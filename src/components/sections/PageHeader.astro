@@ -13,16 +13,37 @@ interface Props {
   lead?: string;
   crumbs?: NavItem[];
   tone?: 'default' | 'alt' | 'soft';
+  size?: 'sm' | 'md';
+  /**
+   * Układ wejściowy z `/pierwsza-wizyta`: krótka kreska akcentu zamyka tytuł,
+   * zanim zacznie się lead, a sam lead dostaje luźniejszą interlinię i węższą
+   * miarę. Opcja, nie domyślność — pozostałe podstrony zostają przy
+   * dotychczasowym rytmie, dopóki nie przestawimy ich świadomie.
+   */
+  rule?: boolean;
 }
 
-const { eyebrow, title, lead, crumbs, tone = 'default' } = Astro.props;
+const {
+  eyebrow,
+  title,
+  lead,
+  crumbs,
+  tone = 'default',
+  size = 'sm',
+  rule = false,
+} = Astro.props;
 ---
 
-<Section as="div" size="sm" tone={tone} class="page-header">
+<Section as="div" size={size} tone={tone} class="page-header">
   {crumbs && <Breadcrumbs items={crumbs} />}
   {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-  <h1 class="page-header__title">{title}</h1>
-  {lead && <p class="lead page-header__lead">{lead}</p>}
+  <h1 class:list={['page-header__title', rule && 'page-header__title--tight']}>{title}</h1>
+  {rule && <span class="page-header__rule" aria-hidden="true"></span>}
+  {
+    lead && (
+      <p class:list={['lead', 'page-header__lead', rule && 'page-header__lead--loose']}>{lead}</p>
+    )
+  }
 </Section>
 
 <style>
@@ -35,7 +56,30 @@ const { eyebrow, title, lead, crumbs, tone = 'default' } = Astro.props;
     max-width: 20ch;
   }
 
+  /* Węższa miara łamie tytuł na dwie linie, zamiast rozciągać go w jedną —
+     ta sama wartość co w nagłówku pierwszej wizyty. */
+  .page-header__title--tight {
+    max-width: 18ch;
+  }
+
+  /* Kreska robi to, czego nie zrobi sam odstęp: zamyka tytuł, zamiast
+     pozwolić mu przejść płynnie w akapit. */
+  .page-header__rule {
+    display: block;
+    inline-size: 3.5rem;
+    block-size: 2px;
+    margin-block: var(--space-md);
+    background: var(--accent);
+  }
+
   .page-header__lead {
     margin-block-start: var(--space-sm);
+  }
+
+  /* Odstęp nad leadem daje już kreska, dlatego marginesu nie dokładamy. */
+  .page-header__lead--loose {
+    margin-block-start: 0;
+    line-height: 1.85;
+    max-width: 46ch;
   }
 </style>
