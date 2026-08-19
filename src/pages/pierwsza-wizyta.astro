@@ -3,7 +3,6 @@ import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
 import Section from '~/components/ui/Section.astro';
-import Button from '~/components/ui/Button.astro';
 import Mark from '~/components/ui/Mark.astro';
 import Todo from '~/components/ui/Todo.astro';
 import Faq from '~/components/sections/Faq.astro';
@@ -67,22 +66,34 @@ const blocks = [
 
         <aside class="booking">
           <h2 class="booking__title">{home.firstVisit.ctaLabel}</h2>
-          <p class="booking__text">
-            Konto, karnet i płatność obsługuje system rezerwacji. Zajmuje to kilka minut.
-          </p>
-          <Button
-            href={booking.frontOfficeUrl}
-            newTab={booking.newTab}
-            size="lg"
-            source="first-visit"
-            event="first_visit_cta_click"
-          >
-            {home.firstVisit.ctaLabel}
-          </Button>
+
           <p class="booking__help">
             Wolisz zapisać się przez telefon?
             <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
           </p>
+
+          {/* Na szerokim ekranie zostaje sama strzałka, dlatego etykieta musi
+              przetrwać jako aria-label — inaczej czytnik ogłosiłby „link”. */}
+          <a
+            class="booking__go"
+            href={booking.frontOfficeUrl}
+            target={booking.newTab ? '_blank' : undefined}
+            rel={booking.newTab ? 'noopener' : undefined}
+            aria-label={home.firstVisit.ctaLabel}
+            data-cta-source="first-visit"
+            data-event="first_visit_cta_click"
+          >
+            <span class="booking__goLabel">{home.firstVisit.ctaLabel}</span>
+            <svg class="booking__goIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path
+                d="M4 12h15m0 0-6-6m6 6-6 6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </svg>
+          </a>
         </aside>
       </div>
     </div>
@@ -210,7 +221,7 @@ const blocks = [
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
-    aspect-ratio: 7 / 6;
+    aspect-ratio: 4 / 3;
     /* Kubek siedzi w dolnej połowie kadru — przy przycinaniu pionowego
        zdjęcia trzymamy się dołu, żeby go nie uciąć. */
     object-position: 50% 68%;
@@ -286,11 +297,11 @@ const blocks = [
 
   /* ————————————————————————— karta rezerwacji ————————————————————————— */
 
-  /* Na wąskim ekranie karta stoi po prostu pod zdjęciem. Nachodzenie
-     włącza się dopiero tam, gdzie jest na nie miejsce (patrz 60rem). */
+  /* Na wąskim ekranie karta stoi po prostu pod zdjęciem i wygląda jak
+     zwykły blok z pełnym przyciskiem. Poziomy pasek ze strzałką włącza się
+     dopiero tam, gdzie jest na niego miejsce (patrz 60rem). */
   .booking {
     display: grid;
-    justify-items: start;
     gap: var(--space-sm);
     margin-block-start: var(--space-md);
     padding: var(--space-md);
@@ -302,12 +313,6 @@ const blocks = [
     font-size: var(--fs-h3);
   }
 
-  .booking__text {
-    font-size: var(--fs-small);
-    color: var(--text-muted);
-    max-width: 32ch;
-  }
-
   .booking__help {
     font-size: var(--fs-small);
     color: var(--text-muted);
@@ -316,6 +321,27 @@ const blocks = [
   .booking__help a {
     color: var(--text-accent);
     margin-inline-start: 0.35em;
+  }
+
+  .booking__go {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2xs);
+    min-block-size: 44px;
+    padding-inline: var(--space-md);
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    color: var(--on-accent);
+    text-decoration: none;
+    font-size: var(--fs-small);
+    text-align: center;
+  }
+
+  .booking__goIcon {
+    display: none;
+    inline-size: 1.35rem;
+    block-size: 1.35rem;
   }
 
   /* ————————————————————————— bloki informacyjne ————————————————————————— */
@@ -394,12 +420,17 @@ const blocks = [
   }
 
   @media (min-width: 60rem) {
-    /* `:global`, bo klasa `intro` trafia na korzeń komponentu Section, a ten
+    /* :global, bo klasa "intro" trafia na korzeń komponentu Section, a ten
        nosi scope Astro tamtego komponentu, nie tej strony — bez tego reguła
-       po cichu nie działa. Zapas na dole robi miejsce dla karty, która
-       zwisa poniżej kadru. */
+       po cichu nie działa.
+
+       overflow-x: clip jest obowiązkowe przy kadrze wychodzącym poza okno:
+       100vw liczy szerokość RAZEM z paskiem przewijania, więc bez tego strona
+       dostaje poziomy pasek. clip, w odróżnieniu od hidden, nie tworzy
+       kontenera przewijania. */
     :global(.intro) {
       padding-block-end: var(--space-2xl);
+      overflow-x: clip;
     }
 
     .intro__grid {
@@ -408,19 +439,74 @@ const blocks = [
       align-items: center;
     }
 
-    /* Karta zachodzi na prawy dolny narożnik kadru i przekracza jego dolną
-       linię. Odsunięcie liczone od krawędzi ZDJĘCIA, nie kontenera — to
-       zdjęcie jest tu układem odniesienia. */
+    /* Kadr ucieka poza prawą krawędź okna. */
+    .intro__media {
+      margin-inline-end: calc(-1 * (var(--gutter) + max(0px, (100vw - var(--container)) / 2)));
+    }
+
+    /* Poziomy pasek zamiast pionowej karty: tytuł, kreska, telefon, strzałka.
+       Proporcje z makiety — 58% szerokości kadru przy 22% jego wysokości,
+       czyli element LEŻĄCY, a nie stojący. Poprzednia wersja miała te same
+       treści ułożone w słupek i przez to była dwa razy za wysoka. */
     .booking {
       position: absolute;
-      inset-block-end: calc(-1 * var(--space-xl));
-      inset-inline-end: var(--space-md);
-      /* Proporcja z makiety: karta zajmuje mniej więcej połowę szerokości
-         kadru. Niżej niż 17rem tekst w środku zaczyna się rwać, więc to
-         jest dolna granica, nie punkt wyjścia. */
-      inline-size: min(19rem, 48%);
+      inset-block-end: calc(-1 * (var(--space-lg) + var(--space-sm)));
+      inset-inline-end: var(--space-lg);
+      inline-size: min(26rem, 58%);
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm);
       margin-block-start: 0;
       box-shadow: 0 2px 28px color-mix(in srgb, var(--espresso) 14%, transparent);
+    }
+
+    .booking__title {
+      font-size: var(--fs-h4);
+      line-height: var(--lh-heading);
+      max-width: 10ch;
+    }
+
+    /* Kreska oddzielająca to obramowanie akapitu z telefonem — jeden element
+       mniej w drzewie niż osobny separator. */
+    .booking__help {
+      font-size: var(--fs-caption);
+      line-height: var(--lh-body);
+      max-width: 17ch;
+      padding-inline-start: var(--space-sm);
+      border-inline-start: var(--hairline) solid
+        color-mix(in srgb, var(--clay-deep) 45%, transparent);
+    }
+
+    .booking__help a {
+      display: block;
+      margin-inline-start: 0;
+    }
+
+    /* Etykieta zostaje w drzewie dostępności przez aria-label na linku,
+       więc można ją tu schować bez straty dla czytników. */
+    .booking__goLabel {
+      display: none;
+    }
+
+    .booking__go {
+      inline-size: 2.9rem;
+      block-size: 2.9rem;
+      min-block-size: 0;
+      padding-inline: 0;
+      background: transparent;
+      color: var(--text-accent);
+      border: var(--hairline) solid color-mix(in srgb, var(--clay-deep) 78%, transparent);
+      transition: background var(--dur-fast), color var(--dur-fast);
+    }
+
+    .booking__go:hover {
+      background: var(--accent);
+      color: var(--on-accent);
+    }
+
+    .booking__goIcon {
+      display: block;
     }
   }
 </style>
