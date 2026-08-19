@@ -14,11 +14,16 @@ export const pages = {
     title: 'Wybierz zajęcia i termin',
     lead: 'Grafik i rezerwacje prowadzimy w systemie Fitssey. Poniżej działa on bezpośrednio na stronie — konto, karnet i płatność zostają po stronie systemu.',
     rulesTitle: 'Zasady zapisów',
+    // FAKT: pierwsze cztery to odpowiedzi 28–31. Piąta i szósta pochodzą
+    // z odpowiedzi 27 i z maila (19.08.2026) — dotyczą tego samego tematu,
+    // więc stoją tutaj, a nie w FAQ.
     rules: [
-      'TODO(klientka): do kiedy można odwołać rezerwację bez utraty wejścia',
-      'TODO(klientka): jak działają listy rezerwowe',
-      'TODO(klientka): czy karnet obowiązuje w obu lokalizacjach',
-      'TODO(klientka): czy akceptowane są karty sportowe',
+      'Rezerwację odwołasz bez utraty wejścia najpóźniej 14 godzin przed rozpoczęciem zajęć. Później wejście przepada.',
+      'Gdy termin jest zajęty, zapisz się na listę rezerwową — o zwolnionym miejscu poinformujemy Cię e-mailem.',
+      'Karnet działa w obu studiach: możesz ćwiczyć raz w Pruszczu, raz w Gdańsku.',
+      'Nie akceptujemy kart sportowych.',
+      'Karnety x4 i x8 możesz dzielić z bliskimi — na przykład z partnerem albo córką.',
+      'Jesteś w Trójmieście przejazdem? W systemie rezerwacji wybierz wejście jednorazowe i przyjdź do wybranego studia.',
     ],
     helpTitle: 'Coś nie działa?',
     helpLead: 'Jeśli grafik się nie wczytuje albo nie możesz dokończyć rezerwacji, napisz lub zadzwoń — pomożemy zapisać się ręcznie.',
