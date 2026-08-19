@@ -49,6 +49,7 @@ const blocks = [
         <Breadcrumbs items={[{ label: 'Pierwsza wizyta', href: '/pierwsza-wizyta' }]} />
         <p class="eyebrow">{t.eyebrow}</p>
         <h1 class="intro__title">{t.title}</h1>
+        <span class="intro__rule" aria-hidden="true"></span>
         {lead ? <p class="lead intro__lead">{lead}</p> : <Todo label={t.lead} block />}
       </div>
 
@@ -176,9 +177,19 @@ const blocks = [
     max-width: 18ch;
   }
 
+  /* Krótka kreska oddziela nagłówek od akapitu. Robi to, czego nie zrobi
+     sam odstęp: zamyka tytuł, zamiast pozwolić mu przejść płynnie w tekst. */
+  .intro__rule {
+    display: block;
+    inline-size: 3.5rem;
+    block-size: 2px;
+    margin-block: var(--space-md);
+    background: var(--accent);
+  }
+
   .intro__lead {
-    margin-block-start: var(--space-sm);
-    max-width: var(--measure);
+    line-height: 1.85;
+    max-width: 46ch;
   }
 
   .intro__media {
@@ -186,8 +197,8 @@ const blocks = [
   }
 
   /* Łuk cytuje ten namalowany na ścianie studia — patrz --radius-arch.
-     Zaokrąglony jest tylko górny lewy narożnik: prawa strona kadru ucieka
-     poza okno, więc nie ma tam krawędzi, którą trzeba by wykończyć. */
+     Zaokrąglony jest tylko górny lewy narożnik; pozostałe zostają ostre,
+     żeby kadr miał kierunek i nie zamienił się w medalion. */
   .intro__figure {
     margin: 0;
     border-start-start-radius: var(--radius-arch);
@@ -199,10 +210,10 @@ const blocks = [
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
-    aspect-ratio: 4 / 3;
-    /* Kubek siedzi w dolnej połowie kadru — przy poziomym kadrowaniu
-       pionowego zdjęcia trzymamy się dołu, żeby go nie uciąć. */
-    object-position: 50% 70%;
+    aspect-ratio: 7 / 6;
+    /* Kubek siedzi w dolnej połowie kadru — przy przycinaniu pionowego
+       zdjęcia trzymamy się dołu, żeby go nie uciąć. */
+    object-position: 50% 68%;
   }
 
   /* ————————————————————————— oś czasu ————————————————————————— */
@@ -385,15 +396,10 @@ const blocks = [
   @media (min-width: 60rem) {
     /* `:global`, bo klasa `intro` trafia na korzeń komponentu Section, a ten
        nosi scope Astro tamtego komponentu, nie tej strony — bez tego reguła
-       po cichu nie działa.
-
-       `overflow-x: clip` jest tu obowiązkowe: 100vw poniżej liczy szerokość
-       okna RAZEM z paskiem przewijania, więc kadr wychodzi kilka pikseli za
-       daleko i strona dostaje poziomy pasek. `clip` przycina, ale w
-       przeciwieństwie do `hidden` nie tworzy kontenera przewijania. */
+       po cichu nie działa. Zapas na dole robi miejsce dla karty, która
+       zwisa poniżej kadru. */
     :global(.intro) {
       padding-block-end: var(--space-2xl);
-      overflow-x: clip;
     }
 
     .intro__grid {
@@ -402,20 +408,17 @@ const blocks = [
       align-items: center;
     }
 
-    /* Kadr ucieka poza prawą krawędź okna. Odległość od prawego brzegu
-       kontenera do brzegu okna to gutter plus połowa tego, co zostaje
-       z okna po odjęciu kontenera. */
-    .intro__media {
-      margin-inline-end: calc(-1 * (var(--gutter) + max(0px, (100vw - var(--container)) / 2)));
-    }
-
-    /* Karta siedzi przy prawej krawędzi kadru i przekracza jego dolną
-       linię — to ona wiąże zdjęcie z treścią poniżej. */
+    /* Karta zachodzi na prawy dolny narożnik kadru i przekracza jego dolną
+       linię. Odsunięcie liczone od krawędzi ZDJĘCIA, nie kontenera — to
+       zdjęcie jest tu układem odniesienia. */
     .booking {
       position: absolute;
-      inset-block-end: calc(-1 * var(--space-lg));
-      inset-inline-end: calc(var(--gutter) + max(0px, (100vw - var(--container)) / 2));
-      inline-size: min(21rem, 60%);
+      inset-block-end: calc(-1 * var(--space-xl));
+      inset-inline-end: var(--space-md);
+      /* Proporcja z makiety: karta zajmuje mniej więcej połowę szerokości
+         kadru. Niżej niż 17rem tekst w środku zaczyna się rwać, więc to
+         jest dolna granica, nie punkt wyjścia. */
+      inline-size: min(19rem, 48%);
       margin-block-start: 0;
       box-shadow: 0 2px 28px color-mix(in srgb, var(--espresso) 14%, transparent);
     }
