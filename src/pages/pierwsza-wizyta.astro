@@ -47,9 +47,11 @@ const blocks = [
       <div class="intro__text">
         <Breadcrumbs items={[{ label: 'Pierwsza wizyta', href: '/pierwsza-wizyta' }]} />
         <p class="eyebrow">{t.eyebrow}</p>
-        <h1 class="intro__title">{t.title}</h1>
-        <span class="intro__rule" aria-hidden="true"></span>
-        {lead ? <p class="lead intro__lead">{lead}</p> : <Todo label={t.lead} block />}
+        {/* Te same klasy co w `PageHeader` — rytm wejścia definiuje `base.css`,
+            żeby dwukolumnowy nagłówek nie rozjechał się z resztą podstron. */}
+        <h1 class="page-header__title">{t.title}</h1>
+        <span class="page-header__rule" aria-hidden="true"></span>
+        {lead ? <p class="lead page-header__lead">{lead}</p> : <Todo label={t.lead} block />}
       </div>
 
       <div class="intro__media">
@@ -183,25 +185,8 @@ const blocks = [
     align-items: center;
   }
 
-  .intro__title {
-    margin-block-start: var(--space-2xs);
-    max-width: 18ch;
-  }
-
-  /* Krótka kreska oddziela nagłówek od akapitu. Robi to, czego nie zrobi
-     sam odstęp: zamyka tytuł, zamiast pozwolić mu przejść płynnie w tekst. */
-  .intro__rule {
-    display: block;
-    inline-size: 3.5rem;
-    block-size: 2px;
-    margin-block: var(--space-md);
-    background: var(--accent);
-  }
-
-  .intro__lead {
-    line-height: 1.85;
-    max-width: 46ch;
-  }
+  /* Tytuł, kreska i lead biorą reguły z `base.css` (`.page-header__*`) —
+     nie powtarzamy ich tutaj, bo to jeden wzorzec na wszystkie podstrony. */
 
   .intro__media {
     position: relative;

@@ -176,6 +176,23 @@ każdemu tłu sekcji, nie tylko domyślnemu.**
 Fonty rozstrzygnięte empirycznie: **Tenor Sans** (display) + **Figtree** (tekst),
 oba z pełnym `latin-ext`. Italiana odrzucona — zero polskich glifów.
 
+### Wejście w podstronę — jeden wzorzec na wszystkie
+
+Okruszki → nadtytuł → tytuł (miara 18ch) → **krótka kreska akcentu 3,5rem** →
+lead (interlinia 1,85, miara 46ch). Układ zatwierdzony na makiecie pierwszej
+wizyty, obowiązuje na **każdej** podstronie. Kreska stoi także tam, gdzie leadu
+nie ma — domyka nagłówek, zamiast zostawiać go zawieszonym nad treścią.
+
+Reguły siedzą **globalnie w `base.css`** jako `.page-header__title`,
+`.page-header__rule`, `.page-header__lead`, a nie w scoped-stylach `PageHeader`.
+Powód: ten sam rytm musi działać w dwóch obudowach — w komponencie
+(14 podstron) i w dwukolumnowym nagłówku `/pierwsza-wizyta`, gdzie obok tekstu
+stoi kadr w łuku i karta rezerwacji. Dwa komplety scoped-styli już raz się
+rozjechały. **Zmieniasz rytm wejścia → zmieniasz `base.css`, nie komponent.**
+
+Wyjątki świadome: strona główna (ma własny hero) i `/404` (wyśrodkowany układ
+z symbolem-kroplą).
+
 ---
 
 ## 6. Stan — co stoi

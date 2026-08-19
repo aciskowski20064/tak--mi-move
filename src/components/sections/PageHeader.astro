@@ -14,72 +14,25 @@ interface Props {
   crumbs?: NavItem[];
   tone?: 'default' | 'alt' | 'soft';
   size?: 'sm' | 'md';
-  /**
-   * Układ wejściowy z `/pierwsza-wizyta`: krótka kreska akcentu zamyka tytuł,
-   * zanim zacznie się lead, a sam lead dostaje luźniejszą interlinię i węższą
-   * miarę. Opcja, nie domyślność — pozostałe podstrony zostają przy
-   * dotychczasowym rytmie, dopóki nie przestawimy ich świadomie.
-   */
-  rule?: boolean;
 }
 
-const {
-  eyebrow,
-  title,
-  lead,
-  crumbs,
-  tone = 'default',
-  size = 'sm',
-  rule = false,
-} = Astro.props;
+const { eyebrow, title, lead, crumbs, tone = 'default', size = 'md' } = Astro.props;
 ---
 
 <Section as="div" size={size} tone={tone} class="page-header">
   {crumbs && <Breadcrumbs items={crumbs} />}
   {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-  <h1 class:list={['page-header__title', rule && 'page-header__title--tight']}>{title}</h1>
-  {rule && <span class="page-header__rule" aria-hidden="true"></span>}
-  {
-    lead && (
-      <p class:list={['lead', 'page-header__lead', rule && 'page-header__lead--loose']}>{lead}</p>
-    )
-  }
+  <h1 class="page-header__title">{title}</h1>
+  {/* Kreska stoi też pod tytułem bez leadu (np. podstrony studiów, polityki) —
+      domyka nagłówek, zamiast zostawiać go zawieszonym nad treścią. */}
+  <span class="page-header__rule" aria-hidden="true"></span>
+  {lead && <p class="lead page-header__lead">{lead}</p>}
 </Section>
 
 <style>
+  /* Typografia wejścia siedzi w `base.css` — te same reguły obsługują
+     dwukolumnowy nagłówek pierwszej wizyty. Tutaj zostaje sam odstęp. */
   .page-header {
     padding-block-end: var(--space-lg);
-  }
-
-  .page-header__title {
-    margin-block-start: var(--space-2xs);
-    max-width: 20ch;
-  }
-
-  /* Węższa miara łamie tytuł na dwie linie, zamiast rozciągać go w jedną —
-     ta sama wartość co w nagłówku pierwszej wizyty. */
-  .page-header__title--tight {
-    max-width: 18ch;
-  }
-
-  /* Kreska robi to, czego nie zrobi sam odstęp: zamyka tytuł, zamiast
-     pozwolić mu przejść płynnie w akapit. */
-  .page-header__rule {
-    display: block;
-    inline-size: 3.5rem;
-    block-size: 2px;
-    margin-block: var(--space-md);
-    background: var(--accent);
-  }
-
-  .page-header__lead {
-    margin-block-start: var(--space-sm);
-  }
-
-  /* Odstęp nad leadem daje już kreska, dlatego marginesu nie dokładamy. */
-  .page-header__lead--loose {
-    margin-block-start: 0;
-    line-height: 1.85;
-    max-width: 46ch;
   }
 </style>

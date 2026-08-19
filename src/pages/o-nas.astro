@@ -33,8 +33,6 @@ const blocks = [t.spaces, t.community];
     title={t.title}
     lead={lead ?? undefined}
     crumbs={[{ label: 'O nas', href: '/o-nas' }]}
-    size="md"
-    rule
   />
 
   {!lead && <Section as="div" size="sm"><Todo label={t.lead} block /></Section>}

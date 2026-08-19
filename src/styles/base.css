@@ -160,6 +160,40 @@ a:hover {
   max-width: var(--measure-narrow);
 }
 
+/* ————————————————————— wejście w podstronę —————————————————————
+
+   Rytm zatwierdzony na makiecie pierwszej wizyty, obowiązujący na KAŻDEJ
+   podstronie: okruszki, nadtytuł, tytuł, krótka kreska akcentu, lead.
+
+   Reguły stoją globalnie, a nie w `PageHeader`, bo ten sam układ musi
+   działać w dwóch obudowach: w samym komponencie (większość podstron)
+   i w dwukolumnowym nagłówku pierwszej wizyty, gdzie obok tekstu stoi
+   kadr i karta rezerwacji. Dwa komplety scoped-styli już raz się
+   rozjechały — stąd jedno miejsce na te wartości. */
+
+.page-header__title {
+  margin-block-start: var(--space-2xs);
+  /* Węższa miara łamie tytuł na wiersze, zamiast rozciągać go w jeden. */
+  max-width: 18ch;
+}
+
+/* Kreska robi to, czego nie zrobi sam odstęp: zamyka tytuł, zamiast
+   pozwolić mu przejść płynnie w akapit. */
+.page-header__rule {
+  display: block;
+  inline-size: 3.5rem;
+  block-size: 2px;
+  margin-block: var(--space-md);
+  background: var(--accent);
+}
+
+/* Odstęp nad leadem daje już kreska, dlatego marginesu nie dokładamy. */
+.page-header__lead {
+  margin-block-start: 0;
+  line-height: 1.85;
+  max-width: 46ch;
+}
+
 /* ——————————————————————————— ruch ——————————————————————————— */
 
 @media (prefers-reduced-motion: reduce) {
