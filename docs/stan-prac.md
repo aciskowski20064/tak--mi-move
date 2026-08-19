@@ -1,11 +1,11 @@
 # Stan prac — finalizacja strony
 
-**Ostatnia aktualizacja: 19.08.2026, koniec sesji pierwszej.**
+**Ostatnia aktualizacja: 19.08.2026, sesja druga — blok A.**
 
 Numery w nawiasach odsyłają do pytań 1–60 z `dla-klientki.md`; odpowiedzi
 i statusy ich weryfikacji są w `odpowiedzi-klientki.md`.
 
-Licznik: **37 znaczników `TODO(` w kodzie** (na starcie sesji było 55).
+Licznik: **34 znaczniki `TODO(` w kodzie** (55 → 37 → 34).
 
 ---
 
@@ -76,19 +76,46 @@ Klientka i tak musi ją zatwierdzić, więc lepiej raz, na gotowej treści.
 
 ---
 
+## ZROBIONE 19.08.2026 — sesja druga
+
+### Blok A — `/o-nas` (53–56) · KOMPLETNY
+
+- [x] **Opis marki (53)** — lead nagłówka: „studio zdrowego ruchu" z formularza
+      plus zdanie z maila o bezpiecznej, inkluzywnej i wspierającej przestrzeni.
+- [x] **Historia powstania (54)** — blok „Po co powstało TAK MI MOVE".
+      **Napisany bez imienia założycielki**: klientka odmówiła nazwisk
+      w sekcji o zespole (1), więc dopóki tego wprost nie potwierdzi, historia
+      mówi o niej opisowo. Do dopytania — imię ociepliłoby ten akapit,
+      a pełna nazwa działalności i tak stoi w stopce.
+- [x] **Wartości (55)** — hasło `Siła ~ Spokój ~ Równowaga` jako nadtytuł
+      sekcji plus cztery punkty: Bezpiecznie · Dla każdego · Ze wsparciem ·
+      Ciało i głowa. **Same przymiotniki są z maila (FAKT), rozwinięcia pod
+      nimi napisane przeze mnie (ROBOCZE)** — opierają się na potwierdzonych
+      odpowiedziach 12, 23, 26, 41 i 51, ale wymagają akceptacji klientki.
+- [x] **Warsztaty i wydarzenia (56)** — regularne warsztaty **i wyjazdy**,
+      terminy na FB/IG, wydarzenia na zamówienie (gotowy pakiet albo „uszyte
+      na miarę"), oferta i ceny mailem.
+
+**Zmiana strukturalna, nie sama treść:** `values` przestało być pojedynczym
+akapitem — ma teraz `motto` i tablicę `items`, a `/o-nas` renderuje z niej
+osobną sekcję na tle `--sand`. Historia dostała własną sekcję w skali `lg`,
+w gridzie zostały tylko „Dwie przestrzenie" i „Społeczność i wydarzenia".
+
+Sprawdzone na buildzie produkcyjnym: 17 podstron, zero błędów, `/o-nas` ma
+komplet nagłówków, brak poziomego przewijania na 1280 i 375 px. Kontrast na
+tle `--sand`: motto 4,84 · opisy wartości 4,85 · tytuły 11,16 (próg AA 4,5).
+
+### Odzyskane brzmienie odpowiedzi 53–56
+
+`odpowiedzi-klientki.md` to skrót — przy pisaniu treści okazało się, że gubi
+szczegóły. Oryginał (`TAK_MI_MOVE_pytania_i_odpowiedzi.pdf`) da się rozłożyć
+na tekst bez dodatkowych narzędzi: PDF ma warstwę tekstową w strumieniach
+obiektów, wystarczy skrypt w Node (`zlib.inflateSync` + mapy `ToUnicode`).
+Wyszły z tego trzy fakty, których w skrócie nie było — patrz `odpowiedzi-klientki.md`.
+
+---
+
 ## DO ZROBIENIA
-
-### Blok A — `/o-nas` (53–56) · wszystko potwierdzone, zero blokad
-
-- [ ] Opis marki (53) — „studio zdrowego ruchu" + rozwinięcie z maila.
-- [ ] Historia powstania (54) — po urodzeniu syna, miejsce przyjazne
-      i kobiece na bezpieczny powrót do aktywności.
-- [ ] Wartości (55) — Siła ~ Spokój ~ Równowaga; bezpieczne, inkluzywne,
-      wspierające; troska o ciało i głowę. Do rozbicia na 3–5 punktów.
-- [ ] Warsztaty i wydarzenia (56) — regularne, info na FB/IG, można zamówić
-      własne wydarzenie mailowo.
-
-**To najszybszy zysk: jeden plik `pages.ts`, wszystko pewne.**
 
 ### Blok B — strona główna (4–5, 13–17)
 
@@ -163,6 +190,11 @@ Klientka i tak musi ją zatwierdzić, więc lepiej raz, na gotowej treści.
 4. Dwa ostatnie słowa opisujące atmosferę zajęć (41).
 5. **Czy barre odbywa się w Gdańsku** — patrz konflikt niżej.
 6. Czy wyjątek od zasady 14 godzin przy nagłej ciąży ma być publiczną regułą (28).
+7. **Nowe:** czy w historii marki na `/o-nas` może paść imię założycielki (54).
+   Dziś stoi tam „założycielka" — bezpiecznie, ale bezosobowo.
+8. **Nowe:** czy strona ma mówić o sesjach indywidualnych i treningu
+   funkcjonalnym/medycznym (53). Klientka wymienia je w opisie marki, ale
+   `/zajecia` pokazuje wyłącznie pięć form grupowych.
 
 ---
 

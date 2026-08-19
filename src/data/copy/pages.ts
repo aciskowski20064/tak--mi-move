@@ -112,14 +112,42 @@ export const pages = {
     },
     eyebrow: 'O nas',
     title: 'Zdrowy ruch w kameralnej przestrzeni',
-    lead: 'TODO(klientka): jedno–dwa zdania, którymi właścicielka opisuje markę',
+    // FAKT: odpowiedź 53 — „studio zdrowego ruchu” z formularza plus opis marki
+    // przysłany mailem („bezpieczna, inkluzywna i wspierająca przestrzeń…”).
+    lead: 'Jesteśmy studiem zdrowego ruchu. Tworzymy bezpieczną, inkluzywną i wspierającą przestrzeń — miejsce treningu i praktyki, spotkań oraz holistycznej troski o ciało i głowę.',
     manifesto: {
       title: 'Po co powstało TAK MI MOVE',
-      body: 'TODO(klientka): historia powstania marki — brief §17 zabrania jej wymyślać',
+      // FAKT: odpowiedź 54 (mail) — geneza marki. Świadomie bez imienia
+      // założycielki: klientka nie zgodziła się na nazwiska w sekcji o zespole,
+      // więc dopóki tego nie potwierdzi, historia mówi o niej opisowo.
+      body: 'Studio wzięło się z osobistej potrzeby założycielki. Po urodzeniu syna chciała być bliżej ludzi i stworzyć miejsce, którego sama wtedy potrzebowała — przyjazne i kobiece, pozwalające spokojnie i bezpiecznie wrócić do aktywności, z równą uwagą dla ciała i dla głowy.',
     },
     values: {
       title: 'Co jest dla nas ważne',
-      body: 'TODO(klientka): 3–5 wartości wspólnych dla obu lokalizacji, z krótkim rozwinięciem',
+      // FAKT: hasło marki z mediów społecznościowych i z maila (odpowiedź 55).
+      motto: 'Siła ~ Spokój ~ Równowaga',
+      // FAKT: trzy przymiotniki („bezpieczne, inkluzywne, wspierające”) i troska
+      // o ciało i głowę pochodzą wprost z maila. ROBOCZE: rozwinięcia pod nimi —
+      // opisują sposób pracy potwierdzony w odpowiedziach 12, 23, 26, 41 i 51,
+      // ale sformułowane przeze mnie. Do akceptacji klientki.
+      items: [
+        {
+          title: 'Bezpiecznie',
+          body: 'Ruch dobieramy do tego, z czym przychodzisz, nie odwrotnie. O kontuzji, ciąży czy innej szczególnej potrzebie mówisz przed zajęciami — prowadząca podpowie wtedy łagodniejszy wariant ćwiczenia.',
+        },
+        {
+          title: 'Dla każdego',
+          body: 'Nie trzeba mieć doświadczenia ani formy na start. Ćwiczymy w kameralnych grupach, około ośmiu osób, więc nikt nie ginie w tłumie i nikt nie zostaje z tyłu.',
+        },
+        {
+          title: 'Ze wsparciem',
+          body: 'Prowadząca jest po to, żeby patrzeć i podpowiadać, a nie żeby oceniać. Pytania w trakcie zajęć są mile widziane.',
+        },
+        {
+          title: 'Ciało i głowa',
+          body: 'Trening to u nas nie tylko mięśnie. Tak samo liczy się to, w jakim stanie wychodzisz z sali — dlatego pilnujemy oddechu, tempa i spokoju.',
+        },
+      ],
     },
     spaces: {
       title: 'Dwie przestrzenie',
@@ -128,7 +156,10 @@ export const pages = {
     },
     community: {
       title: 'Społeczność i wydarzenia',
-      body: 'TODO(klientka): czy wydarzenia i warsztaty są stałym elementem oferty, czy pojedynczymi akcjami',
+      // FAKT: odpowiedź 56 — „Tak, regularnie warsztaty i wyjazdy → info na FB i IG”,
+      // plus uzupełnienie z maila o wydarzeniach na zamówienie („gotowy pakiet
+      // albo uszyte na miarę”) i o ofercie wysyłanej mailem.
+      body: 'Warsztaty i wyjazdy organizujemy regularnie — terminy ogłaszamy na Facebooku i Instagramie. U nas można też zamówić własne wydarzenie: gotowy pakiet albo coś uszytego na miarę. Pełną ofertę i ceny wysyłamy mailem.',
     },
   },
 

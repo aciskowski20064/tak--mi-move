@@ -8,19 +8,23 @@ import Todo from '~/components/ui/Todo.astro';
 import Team from '~/components/sections/Team.astro';
 import { booking, locations, formatAddress } from '~/data/site';
 import { pages } from '~/data/copy/pages';
-import { copyOrNull } from '~/lib/copy';
+import { copyOrNull, realOnly } from '~/lib/copy';
 import zespolGrupa from '~/assets/photos/zespol-grupa.jpg';
 
 /**
- * Brief §17. Kluczowe zastrzeżenie: „Nie należy tworzyć historii marki
- * bez materiału od właścicielki”. Dlatego manifest, historia, wartości
- * i część o społeczności są tu strukturą, a nie treścią — dopóki nie
- * dostaniemy materiału, w produkcji te bloki nie istnieją.
+ * Brief §17: „Nie należy tworzyć historii marki bez materiału od właścicielki”.
+ * Materiał przyszedł 19.08.2026 (odpowiedzi 53–56), więc opis marki, historia,
+ * wartości i wydarzenia są już treścią, a nie samą strukturą. Mechanizm
+ * `TODO(` zostaje na miejscu — gdyby któryś blok wrócił do stanu bez danych,
+ * w produkcji ma zniknąć, a nie pokazać pusty nagłówek.
  */
 const t = pages.about;
 const lead = copyOrNull(t.lead);
 
-const blocks = [t.manifesto, t.values, t.spaces, t.community];
+const story = copyOrNull(t.manifesto.body);
+/** Wartości renderujemy tylko wtedy, gdy mamy czym je wypełnić. */
+const values = realOnly(t.values.items, (item) => item.body);
+const blocks = [t.spaces, t.community];
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
@@ -46,6 +50,34 @@ const blocks = [t.manifesto, t.values, t.spaces, t.community];
       </figure>
     </div>
   </Section>
+
+  <Section size="lg">
+    <section class="about__story">
+      <h2>{t.manifesto.title}</h2>
+      {story ? <p>{story}</p> : <Todo label={t.manifesto.body} block />}
+    </section>
+  </Section>
+
+  {
+    values.length > 0 && (
+      <Section size="md" tone="alt">
+        <div class="about__values">
+          <header class="about__values-head">
+            <p class="about__motto">{t.values.motto}</p>
+            <h2>{t.values.title}</h2>
+          </header>
+          <ul class="about__value-list">
+            {values.map((value) => (
+              <li>
+                <h3>{value.title}</h3>
+                <p>{value.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Section>
+    )
+  }
 
   <Section size="lg">
     <div class="about__blocks">
@@ -109,6 +141,66 @@ const blocks = [t.manifesto, t.values, t.spaces, t.community];
     object-fit: cover;
     object-position: center 35%;
     border-radius: var(--radius-md);
+  }
+
+  /* Historia marki dostaje najszerszy oddech na stronie — to jedyny
+     fragment, w którym studio mówi o sobie w pierwszej osobie. */
+  .about__story {
+    max-width: var(--measure);
+  }
+
+  .about__story h2 {
+    font-size: var(--fs-h2);
+    margin-block-end: var(--space-md);
+  }
+
+  .about__story p {
+    font-size: var(--fs-lead);
+    line-height: var(--lh-loose);
+  }
+
+  .about__values-head {
+    margin-block-end: var(--space-lg);
+  }
+
+  /* Hasło marki, nie ozdobnik — dlatego font display i kolor akcentowy,
+     a nie szara etykieta jak zwykły eyebrow. */
+  .about__motto {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    color: var(--text-accent);
+    letter-spacing: 0.08em;
+    margin-block-end: var(--space-2xs);
+  }
+
+  .about__values-head h2 {
+    font-size: var(--fs-h3);
+  }
+
+  .about__value-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .about__value-list li {
+    padding-block-start: var(--space-sm);
+    border-block-start: var(--hairline) solid var(--line-detail);
+  }
+
+  .about__value-list h3 {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    font-weight: 400;
+    margin-block-end: var(--space-2xs);
+  }
+
+  .about__value-list p {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    max-width: var(--measure-narrow);
   }
 
   .about__blocks {
@@ -176,10 +268,31 @@ const blocks = [t.manifesto, t.values, t.spaces, t.community];
     text-align: center;
   }
 
+  @media (min-width: 40rem) {
+    .about__value-list {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-lg) var(--space-xl);
+    }
+  }
+
   @media (min-width: 60rem) {
     .about__blocks {
       grid-template-columns: repeat(2, 1fr);
       gap: var(--space-xl) var(--space-2xl);
+    }
+
+    .about__values {
+      display: grid;
+      grid-template-columns: minmax(14rem, 1fr) 2fr;
+      gap: var(--space-2xl);
+      align-items: start;
+    }
+
+    .about__values-head {
+      margin-block-end: 0;
+      position: sticky;
+      /* Nagłówek strony jest `sticky`, więc hasło musi zatrzymać się pod nim. */
+      top: calc(var(--header-h) + var(--space-lg));
     }
   }
 </style>

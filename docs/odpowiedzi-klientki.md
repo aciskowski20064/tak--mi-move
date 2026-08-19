@@ -89,15 +89,15 @@ bez dopytania klientki, mimo że jakaś odpowiedź technicznie istnieje.
 | 50 | Szatnie/prysznice | kosmetyki, ręczniki, prysznic dostępne | ✅ | `pages.ts:65,69` |
 | 51 | Urazy/ciąża dodatkowo | „zgłoś nauczycielowi prowadzącemu" | ✅ | `pages.ts:73` |
 | 52 | Kompletność 28–29 | TAK | ✅ | — |
-| 53 | Opis marki (elevator pitch) | „Studio zdrowego ruchu" + rozwinięcie z maila (bezpieczna, inkluzywna, wspierająca przestrzeń...) | ✅ | `pages.ts:90` |
+| 53 | Opis marki (elevator pitch) | „Studio zdrowego ruchu" + rozwinięcie z maila (bezpieczna, inkluzywna, wspierająca przestrzeń...) | ✅ WPISANE | `pages.ts` → `about.lead` |
 
 ## 54–60 — historia, wartości, dane firmowe
 
 | # | Temat | Odpowiedź | Status | Kod |
 |---|---|---|---|---|
-| 54 | Historia marki | po urodzeniu syna — chęć bycia bliżej ludzi, miejsce przyjazne i kobiece na bezpieczny powrót do aktywności | ✅ | `pages.ts:93` |
-| 55 | Co ważne w pracy z ludźmi | „Siła ~ Spokój ~ Równowaga"; bezpieczne/inkluzywne/wspierające; ciało + głowa | ✅ (treść realna, do rozbicia na 3–5 punktów) | `pages.ts:97` |
-| 56 | Warsztaty/wydarzenia | TAK regularnie, info na FB/IG; można zamówić własne (gotowy pakiet lub „na miarę") przez mail | ✅ | `pages.ts:106` |
+| 54 | Historia marki | po urodzeniu syna — chęć bycia bliżej ludzi, miejsce przyjazne i kobiece na bezpieczny powrót do aktywności | ✅ WPISANE (bez imienia — patrz niżej) | `pages.ts` → `about.manifesto` |
+| 55 | Co ważne w pracy z ludźmi | „Siła ~ Spokój ~ Równowaga"; bezpieczne/inkluzywne/wspierające; ciało + głowa. **Formularz był pusty — całość pochodzi z maila** | ✅ WPISANE jako 4 punkty | `pages.ts` → `about.values` |
+| 56 | Warsztaty/wydarzenia | TAK regularnie — **warsztaty i wyjazdy**, info na FB/IG; można zamówić własne (gotowy pakiet lub „uszyte na miarę"); **pełna oferta i ceny mailem** | ✅ WPISANE | `pages.ts` → `about.community` |
 | 57 | Pełna nazwa działalności | **Tak Mi Move Katarzyna Zawadzka** | ✅ | `site.ts:14`, `Footer.astro:62` |
 | 58 | NIP | **6040107434** | ✅ | `site.ts:14`, `Footer.astro:62` |
 | 59 | Maile — oba aktualne? | **NIE** — jeden wspólny adres `takmimove@gmail.com` | 🔁 KONFLIKT | patrz „Konflikty" niżej |
@@ -113,6 +113,33 @@ bez dopytania klientki, mimo że jakaś odpowiedź technicznie istnieje.
 - Z dziećmi: tylko zajęcia „dla mam z dziećmi" oraz sesje indywidualne.
 - Adres Gdańsk **z potwierdzonym kodem pocztowym**: Angielska Grobla 35/47, **80-756** Gdańsk (rozstrzyga wcześniejsze „DO POTWIERDZENIA" w `site.ts`).
 - Linki do materiałów: opinie Google, 2× opinie Instagram, zdjęcia Pruszcz, zdjęcia Gdańsk, logo (WeTransfer — część linków mogła już wygasnąć, logo w wektorze mamy z innej dostawy 18.08).
+
+---
+
+## Doprecyzowania odzyskane z oryginału PDF (19.08.2026, sesja druga)
+
+Ten dokument jest skrótem. Przy pisaniu bloku A okazało się, że w kilku miejscach
+zgubił szczegóły, więc oryginalny PDF został rozłożony na tekst i odpowiedzi
+53–56 przeczytane dosłownie. Różnice warte odnotowania:
+
+1. **Warsztaty to nie wszystko (56).** Klientka napisała „regularnie warsztaty
+   **i wyjazdy**". Wyjazdów w skrócie nie było — a to zupełnie inna kategoria
+   niż warsztat w studiu. Wpisane do `about.community`.
+2. **Oferta w opisie marki jest szersza niż na stronie (53).** Klientka wymienia
+   pięć form grupowych, ale zaraz po nich „**sesje indywidualne oraz trening
+   funkcjonalny i medyczny**". Strona pokazuje dziś wyłącznie pięć zajęć
+   grupowych. **Do rozstrzygnięcia w bloku C** — czy `/zajecia` ma dostać
+   informację o sesjach indywidualnych (umawianych mailowo, patrz punkt wyżej
+   w „Dodatkowych faktach"), czy zostaje sam grafik grupowy.
+3. **Odpowiedź 55 nie istnieje w formularzu.** Rubryka została pusta; wartości
+   marki znamy wyłącznie z maila. To nie zmienia ich statusu (to nadal słowa
+   klientki), ale warto wiedzieć przy ewentualnym dopytywaniu.
+
+Jak to odzyskać ponownie: PDF ma warstwę tekstową schowaną w strumieniach
+obiektów (`/Type /ObjStm`), a fonty są podzbiorami z własnym kodowaniem.
+Skrypt w Node — `zlib.inflateSync` na strumieniach, rozpakowanie `ObjStm`,
+zbudowanie map z `beginbfchar`/`beginbfrange` w `/ToUnicode` — wyciąga
+wszystkie 15 stron. Na tej maszynie nie ma ani `pdftoppm`, ani Pythona.
 
 ---
 
