@@ -63,10 +63,6 @@ export const pages = {
     blocksTitle: 'Wszystko, co warto wiedzieć wcześniej',
     /** FAKT: odpowiedzi 10 i 50 — co realnie zastaje się na miejscu. */
     amenities: ['Szatnie', 'Prysznic', 'Ręczniki', 'Kosmetyki'],
-    contact: {
-      title: 'Masz pytania?',
-      text: 'Napisz albo zadzwoń — odpowiemy, zanim się zapiszesz.',
-    },
     photos: {
       // Zdjęcia od klientki (19.08.2026). Lokalizacja niepotwierdzona,
       // dlatego opisy nie nazywają studia.

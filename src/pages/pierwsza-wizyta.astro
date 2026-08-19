@@ -52,70 +52,68 @@ const blocks = [
         {lead ? <p class="lead intro__lead">{lead}</p> : <Todo label={t.lead} block />}
       </div>
 
-      <figure class="intro__figure">
-        <Image
-          src={photoKawa}
-          alt={t.photos.hero}
-          widths={[420, 660, 900]}
-          sizes="(min-width: 60rem) 38vw, 100vw"
-          loading="eager"
-          class="intro__image"
-        />
-      </figure>
+      <div class="intro__media">
+        <figure class="intro__figure">
+          <Image
+            src={photoKawa}
+            alt={t.photos.hero}
+            widths={[420, 660, 900]}
+            sizes="(min-width: 60rem) 38vw, 100vw"
+            loading="eager"
+            class="intro__image"
+          />
+        </figure>
+
+        <aside class="booking">
+          <h2 class="booking__title">{home.firstVisit.ctaLabel}</h2>
+          <p class="booking__text">
+            Konto, karnet i płatność obsługuje system rezerwacji. Zajmuje to kilka minut.
+          </p>
+          <Button
+            href={booking.frontOfficeUrl}
+            newTab={booking.newTab}
+            size="lg"
+            source="first-visit"
+            event="first_visit_cta_click"
+          >
+            {home.firstVisit.ctaLabel}
+          </Button>
+          <p class="booking__help">
+            Wolisz zapisać się przez telefon?
+            <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+          </p>
+        </aside>
+      </div>
     </div>
   </Section>
 
   <Section size="lg" tone="alt">
-    <div class="steps__grid">
-      <div>
-        <p class="eyebrow">{t.stepsEyebrow}</p>
-        <h2 class="steps__title">{t.stepsTitle}</h2>
+    <p class="eyebrow">{t.stepsEyebrow}</p>
+    <h2 class="steps__title">{t.stepsTitle}</h2>
 
-        <ol class="steps">
-          {
-            steps.map((step, index) => (
-              <li class="step">
-                <span class="step__marker" aria-hidden="true">
-                  <Mark size="2.2rem" />
-                  <span class="step__num">{String(index + 1).padStart(2, '0')}</span>
-                </span>
-                <div class="step__body">
-                  <h3 class="step__title">{step.title}</h3>
-                  <p class="step__text">{step.text}</p>
-                </div>
-              </li>
-            ))
-          }
-          {
-            missingSteps.map((step) => (
-              <li class="step step--todo">
-                <Todo label={step.text} block />
-              </li>
-            ))
-          }
-        </ol>
-      </div>
-
-      <aside class="booking">
-        <h2 class="booking__title">{home.firstVisit.ctaLabel}</h2>
-        <p class="booking__text">
-          Konto, karnet i płatność obsługuje system rezerwacji. Zajmuje to kilka minut.
-        </p>
-        <Button
-          href={booking.frontOfficeUrl}
-          newTab={booking.newTab}
-          size="lg"
-          source="first-visit"
-          event="first_visit_cta_click"
-        >
-          {home.firstVisit.ctaLabel}
-        </Button>
-        <p class="booking__help">
-          Wolisz zapisać się przez telefon?
-          <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-        </p>
-      </aside>
-    </div>
+    <ol class="steps">
+      {
+        steps.map((step, index) => (
+          <li class="step">
+            <span class="step__marker" aria-hidden="true">
+              <Mark size="2.2rem" />
+              <span class="step__num">{String(index + 1).padStart(2, '0')}</span>
+            </span>
+            <div class="step__body">
+              <h3 class="step__title">{step.title}</h3>
+              <p class="step__text">{step.text}</p>
+            </div>
+          </li>
+        ))
+      }
+      {
+        missingSteps.map((step) => (
+          <li class="step step--todo">
+            <Todo label={step.text} block />
+          </li>
+        ))
+      }
+    </ol>
   </Section>
 
   <Section size="lg">
@@ -161,19 +159,6 @@ const blocks = [
     </div>
   </Section>
 
-  <Section size="md" tone="soft">
-    <div class="help">
-      <div>
-        <h2 class="help__title">{t.contact.title}</h2>
-        <p class="help__text">{t.contact.text}</p>
-      </div>
-      <p class="help__links">
-        <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-        <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
-      </p>
-    </div>
-  </Section>
-
   <Faq />
 </Base>
 
@@ -196,6 +181,10 @@ const blocks = [
     max-width: var(--measure);
   }
 
+  .intro__media {
+    position: relative;
+  }
+
   /* Łuk cytuje ten namalowany na ścianie studia — patrz --radius-arch. */
   .intro__figure {
     margin: 0;
@@ -212,12 +201,6 @@ const blocks = [
   }
 
   /* ————————————————————————— oś czasu ————————————————————————— */
-
-  .steps__grid {
-    display: grid;
-    gap: var(--space-xl);
-    align-items: start;
-  }
 
   .steps__title {
     margin-block: var(--space-2xs) var(--space-lg);
@@ -287,10 +270,13 @@ const blocks = [
 
   /* ————————————————————————— karta rezerwacji ————————————————————————— */
 
+  /* Na wąskim ekranie karta stoi po prostu pod zdjęciem. Nachodzenie
+     włącza się dopiero tam, gdzie jest na nie miejsce (patrz 60rem). */
   .booking {
     display: grid;
     justify-items: start;
     gap: var(--space-sm);
+    margin-block-start: var(--space-md);
     padding: var(--space-md);
     background: var(--surface);
     border: var(--hairline) solid var(--line);
@@ -385,46 +371,9 @@ const blocks = [
     color: var(--text-accent);
   }
 
-  /* ————————————————————————— pasek kontaktowy ————————————————————————— */
-
-  .help {
-    display: grid;
-    gap: var(--space-md);
-  }
-
-  .help__title {
-    font-size: var(--fs-h3);
-  }
-
-  .help__text {
-    margin-block-start: var(--space-3xs);
-    font-size: var(--fs-small);
-    color: var(--text-muted);
-  }
-
-  .help__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-lg);
-    align-items: center;
-  }
-
-  .help__links a {
-    color: var(--text-accent);
-    text-decoration: none;
-    border-block-end: var(--hairline) solid currentColor;
-    padding-block-end: 0.15em;
-  }
-
   @media (min-width: 48rem) {
     .blocks {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-lg);
-    }
-
-    .help {
-      grid-template-columns: 1fr auto;
-      align-items: center;
       gap: var(--space-lg);
     }
   }
@@ -433,18 +382,21 @@ const blocks = [
     .intro__grid {
       grid-template-columns: 1fr minmax(20rem, 30rem);
       gap: var(--space-2xl);
+      /* Kolumna tekstu wyrównana do góry, żeby karta mogła zejść niżej
+         i nachodzić na kadr bez rozpychania nagłówka. */
+      align-items: start;
     }
 
-    .steps__grid {
-      grid-template-columns: 1fr minmax(18rem, 24rem);
-      gap: var(--space-2xl);
-    }
-
-    /* Karta rezerwacji jedzie razem z osią czasu, żeby przycisk był
-       w zasięgu wzroku przy każdym kroku, nie tylko na początku listy. */
+    /* Karta wychodzi poza lewą krawędź kadru, w przerwę siatki — dzięki temu
+       czyta się jako osobny element leżący na zdjęciu, a nie jako plomba
+       wypełniająca je w środku. Prawy pas kadru zostaje odsłonięty. */
     .booking {
-      position: sticky;
-      inset-block-start: var(--space-lg);
+      position: absolute;
+      inset-block-end: var(--space-lg);
+      inset-inline-start: calc(-1 * var(--space-lg));
+      inline-size: min(20rem, 100%);
+      margin-block-start: 0;
+      box-shadow: 0 2px 28px color-mix(in srgb, var(--espresso) 14%, transparent);
     }
   }
 </style>
