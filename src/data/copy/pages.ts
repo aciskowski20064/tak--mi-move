@@ -115,12 +115,28 @@ export const pages = {
     // FAKT: odpowiedź 53 — „studio zdrowego ruchu” z formularza plus opis marki
     // przysłany mailem („bezpieczna, inkluzywna i wspierająca przestrzeń…”).
     lead: 'Jesteśmy studiem zdrowego ruchu. Tworzymy bezpieczną, inkluzywną i wspierającą przestrzeń — miejsce treningu i praktyki, spotkań oraz holistycznej troski o ciało i głowę.',
+    /**
+     * Podpis na kadrze nagłówka. Świadomie same fakty: makieta miała tu
+     * powitanie „Cieszę się, że tu jesteś" pisane odręcznym krojem — zdanie,
+     * którego klientka nigdy nie napisała, w foncie, którego nie mamy.
+     */
+    heroCard: {
+      // FAKT: rok założenia i obie lokalizacje z materiałów marki.
+      label: 'Studio zdrowego ruchu',
+      line: 'Pruszcz Gdański i Gdańsk · od 2022',
+    },
     manifesto: {
       title: 'Po co powstało TAK MI MOVE',
-      // FAKT: odpowiedź 54 (mail) — geneza marki. Świadomie bez imienia
-      // założycielki: klientka nie zgodziła się na nazwiska w sekcji o zespole,
-      // więc dopóki tego nie potwierdzi, historia mówi o niej opisowo.
+      // FAKT: odpowiedź 54 (mail) — geneza marki. Trzecia osoba, nie cytat:
+      // to, co mamy, jest streszczeniem maila, a nie zdaniami wypowiedzianymi
+      // przez Katarzynę. Wzięcie tego w cudzysłów byłoby zmyśleniem cytatu.
       body: 'Studio wzięło się z osobistej potrzeby założycielki. Po urodzeniu syna chciała być bliżej ludzi i stworzyć miejsce, którego sama wtedy potrzebowała — przyjazne i kobiece, pozwalające spokojnie i bezpiecznie wrócić do aktywności, z równą uwagą dla ciała i dla głowy.',
+      // FAKT: pełna nazwa działalności — odpowiedź 57. Podpis opisuje portret,
+      // nie tekst obok, więc nie sugeruje autorstwa zdań powyżej.
+      caption: 'Katarzyna Zawadzka — założycielka',
+      portrait: 'TODO(klientka): zdjęcie Katarzyny do bloku o historii marki',
+      ownWords:
+        'TODO(klientka): trzy–cztery zdania własnymi słowami o tym, po co powstało studio — dopiero wtedy ten blok może być prawdziwym cytatem',
     },
     values: {
       title: 'Co jest dla nas ważne',
@@ -161,6 +177,8 @@ export const pages = {
       // albo uszyte na miarę”) i o ofercie wysyłanej mailem.
       body: 'Warsztaty i wyjazdy organizujemy regularnie — terminy ogłaszamy na Facebooku i Instagramie. U nas można też zamówić własne wydarzenie: gotowy pakiet albo coś uszytego na miarę. Pełną ofertę i ceny wysyłamy mailem.',
     },
+    locationsTitle: 'Gdzie nas znajdziesz',
+    ctaTitle: 'Przyjdź na pierwsze zajęcia',
   },
 
   contact: {
