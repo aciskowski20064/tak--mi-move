@@ -173,7 +173,7 @@ const blocks = [
 
   .intro__title {
     margin-block-start: var(--space-2xs);
-    max-width: 16ch;
+    max-width: 18ch;
   }
 
   .intro__lead {
@@ -185,10 +185,12 @@ const blocks = [
     position: relative;
   }
 
-  /* Łuk cytuje ten namalowany na ścianie studia — patrz --radius-arch. */
+  /* Łuk cytuje ten namalowany na ścianie studia — patrz --radius-arch.
+     Zaokrąglony jest tylko górny lewy narożnik: prawa strona kadru ucieka
+     poza okno, więc nie ma tam krawędzi, którą trzeba by wykończyć. */
   .intro__figure {
     margin: 0;
-    border-radius: var(--radius-arch);
+    border-start-start-radius: var(--radius-arch);
     overflow: hidden;
   }
 
@@ -197,7 +199,10 @@ const blocks = [
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 4 / 3;
+    /* Kubek siedzi w dolnej połowie kadru — przy poziomym kadrowaniu
+       pionowego zdjęcia trzymamy się dołu, żeby go nie uciąć. */
+    object-position: 50% 70%;
   }
 
   /* ————————————————————————— oś czasu ————————————————————————— */
@@ -278,8 +283,7 @@ const blocks = [
     gap: var(--space-sm);
     margin-block-start: var(--space-md);
     padding: var(--space-md);
-    background: var(--surface);
-    border: var(--hairline) solid var(--line);
+    background: var(--surface-soft);
     border-radius: var(--radius-card);
   }
 
@@ -379,22 +383,39 @@ const blocks = [
   }
 
   @media (min-width: 60rem) {
-    .intro__grid {
-      grid-template-columns: 1fr minmax(20rem, 30rem);
-      gap: var(--space-2xl);
-      /* Kolumna tekstu wyrównana do góry, żeby karta mogła zejść niżej
-         i nachodzić na kadr bez rozpychania nagłówka. */
-      align-items: start;
+    /* `:global`, bo klasa `intro` trafia na korzeń komponentu Section, a ten
+       nosi scope Astro tamtego komponentu, nie tej strony — bez tego reguła
+       po cichu nie działa.
+
+       `overflow-x: clip` jest tu obowiązkowe: 100vw poniżej liczy szerokość
+       okna RAZEM z paskiem przewijania, więc kadr wychodzi kilka pikseli za
+       daleko i strona dostaje poziomy pasek. `clip` przycina, ale w
+       przeciwieństwie do `hidden` nie tworzy kontenera przewijania. */
+    :global(.intro) {
+      padding-block-end: var(--space-2xl);
+      overflow-x: clip;
     }
 
-    /* Karta wychodzi poza lewą krawędź kadru, w przerwę siatki — dzięki temu
-       czyta się jako osobny element leżący na zdjęciu, a nie jako plomba
-       wypełniająca je w środku. Prawy pas kadru zostaje odsłonięty. */
+    .intro__grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      gap: var(--space-2xl);
+      align-items: center;
+    }
+
+    /* Kadr ucieka poza prawą krawędź okna. Odległość od prawego brzegu
+       kontenera do brzegu okna to gutter plus połowa tego, co zostaje
+       z okna po odjęciu kontenera. */
+    .intro__media {
+      margin-inline-end: calc(-1 * (var(--gutter) + max(0px, (100vw - var(--container)) / 2)));
+    }
+
+    /* Karta siedzi przy prawej krawędzi kadru i przekracza jego dolną
+       linię — to ona wiąże zdjęcie z treścią poniżej. */
     .booking {
       position: absolute;
-      inset-block-end: var(--space-lg);
-      inset-inline-start: calc(-1 * var(--space-lg));
-      inline-size: min(20rem, 100%);
+      inset-block-end: calc(-1 * var(--space-lg));
+      inset-inline-end: calc(var(--gutter) + max(0px, (100vw - var(--container)) / 2));
+      inline-size: min(21rem, 60%);
       margin-block-start: 0;
       box-shadow: 0 2px 28px color-mix(in srgb, var(--espresso) 14%, transparent);
     }

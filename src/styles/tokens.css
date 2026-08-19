@@ -102,8 +102,10 @@
   --radius-card: 10px;
   /* Łuk kadru fotograficznego. To nie jest ozdobnik: identyczny łuk jest
      namalowany na ścianie studia (zdjęcie ze sprzętem), więc strona cytuje
-     wnętrze, a nie wymyśla własny motyw. */
-  --radius-arch: 42% 42% 0 0 / 34% 34% 0 0;
+     wnętrze, a nie wymyśla własny motyw. Zaokrąglamy JEDEN narożnik — kadr
+     wychodzi poza krawędź okna, więc kopuła na obu rogach zamykałaby go
+     w medalion zamiast otwierać w bok. */
+  --radius-arch: clamp(4rem, 11vw, 11rem);
 
   --hairline: 1px;
 
