@@ -5,15 +5,9 @@ scope: all
 approved: true
 ---
 
-Wygodny strój, w którym swobodnie się ruszasz, i coś do picia. Na pilatesie
-i barre przydają się skarpetki antypoślizgowe, a na aerial yodze strój
-zakrywający pachy i kolana — tkanina hamaka ociera skórę.
+Wystarczy ubranie, które nie krępuje ruchów. Ćwiczymy boso lub w skarpetkach,
+a maty i sprzęt czekają na miejscu — nie musisz przynosić nic swojego.
+W szatni znajdziesz prysznic, ręczniki i kosmetyki.
 
-Zdejmij biżuterię, zwłaszcza przed zajęciami z hamakiem.
-
-<!--
-  ODPOWIEDŹ NIEPEŁNA — świadomie.
-  Brakuje najważniejszej informacji: czy studio zapewnia maty, ręczniki
-  i sprzęt, czy trzeba mieć swoje. Tego nie wolno zgadywać.
-  DO UZUPEŁNIENIA przez klientkę przed publikacją.
--->
+Na aerial yogę przyjdź bez biżuterii: może uszkodzić hamak, a przy zawieszeniu
+uwiera. Przyda się też strój zakrywający pachy i kolana, bo tkanina ociera skórę.

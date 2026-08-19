@@ -56,25 +56,27 @@ export const pages = {
     },
     eyebrow: 'Pierwszy raz?',
     title: 'Pierwsza wizyta krok po kroku',
-    // Cała treść tej podstrony opisuje procedurę konkretnego studia,
-    // więc pisze ją zespół. My dostarczamy układ i miejsca na tekst.
-    lead: 'TODO(klientka): 1–2 zdania wprowadzenia — czego może spodziewać się osoba, która przychodzi pierwszy raz',
+    // FAKT: cała treść tej podstrony pochodzi z odpowiedzi 48–52 oraz
+    // powtórzonych tam odpowiedzi 10–12, 24, 26, 28–30 i 42 (19.08.2026).
+    lead: 'Na pierwszych zajęciach prowadząca pokaże Ci studio i podpowie, które jeszcze formy ruchu mogą Ci odpowiadać. Każde ćwiczenie ma łagodniejszy wariant — korzystasz z niego, kiedy potrzebujesz.',
     sections: {
       bring: {
         title: 'Co zabrać',
-        body: 'TODO(klientka): strój, mata, ręcznik, woda, skarpetki — co zapewnia studio, a co trzeba mieć swoje',
+        body: 'Wystarczy ubranie, które nie krępuje ruchów. Ćwiczymy boso lub w skarpetkach, a maty i cały sprzęt czekają na miejscu — nie musisz przynosić nic swojego. Jedyny wyjątek dotyczy aerial yogi: na te zajęcia przychodzimy bez biżuterii, bo może uszkodzić hamak.',
       },
       arrival: {
         title: 'Na miejscu',
-        body: 'TODO(klientka): kiedy przyjść, gdzie zostawić rzeczy, czy są szatnie i prysznice',
+        body: 'Przyjdź około 10 minut przed zajęciami — tyle wystarczy, żeby w ciszy wypić herbatę i spokojnie wejść na salę. Oba studia mają szatnie, a do dyspozycji są prysznic, ręczniki i kosmetyki.',
       },
       health: {
         title: 'Urazy i szczególne potrzeby',
-        body: 'TODO(klientka): jak zgłaszać urazy i ciążę, plus zdanie odsyłające do lekarza lub fizjoterapeuty (§9.3 — bez obietnic medycznych)',
+        // ROBOCZE: klientka zapowiedziała osobną, zredagowaną wersję treści
+        // zdrowotnych (odpowiedź 26). Do podmiany, gdy przyjdzie.
+        body: 'O kontuzji, ciąży albo innej szczególnej potrzebie napisz nam wcześniej na takmimove@gmail.com, a przed samymi zajęciami powiedz o niej prowadzącej — dobierze warianty ćwiczeń. W ciąży ćwiczą u nas osoby, które mają zielone światło od lekarza prowadzącego. Nie zastępujemy diagnozy ani leczenia: jeśli coś Cię niepokoi, skonsultuj się najpierw z lekarzem lub fizjoterapeutą.',
       },
       cancel: {
         title: 'Odwoływanie rezerwacji',
-        body: 'TODO(klientka): zasady odwoływania i listy rezerwowej — te same, co na podstronie grafiku',
+        body: 'Rezerwację możesz odwołać bez utraty wejścia najpóźniej 14 godzin przed rozpoczęciem zajęć — później wejście przepada i nie robimy tu wyjątków. Jedyny, jaki dopuszczamy, dotyczy sytuacji, w której dowiadujesz się o ciąży i lekarz nie pozwala Ci ćwiczyć. Jeśli termin jest już zajęty, zapisz się na listę rezerwową: gdy zwolni się miejsce, dostaniesz wiadomość e-mail. Karnet działa w obu studiach.',
       },
     },
   },
