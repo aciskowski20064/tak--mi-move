@@ -26,7 +26,6 @@ import zalozycielka from '~/assets/photos/zalozycielka-portret.jpg';
  */
 const t = pages.about;
 const lead = copyOrNull(t.lead);
-const story = copyOrNull(t.manifesto.body);
 const values = realOnly(t.values.items, (item) => item.body);
 const cards = [t.spaces, t.community];
 ---
@@ -59,46 +58,57 @@ const cards = [t.spaces, t.community];
     </div>
   </Section>
 
+  <Section size="lg" tone="alt">
+    <article class="founder">
+      <figure class="founder__figure">
+        <Image
+          src={zalozycielka}
+          alt="Katarzyna Zawadzka, założycielka TAK MI MOVE, siedzi na blacie recepcji pod logo studia"
+          widths={[320, 480, 640]}
+          sizes="(min-width: 60rem) 22vw, 60vw"
+          class="founder__portrait"
+        />
+      </figure>
+
+      <div class="founder__text">
+        <p class="eyebrow">{t.founder.eyebrow}</p>
+        <h2 class="founder__title">{t.founder.title}</h2>
+
+        {/* Cudzysłów jest tu uprawniony: to zdania napisane przez klientkę
+            w pierwszej osobie, nie streszczenie cudzego opracowania. */}
+        <blockquote class="founder__quote">
+          {t.founder.quote.map((akapit) => (
+            <p>{akapit}</p>
+          ))}
+        </blockquote>
+
+        <footer class="founder__sign">
+          <span class="founder__name">{t.founder.name}</span>
+          <span class="founder__role">{t.founder.role}</span>
+        </footer>
+      </div>
+    </article>
+  </Section>
+
   <Section size="lg">
-    <div class="mid">
-      <article class="story">
-        <figure class="story__figure">
-          <Image
-            src={zalozycielka}
-            alt="Założycielka TAK MI MOVE siedzi na blacie recepcji pod logo studia"
-            widths={[280, 420, 560]}
-            sizes="(min-width: 60rem) 18vw, 40vw"
-            class="story__portrait"
-          />
-          <figcaption class="story__caption">{t.manifesto.caption}</figcaption>
-        </figure>
-
-        <div class="story__text">
-          <h2 class="story__title">{t.manifesto.title}</h2>
-          {story ? <p class="story__body">{story}</p> : <Todo label={t.manifesto.body} block />}
-          <Todo label={t.manifesto.ownWords} block />
-        </div>
-      </article>
-
-      <section class="values">
-        <p class="values__motto">{t.values.motto}</p>
-        <h2 class="values__title">{t.values.title}</h2>
-        <ul class="values__list">
-          {
-            values.map((value) => (
-              <li class="value">
-                <span class="value__badge" aria-hidden="true">
-                  <Mark size="1.35rem" />
-                </span>
-                <div>
-                  <h3 class="value__title">{value.title}</h3>
-                  <p class="value__body">{value.body}</p>
-                </div>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
+    <div class="values">
+      <p class="values__motto">{t.values.motto}</p>
+      <h2 class="values__title">{t.values.title}</h2>
+      <ul class="values__list">
+        {
+          values.map((value) => (
+            <li class="value">
+              <span class="value__badge" aria-hidden="true">
+                <Mark size="1.35rem" />
+              </span>
+              <div>
+                <h3 class="value__title">{value.title}</h3>
+                <p class="value__body">{value.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </Section>
 
@@ -189,12 +199,15 @@ const cards = [t.spaces, t.community];
      płytka nad fotografią daje kontrast zależny od tego, co pod nią wypadnie. */
   .intro__card {
     position: absolute;
-    inset-inline: var(--space-md);
+    inset-inline-start: var(--space-md);
+    /* `inset-inline` na obu krawędziach rozciągało płytkę przez cały kadr;
+       `max-inline-size` trzyma ją w rogu, ale nie pozwala wyjść poza zdjęcie. */
+    max-inline-size: calc(100% - 2 * var(--space-md));
     bottom: var(--space-md);
     background: var(--surface);
     border-radius: var(--radius-md);
     padding: var(--space-sm) var(--space-md);
-    display: grid;
+    display: inline-grid;
     gap: 0.15em;
   }
 
@@ -208,61 +221,74 @@ const cards = [t.spaces, t.community];
     color: var(--text-muted);
   }
 
-  /* ——————————————————— historia + wartości ——————————————————— */
+  /* ————————————————————————— założycielka —————————————————————————
 
-  .mid {
+     Blok dostał własną sekcję na pełnej szerokości, a nie wąską kartę obok
+     wartości. Powód jest w treści: klientka przysłała trzy akapity, a kolumna
+     w poprzednim układzie dawała 30 znaków w wierszu — dwa razy mniej,
+     niż potrzeba, żeby dało się to czytać. */
+
+  .founder {
     display: grid;
     gap: var(--space-lg);
     align-items: start;
   }
 
-  .story {
-    background: var(--surface-alt);
-    border-radius: var(--radius-card);
-    padding: var(--space-md);
-    display: grid;
-    gap: var(--space-md);
-    align-items: start;
-  }
-
-  .story__figure {
+  .founder__figure {
     margin: 0;
-    display: grid;
-    gap: var(--space-2xs);
   }
 
-  .story__portrait {
+  /* Naturalna proporcja pliku (2:3) — bez przycinania i bez rozciągania
+     na wysokość sąsiedniej kolumny, przez które portret zamieniał się
+     w pionowy pasek. */
+  .founder__portrait {
     display: block;
     inline-size: 100%;
     block-size: auto;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 2 / 3;
     object-fit: cover;
-    /* Twarz siedzi w górnej trzeciej kadru — przy przycinaniu pionu
-       trzymamy górę, żeby nie uciąć głowy. */
-    object-position: 50% 22%;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-card);
   }
 
-  /* Podpis opisuje portret, a nie akapit obok — stąd stoi pod zdjęciem,
-     a nie pod tekstem, gdzie czytałby się jak podpis pod cytatem. */
-  .story__caption {
-    font-size: var(--fs-caption);
-    color: var(--text-muted);
-    line-height: 1.4;
+  .founder__title {
+    font-size: var(--fs-h2);
+    margin-block: var(--space-2xs) var(--space-md);
+    max-width: 18ch;
   }
 
-  .story__text {
+  .founder__quote {
+    margin: 0;
     display: grid;
     gap: var(--space-sm);
-  }
-
-  .story__title {
-    font-size: var(--fs-h3);
-  }
-
-  .story__body {
     max-width: var(--measure);
+    /* Kreska zamiast łapek: cytat i tak jest oznaczony semantycznie,
+       a wielki znak cudzysłowu byłby ozdobnikiem spoza systemu. */
+    padding-inline-start: var(--space-md);
+    border-inline-start: 2px solid var(--accent);
   }
+
+  .founder__quote p {
+    font-size: var(--fs-lead);
+    line-height: var(--lh-loose);
+  }
+
+  .founder__sign {
+    display: grid;
+    gap: 0.15em;
+    margin-block-start: var(--space-md);
+  }
+
+  .founder__name {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+  }
+
+  .founder__role {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  /* ————————————————————————— wartości ————————————————————————— */
 
   .values__motto {
     font-family: var(--font-display);
@@ -384,26 +410,11 @@ const cards = [t.spaces, t.community];
   }
 
   @media (min-width: 40rem) {
-    /* Portret dostaje stałą kolumnę, nie ułamek — przy proporcji `fr`
-       karta historii (najwęższa kolumna układu) ściskała go do ~90 px. */
-    .story {
-      grid-template-columns: minmax(6.5rem, 8.5rem) minmax(0, 1fr);
-      gap: var(--space-md);
-      /* Zdjęcie ciągnie się na całą wysokość karty, tak jak na makiecie —
-         przy `start` pod portretem zostawała pusta jedna trzecia kolumny. */
-      align-items: stretch;
-    }
-
-    .story__figure {
-      grid-template-rows: minmax(0, 1fr) auto;
-    }
-
-    /* Wysokość bierze się z sąsiedniej kolumny, więc proporcja musi ustąpić —
-       `aspect-ratio` przy `block-size: 100%` jest po cichu ignorowane. */
-    .story__portrait {
-      block-size: 100%;
-      aspect-ratio: auto;
-      min-block-size: 0;
+    /* Portret dostaje kolumnę o stałej szerokości, żeby proporcja zdjęcia
+       decydowała o jego wysokości, a nie długość tekstu obok. */
+    .founder {
+      grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr);
+      gap: var(--space-xl);
     }
 
     .cards {
@@ -427,13 +438,16 @@ const cards = [t.spaces, t.community];
       gap: var(--space-2xl);
     }
 
-    .mid {
-      grid-template-columns: 1fr 1.35fr;
-      gap: var(--space-lg);
+    /* Cztery kafle w rzędzie — wartości to krótkie bloki, a sekcja ma teraz
+       pełną szerokość, więc układ 2×2 zostawiałby połowę wiersza pustą. */
+    .values__list {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
     }
 
-    .values__list {
-      grid-template-columns: repeat(2, 1fr);
+    .value {
+      grid-template-columns: 1fr;
+      gap: var(--space-sm);
     }
   }
 </style>

@@ -125,18 +125,27 @@ export const pages = {
       label: 'Studio zdrowego ruchu',
       line: 'Pruszcz Gdański i Gdańsk · od 2022',
     },
-    manifesto: {
-      title: 'Po co powstało TAK MI MOVE',
-      // FAKT: odpowiedź 54 (mail) — geneza marki. Trzecia osoba, nie cytat:
-      // to, co mamy, jest streszczeniem maila, a nie zdaniami wypowiedzianymi
-      // przez Katarzynę. Wzięcie tego w cudzysłów byłoby zmyśleniem cytatu.
-      body: 'Studio wzięło się z osobistej potrzeby założycielki. Po urodzeniu syna chciała być bliżej ludzi i stworzyć miejsce, którego sama wtedy potrzebowała — przyjazne i kobiece, pozwalające spokojnie i bezpiecznie wrócić do aktywności, z równą uwagą dla ciała i dla głowy.',
-      // FAKT: pełna nazwa działalności — odpowiedź 57. Podpis opisuje portret,
-      // nie tekst obok, więc nie sugeruje autorstwa zdań powyżej.
-      caption: 'Katarzyna Zawadzka — założycielka',
-      portrait: 'TODO(klientka): zdjęcie Katarzyny do bloku o historii marki',
-      ownWords:
-        'TODO(klientka): trzy–cztery zdania własnymi słowami o tym, po co powstało studio — dopiero wtedy ten blok może być prawdziwym cytatem',
+    /**
+     * FAKT: tekst przysłany przez klientkę 19.08.2026 — pierwszy materiał
+     * napisany przez nią w pierwszej osobie. Dlatego ten blok jest wreszcie
+     * cytatem, a nie parafrazą: wcześniej mieliśmy tylko streszczenie maila
+     * i wzięcie go w cudzysłów byłoby zmyśleniem wypowiedzi.
+     *
+     * Redakcja ograniczona do trzech rzeczy: literówki („ze" → „że",
+     * „Przyjazne" w środku zdania), rozbicie na akapity oraz usunięcie
+     * powtórzonego „bezpiecznie" w ostatnim zdaniu („bezpiecznie wrócić
+     * do aktywności oraz poczuć się bezpiecznie"). Sens nietknięty.
+     */
+    founder: {
+      eyebrow: 'Założycielka',
+      title: 'Skąd wzięło się TAK MI MOVE',
+      name: 'Katarzyna Zawadzka',
+      role: 'Trenerka medyczna, nauczycielka jogi, instruktorka pilates i stretchingu',
+      quote: [
+        'Nazywam się Katarzyna Zawadzka. Jestem trenerką medyczną, nauczycielką jogi, instruktorką pilates i stretchingu.',
+        'Prowadzę studia Tak Mi Move. Stworzyłam też program szkoleniowy dla początkujących trenerów i instruktorów, który wspiera ich w budowaniu pozycji trenera, umiejętnej pracy z klientami oraz w metodyce nauczania.',
+        'Studio powstało, kiedy po urodzeniu synka poczułam, że chcę być bliżej ludzi i stworzyć miejsce, którego mi osobiście po porodzie brakowało — przyjazne i kobiece, w którym spokojnie i bezpiecznie będę mogła wrócić do aktywności, dbając jednocześnie o głowę i ciało.',
+      ],
     },
     values: {
       title: 'Co jest dla nas ważne',
