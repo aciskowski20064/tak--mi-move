@@ -17,7 +17,7 @@ ma mówić prawdę o studiu.
 | | Pruszcz Gdański (macierzyste) | Gdańsk |
 |---|---|---|
 | Adres | ul. Grunwaldzka 55/7, 83-000 | ul. Angielska Grobla 35/47 |
-| E-mail | `takmimove@gmail.com` | `takmimovegdansk@gmail.com` |
+| E-mail | `takmimove@gmail.com` | ten sam — druga skrzynka skasowana 19.08 |
 | Instagram | `@tak_mi_move` | `@tak_mi_move_gdansk` |
 
 Telefon wspólny: **507 444 640**. Rok założenia: 2022. Hasło z mediów społecznościowych:
@@ -27,9 +27,12 @@ Oferta: **joga, pilates, stretching, aerial yoga, barre** (5 rodzajów, każdy m
 
 Rezerwacje: **Fitssey**, `https://app.fitssey.com/Takmimove/frontoffice`.
 
-**Czego NIE wiemy i czego nie wolno zmyślać:** historii powstania marki, wartości,
-imion i biogramów instruktorek, opinii klientek, cen, godzin otwarcia, NIP-u, pełnej
-nazwy działalności, zasad odwoływania rezerwacji, informacji o dojeździe i parkingu.
+Pełna nazwa: **Tak Mi Move Katarzyna Zawadzka**, NIP **6040107434** (od 19.08.2026).
+
+**Czego NADAL nie wiemy i czego nie wolno zmyślać:** imion i biogramów instruktorek
+(klientka świadomie ich nie chce), treści opinii klientek, cen, godzin otwarcia.
+Historia marki, wartości i zasady odwoływania są już znane — patrz
+`docs/odpowiedzi-klientki.md`.
 
 ---
 
@@ -253,6 +256,8 @@ ciasteczek przed zgodą.
 | `kierunek-wizualny.md` | uzasadnienie palety, typografii, symbolu |
 | `plan-realizacji.md` | podział na etapy |
 | `status-demo.md` | stan na moment wysyłki demo |
+| `stan-prac.md` | **START KAŻDEJ SESJI** — co zrobione, co zostało, blokady |
+| `odpowiedzi-klientki.md` | 60 odpowiedzi klientki ze statusem weryfikacji |
 | `dla-klientki.md` | **60 ponumerowanych pytań** z adresem podstrony i nazwą sekcji |
 | `instrukcja-fitssey.md` | krok po kroku, jak pobrać kody widżetu |
 
