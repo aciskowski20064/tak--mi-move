@@ -56,6 +56,24 @@ export const pages = {
     },
     eyebrow: 'Pierwszy raz?',
     title: 'Pierwsza wizyta krok po kroku',
+    /** Nagłówki i etykiety układu — nie są faktami o marce, tylko nawigacją. */
+    stepsEyebrow: 'Krok po kroku',
+    stepsTitle: 'Tak wygląda Twoja pierwsza wizyta',
+    blocksEyebrow: 'Ważne informacje',
+    blocksTitle: 'Wszystko, co warto wiedzieć wcześniej',
+    /** FAKT: odpowiedzi 10 i 50 — co realnie zastaje się na miejscu. */
+    amenities: ['Szatnie', 'Prysznic', 'Ręczniki', 'Kosmetyki'],
+    contact: {
+      title: 'Masz pytania?',
+      text: 'Napisz albo zadzwoń — odpowiemy, zanim się zapiszesz.',
+    },
+    photos: {
+      // Zdjęcia od klientki (19.08.2026). Lokalizacja niepotwierdzona,
+      // dlatego opisy nie nazywają studia.
+      hero: 'Kubek kawy na tacy w studiu, w porannym słońcu',
+      gear: 'Regał ze sprzętem: klocki, piłki, wałki, koce i bolstery, obok różowy łuk na ścianie',
+      changing: 'Szatnia — ręczniki na mosiężnych wieszakach, ławka i czarne szafki',
+    },
     // FAKT: cała treść tej podstrony pochodzi z odpowiedzi 48–52 oraz
     // powtórzonych tam odpowiedzi 10–12, 24, 26, 28–30 i 42 (19.08.2026).
     lead: 'Na pierwszych zajęciach prowadząca pokaże Ci studio i podpowie, które jeszcze formy ruchu mogą Ci odpowiadać. Każde ćwiczenie ma łagodniejszy wariant — korzystasz z niego, kiedy potrzebujesz.',

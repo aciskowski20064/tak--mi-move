@@ -109,13 +109,33 @@ export const home = {
   firstVisit: {
     eyebrow: 'Pierwszy raz?',
     title: 'Jak wygląda pierwsza wizyta',
+    // `title` to skrót kroku dla osi czasu na podstronie /pierwsza-wizyta.
+    // Sekcja na stronie głównej pokazuje sam `text`.
     steps: [
-      { text: 'Wybierasz studio i zajęcia w aplikacji Fitssey — grafik obu lokalizacji jest w jednym miejscu.' },
-      { text: 'Zakładasz konto, podając adres e-mail; rejestracja odbywa się w tym samym systemie.' },
-      { text: 'Wybierasz pierwsze wejście „Poczuj nas”, wejście pojedyncze albo karnet — x4, x8 lub Open. Ważność karnetu liczy się od dnia pierwszej wizyty, nie od zakupu.' },
-      { text: 'Przyjdź jakieś 10 minut wcześniej, żeby w ciszy wypić herbatę i spokojnie wejść na salę. W obu studiach są szatnie.' },
-      { text: 'Ubierz się wygodnie, w coś, co nie krępuje ruchów — ćwiczymy boso lub w skarpetkach. Resztę sprzętu masz na miejscu.' },
-      { text: 'O kontuzji, ciąży czy innej szczególnej potrzebie napisz wcześniej na takmimove@gmail.com, a przed samymi zajęciami powiedz prowadzącej.' },
+      {
+        title: 'Wybierz studio i zajęcia',
+        text: 'Wybierasz studio i zajęcia w aplikacji Fitssey — grafik obu lokalizacji jest w jednym miejscu.',
+      },
+      {
+        title: 'Załóż konto',
+        text: 'Zakładasz konto, podając adres e-mail; rejestracja odbywa się w tym samym systemie.',
+      },
+      {
+        title: 'Wybierz karnet lub wejście',
+        text: 'Wybierasz pierwsze wejście „Poczuj nas”, wejście pojedyncze albo karnet — x4, x8 lub Open. Ważność karnetu liczy się od dnia pierwszej wizyty, nie od zakupu.',
+      },
+      {
+        title: 'Przyjdź trochę wcześniej',
+        text: 'Przyjdź jakieś 10 minut wcześniej, żeby w ciszy wypić herbatę i spokojnie wejść na salę. W obu studiach są szatnie.',
+      },
+      {
+        title: 'Ubierz się wygodnie',
+        text: 'Ubierz się wygodnie, w coś, co nie krępuje ruchów — ćwiczymy boso lub w skarpetkach. Resztę sprzętu masz na miejscu.',
+      },
+      {
+        title: 'Powiedz nam o ważnych rzeczach',
+        text: 'O kontuzji, ciąży czy innej szczególnej potrzebie napisz wcześniej na takmimove@gmail.com, a przed samymi zajęciami powiedz prowadzącej.',
+      },
     ],
     ctaLabel: 'Zarezerwuj pierwsze zajęcia',
     moreLabel: 'Więcej o pierwszej wizycie',

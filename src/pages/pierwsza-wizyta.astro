@@ -1,8 +1,10 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
-import PageHeader from '~/components/sections/PageHeader.astro';
+import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
 import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
+import Mark from '~/components/ui/Mark.astro';
 import Todo from '~/components/ui/Todo.astro';
 import Faq from '~/components/sections/Faq.astro';
 import { booking, site } from '~/data/site';
@@ -10,47 +12,83 @@ import { pages } from '~/data/copy/pages';
 import { home } from '~/data/copy/home';
 import { copyOrNull, isPlaceholder, showPlaceholders } from '~/lib/copy';
 
+import photoKawa from '~/assets/photos/studio-kawa.jpg';
+import photoSprzet from '~/assets/photos/studio-sprzet.jpg';
+import photoSzatnia from '~/assets/photos/studio-szatnia.jpg';
+
 /**
  * Brief §18 — osobna podstrona, bo odpowiada na wysokokonwersyjne pytania
  * osób, które nigdy nie ćwiczyły. To najczęstszy powód rezygnacji przed
  * pierwszą rezerwacją.
+ *
+ * Układ prowadzi przez trzy pytania w kolejności, w jakiej padają w głowie:
+ * „co mnie czeka” (nagłówek), „co mam zrobić” (oś czasu), „na co uważać”
+ * (bloki). Zdjęcia nie są dekoracją — każde stoi przy zdaniu, które
+ * potwierdza: sprzęt przy „nie musisz nic przynosić”, szatnia przy „na miejscu”.
  */
 const t = pages.firstVisit;
 const steps = home.firstVisit.steps.filter((step) => !isPlaceholder(step.text));
 const missingSteps = showPlaceholders
   ? home.firstVisit.steps.filter((step) => isPlaceholder(step.text))
   : [];
-const sections = Object.values(t.sections);
 const lead = copyOrNull(t.lead);
+
+/** Bloki ze zdjęciem stoją w pierwszym rzędzie — dowód czyta się przed regułą. */
+const blocks = [
+  { ...t.sections.bring, photo: photoSprzet, alt: t.photos.gear, amenities: false },
+  { ...t.sections.arrival, photo: photoSzatnia, alt: t.photos.changing, amenities: true },
+  { ...t.sections.health, photo: null, alt: null, amenities: false },
+  { ...t.sections.cancel, photo: null, alt: null, amenities: false },
+];
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
-  <PageHeader
-    eyebrow={t.eyebrow}
-    title={t.title}
-    lead={lead ?? undefined}
-    crumbs={[{ label: 'Pierwsza wizyta', href: '/pierwsza-wizyta' }]}
-  />
+  <Section as="div" size="md" class="intro">
+    <div class="intro__grid">
+      <div class="intro__text">
+        <Breadcrumbs items={[{ label: 'Pierwsza wizyta', href: '/pierwsza-wizyta' }]} />
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h1 class="intro__title">{t.title}</h1>
+        {lead ? <p class="lead intro__lead">{lead}</p> : <Todo label={t.lead} block />}
+      </div>
 
-  {!lead && <Section as="div" size="sm"><Todo label={t.lead} block /></Section>}
+      <figure class="intro__figure">
+        <Image
+          src={photoKawa}
+          alt={t.photos.hero}
+          widths={[420, 660, 900]}
+          sizes="(min-width: 60rem) 38vw, 100vw"
+          loading="eager"
+          class="intro__image"
+        />
+      </figure>
+    </div>
+  </Section>
 
-  <Section size="md">
-    <div class="visit__grid">
+  <Section size="lg" tone="alt">
+    <div class="steps__grid">
       <div>
-        <h2 class="visit__heading">Krok po kroku</h2>
-        <ol class="visit__steps">
+        <p class="eyebrow">{t.stepsEyebrow}</p>
+        <h2 class="steps__title">{t.stepsTitle}</h2>
+
+        <ol class="steps">
           {
             steps.map((step, index) => (
-              <li class="visit__step">
-                <span class="visit__num">{String(index + 1).padStart(2, '0')}</span>
-                <span>{step.text}</span>
+              <li class="step">
+                <span class="step__marker" aria-hidden="true">
+                  <Mark size="2.2rem" />
+                  <span class="step__num">{String(index + 1).padStart(2, '0')}</span>
+                </span>
+                <div class="step__body">
+                  <h3 class="step__title">{step.title}</h3>
+                  <p class="step__text">{step.text}</p>
+                </div>
               </li>
             ))
           }
           {
-            missingSteps.map((step, index) => (
-              <li class="visit__step visit__step--todo">
-                <span class="visit__num">{String(steps.length + index + 1).padStart(2, '0')}</span>
+            missingSteps.map((step) => (
+              <li class="step step--todo">
                 <Todo label={step.text} block />
               </li>
             ))
@@ -58,8 +96,9 @@ const lead = copyOrNull(t.lead);
         </ol>
       </div>
 
-      <aside class="visit__cta">
-        <p class="visit__cta-text">
+      <aside class="booking">
+        <h2 class="booking__title">{home.firstVisit.ctaLabel}</h2>
+        <p class="booking__text">
           Konto, karnet i płatność obsługuje system rezerwacji. Zajmuje to kilka minut.
         </p>
         <Button
@@ -71,7 +110,7 @@ const lead = copyOrNull(t.lead);
         >
           {home.firstVisit.ctaLabel}
         </Button>
-        <p class="visit__help">
+        <p class="booking__help">
           Wolisz zapisać się przez telefon?
           <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
         </p>
@@ -79,19 +118,59 @@ const lead = copyOrNull(t.lead);
     </div>
   </Section>
 
-  <Section size="lg" tone="alt">
-    <div class="visit__blocks">
+  <Section size="lg">
+    <header class="blocks__header">
+      <p class="eyebrow">{t.blocksEyebrow}</p>
+      <h2 class="blocks__title">{t.blocksTitle}</h2>
+    </header>
+
+    <div class="blocks">
       {
-        sections.map((section) => {
-          const body = copyOrNull(section.body);
+        blocks.map((block) => {
+          const body = copyOrNull(block.body);
           return (
-            <section class="visit__block">
-              <h2>{section.title}</h2>
-              {body ? <p>{body}</p> : <Todo label={section.body} block />}
-            </section>
+            <article class="card">
+              {block.photo && (
+                <Image
+                  src={block.photo}
+                  alt={block.alt!}
+                  widths={[420, 660, 900]}
+                  sizes="(min-width: 60rem) 44vw, 100vw"
+                  loading="lazy"
+                  class="card__image"
+                />
+              )}
+              <div class="card__body">
+                <h3 class="card__title">{block.title}</h3>
+                {body ? <p class="card__text">{body}</p> : <Todo label={block.body} block />}
+                {block.amenities && (
+                  <ul class="amenities">
+                    {t.amenities.map((item) => (
+                      <li class="amenities__item">
+                        <Mark size="0.7rem" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
           );
         })
       }
+    </div>
+  </Section>
+
+  <Section size="md" tone="soft">
+    <div class="help">
+      <div>
+        <h2 class="help__title">{t.contact.title}</h2>
+        <p class="help__text">{t.contact.text}</p>
+      </div>
+      <p class="help__links">
+        <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+        <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
+      </p>
     </div>
   </Section>
 
@@ -99,97 +178,273 @@ const lead = copyOrNull(t.lead);
 </Base>
 
 <style>
-  .visit__grid {
+  /* ————————————————————————— nagłówek ————————————————————————— */
+
+  .intro__grid {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .intro__title {
+    margin-block-start: var(--space-2xs);
+    max-width: 16ch;
+  }
+
+  .intro__lead {
+    margin-block-start: var(--space-sm);
+    max-width: var(--measure);
+  }
+
+  /* Łuk cytuje ten namalowany na ścianie studia — patrz --radius-arch. */
+  .intro__figure {
+    margin: 0;
+    border-radius: var(--radius-arch);
+    overflow: hidden;
+  }
+
+  .intro__image {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    aspect-ratio: 4 / 5;
+  }
+
+  /* ————————————————————————— oś czasu ————————————————————————— */
+
+  .steps__grid {
     display: grid;
     gap: var(--space-xl);
     align-items: start;
   }
 
-  .visit__heading {
-    font-size: var(--fs-h2);
-    margin-block-end: var(--space-md);
+  .steps__title {
+    margin-block: var(--space-2xs) var(--space-lg);
+    max-width: 18ch;
   }
 
-  .visit__steps {
+  .steps {
     list-style: none;
     padding: 0;
     margin: 0;
-    border-block-start: var(--hairline) solid var(--line-strong);
-  }
-
-  .visit__step {
     display: grid;
-    grid-template-columns: 3ch 1fr;
     gap: var(--space-md);
-    padding-block: var(--space-sm);
-    border-block-end: var(--hairline) solid var(--line);
   }
 
-  .visit__step--todo {
+  .step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-md);
+    align-items: start;
+    position: relative;
+  }
+
+  /* Linia łącząca kolejne kroki. Rysowana od znacznika w dół, ostatni krok
+     jej nie dostaje, żeby oś nie wisiała w powietrzu pod listą. */
+  .step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    inset-block: 2.6rem calc(-1 * var(--space-md));
+    inset-inline-start: calc(1.3rem - var(--hairline) / 2);
+    inline-size: var(--hairline);
+    background: var(--line);
+  }
+
+  .step--todo {
     grid-template-columns: 1fr;
   }
 
-  .visit__num {
-    font-size: var(--fs-caption);
-    letter-spacing: var(--ls-eyebrow);
+  /* Tło kropki zasłania linię łączącą, żeby nie przechodziła przez znacznik. */
+  .step__marker {
+    display: grid;
+    place-items: center;
+    inline-size: 2.6rem;
+    block-size: 2.6rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-alt);
     color: var(--text-accent);
-    padding-block-start: 0.35em;
+    position: relative;
   }
 
-  .visit__cta {
+  .step__num {
+    position: absolute;
+    font-size: var(--fs-caption);
+    letter-spacing: 0.02em;
+    color: var(--text-accent);
+  }
+
+  .step__title {
+    font-size: var(--fs-h4);
+    margin-block-end: var(--space-3xs);
+  }
+
+  .step__text {
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+    max-width: var(--measure);
+  }
+
+  /* ————————————————————————— karta rezerwacji ————————————————————————— */
+
+  .booking {
     display: grid;
     justify-items: start;
     gap: var(--space-sm);
     padding: var(--space-md);
-    background: var(--surface-soft);
-    border-radius: var(--radius-md);
+    background: var(--surface);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-card);
   }
 
-  .visit__cta-text {
+  .booking__title {
+    font-size: var(--fs-h3);
+  }
+
+  .booking__text {
     font-size: var(--fs-small);
+    color: var(--text-muted);
     max-width: 32ch;
   }
 
-  .visit__help {
+  .booking__help {
     font-size: var(--fs-small);
     color: var(--text-muted);
   }
 
-  .visit__help a {
+  .booking__help a {
     color: var(--text-accent);
     margin-inline-start: 0.35em;
   }
 
-  .visit__blocks {
+  /* ————————————————————————— bloki informacyjne ————————————————————————— */
+
+  .blocks__header {
+    margin-block-end: var(--space-lg);
+  }
+
+  .blocks__title {
+    margin-block-start: var(--space-2xs);
+    max-width: 22ch;
+  }
+
+  .blocks {
     display: grid;
-    gap: var(--space-lg);
+    gap: var(--space-md);
   }
 
-  .visit__block {
-    padding-block-start: var(--space-md);
-    border-block-start: var(--hairline) solid var(--line-strong);
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-alt);
+    border-radius: var(--radius-card);
+    overflow: hidden;
   }
 
-  .visit__block h2 {
+  .card__image {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .card__body {
+    padding: var(--space-md);
+  }
+
+  .card__title {
     font-size: var(--fs-h3);
-    margin-block-end: var(--space-sm);
+    margin-block-end: var(--space-xs);
   }
 
-  .visit__block p {
-    max-width: var(--measure);
+  .card__text {
     color: var(--text-muted);
     font-size: var(--fs-small);
+    max-width: var(--measure);
+  }
+
+  .amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-md);
+    list-style: none;
+    padding: 0;
+    margin-block-start: var(--space-md);
+    padding-block-start: var(--space-sm);
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  .amenities__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-accent);
+  }
+
+  /* ————————————————————————— pasek kontaktowy ————————————————————————— */
+
+  .help {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .help__title {
+    font-size: var(--fs-h3);
+  }
+
+  .help__text {
+    margin-block-start: var(--space-3xs);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .help__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    align-items: center;
+  }
+
+  .help__links a {
+    color: var(--text-accent);
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+    padding-block-end: 0.15em;
+  }
+
+  @media (min-width: 48rem) {
+    .blocks {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .help {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: var(--space-lg);
+    }
   }
 
   @media (min-width: 60rem) {
-    .visit__grid {
+    .intro__grid {
+      grid-template-columns: 1fr minmax(20rem, 30rem);
+      gap: var(--space-2xl);
+    }
+
+    .steps__grid {
       grid-template-columns: 1fr minmax(18rem, 24rem);
       gap: var(--space-2xl);
     }
 
-    .visit__blocks {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-xl) var(--space-2xl);
+    /* Karta rezerwacji jedzie razem z osią czasu, żeby przycisk był
+       w zasięgu wzroku przy każdym kroku, nie tylko na początku listy. */
+    .booking {
+      position: sticky;
+      inset-block-start: var(--space-lg);
     }
   }
 </style>

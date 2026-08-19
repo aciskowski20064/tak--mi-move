@@ -13,3 +13,7 @@ dist/
 # System / edytor
 .DS_Store
 Thumbs.db
+
+# Oryginały zdjęć w pełnej rozdzielczości — po kilkanaście MB każdy.
+# W repo trzymamy tylko wersje przetworzone w src/assets/photos.
+assets/oryginaly/

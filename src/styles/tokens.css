@@ -97,6 +97,13 @@
   --radius-sm: 2px;
   --radius-md: 4px;
   --radius-pill: 999px;
+  /* Karta treści — na tyle miękka, żeby czytała się jako osobny kafel,
+     na tyle mała, żeby nie robić z niej pigułki. */
+  --radius-card: 10px;
+  /* Łuk kadru fotograficznego. To nie jest ozdobnik: identyczny łuk jest
+     namalowany na ścianie studia (zdjęcie ze sprzętem), więc strona cytuje
+     wnętrze, a nie wymyśla własny motyw. */
+  --radius-arch: 42% 42% 0 0 / 34% 34% 0 0;
 
   --hairline: 1px;
 
