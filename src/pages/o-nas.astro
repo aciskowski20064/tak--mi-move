@@ -65,27 +65,36 @@ const cards = [t.spaces, t.community];
           src={zalozycielka}
           alt="Katarzyna Zawadzka, założycielka TAK MI MOVE, siedzi na blacie recepcji pod logo studia"
           widths={[320, 480, 640]}
-          sizes="(min-width: 60rem) 22vw, 60vw"
+          sizes="(min-width: 60rem) 24vw, 70vw"
           class="founder__portrait"
         />
+        <figcaption class="founder__caption">
+          <span class="founder__name">{t.founder.name}</span>
+          <span class="founder__role">{t.founder.caption}</span>
+        </figcaption>
       </figure>
 
       <div class="founder__text">
-        <p class="eyebrow">{t.founder.eyebrow}</p>
+        <p class="founder__eyebrow eyebrow">{t.founder.eyebrow}</p>
         <h2 class="founder__title">{t.founder.title}</h2>
+
+        {t.founder.intro.map((akapit) => (
+          <p class="founder__body">{akapit}</p>
+        ))}
 
         {/* Cudzysłów jest tu uprawniony: to zdania napisane przez klientkę
             w pierwszej osobie, nie streszczenie cudzego opracowania. */}
         <blockquote class="founder__quote">
-          {t.founder.quote.map((akapit) => (
-            <p>{akapit}</p>
-          ))}
+          <p>{t.founder.quote}</p>
         </blockquote>
 
-        <footer class="founder__sign">
-          <span class="founder__name">{t.founder.name}</span>
-          <span class="founder__role">{t.founder.role}</span>
-        </footer>
+        <p class="founder__body">{t.founder.afterQuote}</p>
+
+        <ul class="founder__tags">
+          {t.founder.tags.map((tag) => (
+            <li>{tag}</li>
+          ))}
+        </ul>
       </div>
     </article>
   </Section>
@@ -236,6 +245,8 @@ const cards = [t.spaces, t.community];
 
   .founder__figure {
     margin: 0;
+    display: grid;
+    gap: var(--space-md);
   }
 
   /* Naturalna proporcja pliku (2:3) — bez przycinania i bez rozciągania
@@ -250,42 +261,107 @@ const cards = [t.spaces, t.community];
     border-radius: var(--radius-card);
   }
 
-  .founder__title {
-    font-size: var(--fs-h2);
-    margin-block: var(--space-2xs) var(--space-md);
-    max-width: 18ch;
-  }
-
-  .founder__quote {
-    margin: 0;
+  /* Podpis pod zdjęciem, wyśrodkowany, zamknięty krótką kreską — jedyne
+     miejsce na stronie, gdzie tekst jest centrowany, bo domyka kadr. */
+  .founder__caption {
     display: grid;
-    gap: var(--space-sm);
-    max-width: var(--measure);
-    /* Kreska zamiast łapek: cytat i tak jest oznaczony semantycznie,
-       a wielki znak cudzysłowu byłby ozdobnikiem spoza systemu. */
-    padding-inline-start: var(--space-md);
-    border-inline-start: 2px solid var(--accent);
-  }
-
-  .founder__quote p {
-    font-size: var(--fs-lead);
-    line-height: var(--lh-loose);
-  }
-
-  .founder__sign {
-    display: grid;
+    justify-items: center;
     gap: 0.15em;
-    margin-block-start: var(--space-md);
+    text-align: center;
   }
 
   .founder__name {
     font-family: var(--font-display);
     font-size: var(--fs-h4);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
   }
 
   .founder__role {
     font-size: var(--fs-small);
     color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+
+  .founder__caption::after {
+    content: '';
+    inline-size: 2.5rem;
+    block-size: 1px;
+    background: var(--line-detail);
+    margin-block-start: var(--space-sm);
+  }
+
+  /* Nadtytuł ciągnie za sobą kreskę aż do końca swojej linii. */
+  .founder__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    max-inline-size: 24rem;
+  }
+
+  .founder__eyebrow::after {
+    content: '';
+    flex: 1;
+    block-size: 1px;
+    background: var(--line-detail);
+  }
+
+  .founder__title {
+    font-size: var(--fs-h2);
+    margin-block: var(--space-sm) var(--space-md);
+    max-width: 16ch;
+  }
+
+  .founder__body {
+    max-width: var(--measure);
+    margin-block-end: var(--space-md);
+  }
+
+  /* Cytat wyjęty z toku tekstu: własne tło, pasek akcentu i prawdziwa
+     kursywa (font wczytany osobno — syntetyczna psuje polskie znaki). */
+  .founder__quote {
+    margin: 0 0 var(--space-md);
+    max-width: var(--measure);
+    background: var(--surface-soft);
+    border-inline-start: 3px solid var(--accent);
+    border-start-end-radius: var(--radius-md);
+    border-end-end-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-md) var(--space-md) var(--space-lg);
+    position: relative;
+  }
+
+  .founder__quote::before {
+    content: '„';
+    position: absolute;
+    inset-block-start: 0.05em;
+    inset-inline-start: 0.28em;
+    font-family: var(--font-display);
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--accent);
+  }
+
+  .founder__quote p {
+    font-style: italic;
+    font-size: var(--fs-lead);
+    line-height: var(--lh-loose);
+  }
+
+  .founder__tags {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+  }
+
+  .founder__tags li {
+    border: var(--hairline) solid var(--line-detail);
+    border-radius: var(--radius-pill);
+    padding: 0.5em 1.1em;
+    font-size: var(--fs-small);
+    color: var(--text-accent);
   }
 
   /* ————————————————————————— wartości ————————————————————————— */
@@ -413,8 +489,8 @@ const cards = [t.spaces, t.community];
     /* Portret dostaje kolumnę o stałej szerokości, żeby proporcja zdjęcia
        decydowała o jego wysokości, a nie długość tekstu obok. */
     .founder {
-      grid-template-columns: minmax(15rem, 19rem) minmax(0, 1fr);
-      gap: var(--space-xl);
+      grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+      gap: var(--space-2xl);
     }
 
     .cards {

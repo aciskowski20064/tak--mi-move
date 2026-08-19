@@ -140,12 +140,24 @@ export const pages = {
       eyebrow: 'Założycielka',
       title: 'Skąd wzięło się TAK MI MOVE',
       name: 'Katarzyna Zawadzka',
-      role: 'Trenerka medyczna, nauczycielka jogi, instruktorka pilates i stretchingu',
-      quote: [
+      caption: 'założycielka TAK MI MOVE',
+      intro: [
         'Nazywam się Katarzyna Zawadzka. Jestem trenerką medyczną, nauczycielką jogi, instruktorką pilates i stretchingu.',
         'Prowadzę studia Tak Mi Move. Stworzyłam też program szkoleniowy dla początkujących trenerów i instruktorów, który wspiera ich w budowaniu pozycji trenera, umiejętnej pracy z klientami oraz w metodyce nauczania.',
-        'Studio powstało, kiedy po urodzeniu synka poczułam, że chcę być bliżej ludzi i stworzyć miejsce, którego mi osobiście po porodzie brakowało — przyjazne i kobiece, w którym spokojnie i bezpiecznie będę mogła wrócić do aktywności, dbając jednocześnie o głowę i ciało.',
       ],
+      /**
+       * Ostatnie zdanie klientki jest w oryginale jedno i długie. Rozbite na
+       * cytat i domknięcie — układ wyciąga początek do ramki. Rozbicie wymusiło
+       * dodanie słowa „Miejsce" na starcie drugiej części: bez niego zostaje
+       * urwany równoważnik („Przyjazne i kobiece, w którym…"), który wisi
+       * bez rzeczownika, do którego się odnosi.
+       */
+      quote:
+        'Studio powstało, kiedy po urodzeniu synka poczułam, że chcę być bliżej ludzi i stworzyć miejsce, którego mi osobiście po porodzie brakowało.',
+      afterQuote:
+        'Miejsce przyjazne i kobiece, w którym spokojnie i bezpiecznie będę mogła wrócić do aktywności, dbając jednocześnie o głowę i ciało.',
+      // FAKT: cztery specjalizacje wymienione przez klientkę w pierwszym zdaniu.
+      tags: ['trenerka medyczna', 'joga', 'pilates', 'stretching'],
     },
     values: {
       title: 'Co jest dla nas ważne',
