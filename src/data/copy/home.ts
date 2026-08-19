@@ -102,20 +102,20 @@ export const home = {
   },
 
   /**
-   * Przebieg pierwszej wizyty opisuje zespół — to procedura konkretnego
-   * studia (rezerwacja, sprzęt, szatnie, na kiedy przyjść), a nie treść,
-   * którą można wywieść z briefu. Zostaje sześć ponumerowanych miejsc.
+   * FAKT: sześć kroków wprost z odpowiedzi 7–12 (19.08.2026), zredagowanych
+   * na jedno zdanie każdy. Wszystko, co tu stoi, pochodzi od klientki —
+   * nazwa systemu, 10 minut zapasu, boso lub w skarpetkach, adres do zgłoszeń.
    */
   firstVisit: {
     eyebrow: 'Pierwszy raz?',
     title: 'Jak wygląda pierwsza wizyta',
     steps: [
-      { text: 'TODO(klientka): krok 1 — jak wybrać i zarezerwować zajęcia' },
-      { text: 'TODO(klientka): krok 2 — konto w systemie rezerwacji' },
-      { text: 'TODO(klientka): krok 3 — płatność i karnety' },
-      { text: 'TODO(klientka): krok 4 — na kiedy przyjść i gdzie zostawić rzeczy' },
-      { text: 'TODO(klientka): krok 5 — co zabrać, a co zapewnia studio' },
-      { text: 'TODO(klientka): krok 6 — urazy i szczególne potrzeby' },
+      { text: 'Wybierasz studio i zajęcia w aplikacji Fitssey — grafik obu lokalizacji jest w jednym miejscu.' },
+      { text: 'Zakładasz konto, podając adres e-mail; rejestracja odbywa się w tym samym systemie.' },
+      { text: 'Wybierasz pierwsze wejście „Poczuj nas”, wejście pojedyncze albo karnet — x4, x8 lub Open. Ważność karnetu liczy się od dnia pierwszej wizyty, nie od zakupu.' },
+      { text: 'Przyjdź jakieś 10 minut wcześniej, żeby w ciszy wypić herbatę i spokojnie wejść na salę. W obu studiach są szatnie.' },
+      { text: 'Ubierz się wygodnie, w coś, co nie krępuje ruchów — ćwiczymy boso lub w skarpetkach. Resztę sprzętu masz na miejscu.' },
+      { text: 'O kontuzji, ciąży czy innej szczególnej potrzebie napisz wcześniej na takmimove@gmail.com, a przed samymi zajęciami powiedz prowadzącej.' },
     ],
     ctaLabel: 'Zarezerwuj pierwsze zajęcia',
     moreLabel: 'Więcej o pierwszej wizycie',
