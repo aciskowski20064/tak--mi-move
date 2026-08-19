@@ -142,3 +142,4 @@ bez dopytania klientki, mimo że jakaś odpowiedź technicznie istnieje.
 - Pytanie 34 — czy parking w Pruszczu jest płatny.
 - Pytanie 41 — dwa ostatnie słowa opisujące atmosferę zajęć.
 - **Nowe:** czy barre faktycznie odbywa się w Gdańsku (konflikt #2 wyżej).
+- **Nowe:** czy wyjątek od zasady 14 godzin przy nagłej ciąży ma być publiczną regułą na stronie. Dopisek stał nad tabelą, nie przy pytaniu 28, więc nie wiadomo, czy w ogóle dotyczy odwołań. Nie publikujemy go — na stronie zostaje sama zasada 14 godzin.

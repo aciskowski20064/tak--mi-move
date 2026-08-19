@@ -76,7 +76,11 @@ export const pages = {
       },
       cancel: {
         title: 'Odwoływanie rezerwacji',
-        body: 'Rezerwację możesz odwołać bez utraty wejścia najpóźniej 14 godzin przed rozpoczęciem zajęć — później wejście przepada i nie robimy tu wyjątków. Jedyny, jaki dopuszczamy, dotyczy sytuacji, w której dowiadujesz się o ciąży i lekarz nie pozwala Ci ćwiczyć. Jeśli termin jest już zajęty, zapisz się na listę rezerwową: gdy zwolni się miejsce, dostaniesz wiadomość e-mail. Karnet działa w obu studiach.',
+        // Dopisek klientki „chyba że ktoś dowie się akurat o ciąży i lekarz nie
+        // pozwoli ćwiczyć" stał nad tabelą, nie przy pytaniu 28 — nie wiadomo,
+        // czy dotyczy odwołań, ani czy ma być publiczną regułą. Nie publikujemy
+        // go do czasu potwierdzenia: to zobowiązanie wobec każdej klientki.
+        body: 'Rezerwację możesz odwołać bez utraty wejścia najpóźniej 14 godzin przed rozpoczęciem zajęć — później wejście przepada. Jeśli termin jest już zajęty, zapisz się na listę rezerwową: gdy zwolni się miejsce, dostaniesz wiadomość e-mail. Karnet działa w obu studiach.',
       },
     },
   },
