@@ -11,15 +11,19 @@ import type { StudioLocation } from '~/types';
 export const site = {
   /** Zapis wg logo — wersalikami. */
   name: 'TAK MI MOVE',
-  /** TODO(klientka): pełna nazwa działalności + NIP do stopki i schema. */
-  legalName: null,
-  vatId: null,
+  /** FAKT: pełna nazwa działalności i NIP — odpowiedzi 57 i 58 (19.08.2026). */
+  legalName: 'Tak Mi Move Katarzyna Zawadzka',
+  vatId: '6040107434',
   tagline: 'Butikowe studia zdrowego ruchu',
   locale: 'pl_PL',
   lang: 'pl',
+  /** FAKT: jeden numer obsługuje oba studia — odpowiedź 60. */
   phone: '+48507444640',
   phoneDisplay: '507 444 640',
-  /** TODO(klientka): potwierdzić podział skrzynek między lokalizacje. */
+  /**
+   * FAKT: jeden wspólny adres dla obu lokalizacji — odpowiedź 59.
+   * Klientka przekreśliła `takmimovegdansk@gmail.com`: ta skrzynka nie działa.
+   */
   email: 'takmimove@gmail.com',
   /** TODO(klientka): potwierdzić domenę. */
   url: 'https://takmimove.pl',
@@ -78,7 +82,7 @@ export const locations: StudioLocation[] = [
     street: 'ul. Grunwaldzka 55/7',
     postalCode: '83-000',
     phone: site.phone,
-    email: 'takmimove@gmail.com',
+    email: site.email,
     // TODO(klientka): potwierdzić wejście od ul. Kossaka.
     // TODO(klientka): parking, dojazd, dostępność, godziny otwarcia.
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga', 'barre'],
@@ -92,9 +96,9 @@ export const locations: StudioLocation[] = [
     name: 'Studio Gdańsk',
     city: 'Gdańsk',
     street: 'ul. Angielska Grobla 35/47',
-    postalCode: '80-756', // DO POTWIERDZENIA — występuje tylko w jednym z briefów
+    postalCode: '80-756', // FAKT: potwierdzone w mailu klientki (19.08.2026)
     phone: site.phone,
-    email: 'takmimovegdansk@gmail.com', // DO POTWIERDZENIA
+    email: site.email, // FAKT: jeden wspólny adres — odpowiedź 59
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga'],
     social: [
       {

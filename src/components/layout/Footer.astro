@@ -53,13 +53,16 @@ const year = new Date().getFullYear();
   </div>
 
   <div class="container footer__bar">
-    <p>© {year} {site.name}</p>
+    <p class="footer__legalName">
+      <span>© {year} {site.name}</span>
+      {site.legalName && <span><span class="footer__sep" aria-hidden="true">·</span>{site.legalName}</span>}
+      {site.vatId && <span><span class="footer__sep" aria-hidden="true">·</span>NIP {site.vatId}</span>}
+    </p>
     <ul class="footer__legal">
       {footerLegalNav.map((item) => (
         <li><a href={item.href}>{item.label}</a></li>
       ))}
     </ul>
-    {/* TODO(klientka): pełna nazwa działalności i NIP — wymagane w stopce i w danych strukturalnych. */}
   </div>
 </footer>
 
@@ -167,6 +170,31 @@ const year = new Date().getFullYear();
     border-block-start: var(--hairline) solid color-mix(in srgb, var(--bone) 18%, transparent);
     font-size: var(--fs-caption);
     color: color-mix(in srgb, var(--bone) 62%, transparent);
+  }
+
+  /* Na wąskim ekranie dane rejestrowe idą w słupek, bez separatorów — kropka
+     zawijana razem z tekstem lądowałaby na początku wiersza i udawała punktor.
+     Separatory wracają dopiero wtedy, gdy całość mieści się w jednej linii. */
+  .footer__legalName {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .footer__sep {
+    display: none;
+  }
+
+  @media (min-width: 48rem) {
+    .footer__legalName {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+
+    .footer__sep {
+      display: inline;
+      margin-inline: var(--space-2xs);
+      opacity: 0.5;
+    }
   }
 
   .footer__legal {

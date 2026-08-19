@@ -61,9 +61,39 @@ npm run preview  # port 5202
 ```
 
 Podgląd przez `preview_start` po nazwie `takmimove` (dev) lub `takmimove-demo` (build).
-Konfiguracja w `.claude/launch.json`.
+Konfiguracja w `.claude/launch.json` — ale narzędzie podglądu czyta plik z katalogu
+roboczego sesji (`~/.claude/.claude/launch.json`), więc wpis musi istnieć **tam**,
+z pełną ścieżką w `--prefix`.
 
 Alias importów: `~/` → `src/`.
+
+### Smart App Control blokuje kompilator Astro (maszyna Olka, od 19.08.2026)
+
+`npm run build` przestał działać z komunikatem *„An Application Control policy has
+blocked this file"* — Windows blokuje niepodpisaną bibliotekę natywną
+`@astrojs/compiler-binding-win32-x64-msvc/astro.win32-x64-msvc.node`.
+To ustawienie systemu (`VerifiedAndReputablePolicyState = 1`), nie problem projektu:
+na innej maszynie repozytorium buduje się normalnie.
+
+**Smart App Control raz wyłączony wraca dopiero po reinstalacji Windows** — dlatego
+zamiast go ruszać, używamy fallbacku WASM, który Astro ma wbudowany i włącza sam:
+
+```bash
+npm install --no-save --force @astrojs/compiler-binding-wasm32-wasi@0.3.2 @emnapi/core@1.11.3
+```
+
+Dwa warunki, bez których fallback milczy:
+
+1. **Wersja `wasm32-wasi` musi być identyczna z `@astrojs/compiler-binding`** (dziś 0.3.2).
+   Domyślne `@latest` instaluje 0.4.0 i kończy się błędem ABI.
+2. **`@emnapi/core` i `@emnapi/runtime` muszą być z tej samej linii.** W drzewie siedział
+   `core@2.0.0-alpha.3` przy `runtime@1.11.3` — stąd
+   `napi_set_last_error: function import requires a callable`.
+
+Instalacja jest `--no-save`, więc `package.json` i lockfile zostają czyste. Znaczy to
+też, że **`npm install` albo `npm ci` skasuje obejście** i trzeba powtórzyć komendę.
+Do zdiagnozowania prawdziwej przyczyny, gdy fallback się nie ładuje:
+`NAPI_RS_FORCE_WASI=1 npm run build`.
 
 ---
 
