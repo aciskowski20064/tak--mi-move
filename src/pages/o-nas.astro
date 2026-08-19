@@ -119,9 +119,10 @@ const cards = [t.spaces, t.community];
         }
       </ul>
     </div>
-  </Section>
 
-  <Section size="md">
+    {/* Kafle długie siedzą w tej samej sekcji co wartości. Osobne sekcje
+        sumowały swoje paddingi (2xl + xl) i robiły między nimi kilkanaście
+        centymetrów pustki — rozdziela je teraz sama cienka linia. */}
     <div class="cards">
       {
         cards.map((card) => {
@@ -424,9 +425,14 @@ const cards = [t.spaces, t.community];
 
   /* ————————————————— dwie karty pod spodem ————————————————— */
 
+  /* Delikatny rozdzielnik między wartościami a kaflami długimi: jedna
+     cienka linia i równy odstęp po obu jej stronach. */
   .cards {
     display: grid;
     gap: var(--space-md);
+    margin-block-start: var(--space-lg);
+    padding-block-start: var(--space-lg);
+    border-block-start: var(--hairline) solid var(--line);
   }
 
   .card__title {
