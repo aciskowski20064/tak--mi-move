@@ -1,0 +1,130 @@
+---
+/**
+ * Mapa ładowana dopiero po kliknięciu.
+ *
+ * Osadzona mapa Google ustawia własne cookies już przy wczytaniu strony,
+ * więc do czasu wdrożenia zgody na cookies (brief §49) mapa startuje jako
+ * statyczny panel z przyciskiem. Użytkownik świadomie decyduje o połączeniu
+ * z Google, a strona domyślnie niczego do nich nie wysyła.
+ *
+ * Link „Wyznacz trasę” działa zawsze — to zwykły odsyłacz, nie osadzenie.
+ */
+interface Props {
+  address: string;
+  label: string;
+}
+
+const { address, label } = Astro.props;
+
+const query = encodeURIComponent(address);
+const embedUrl = `https://www.google.com/maps?q=${query}&output=embed`;
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
+const viewUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
+---
+
+<figure class="map" data-map data-embed-url={embedUrl}>
+  <div class="map__placeholder" data-map-placeholder>
+    <p class="map__address">{address}</p>
+    <button type="button" class="map__load" data-map-load data-event="studio_map_click">
+      Pokaż mapę
+    </button>
+    <p class="map__note">
+      Mapa pochodzi z Google i po wczytaniu może zapisać pliki cookies.
+    </p>
+  </div>
+
+  <figcaption class="map__actions">
+    <a href={directionsUrl} target="_blank" rel="noopener" data-event="studio_map_click">
+      Wyznacz trasę
+    </a>
+    <a href={viewUrl} target="_blank" rel="noopener" data-event="studio_map_click">
+      Otwórz w Google Maps
+    </a>
+    <span class="visually-hidden">Lokalizacja: {label}</span>
+  </figcaption>
+</figure>
+
+<style>
+  .map {
+    margin: 0;
+  }
+
+  .map__placeholder {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: var(--space-sm);
+    aspect-ratio: 16 / 10;
+    padding: var(--space-md);
+    text-align: center;
+    background: var(--surface-alt);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  .map__address {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+  }
+
+  .map__load {
+    padding: 0.6em 1.4em;
+    border: var(--hairline) solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--text);
+    font-size: var(--fs-small);
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .map__load:hover {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  .map__note {
+    max-width: 34ch;
+    font-size: var(--fs-caption);
+    color: var(--text-muted);
+  }
+
+  .map__frame {
+    inline-size: 100%;
+    aspect-ratio: 16 / 10;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  .map__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-md);
+    margin-block-start: var(--space-sm);
+    font-size: var(--fs-small);
+  }
+
+  .map__actions a {
+    color: var(--text-accent);
+    padding-block: 0.25rem;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-map]').forEach((map) => {
+    const button = map.querySelector<HTMLButtonElement>('[data-map-load]');
+    const placeholder = map.querySelector<HTMLElement>('[data-map-placeholder]');
+    const url = map.dataset.embedUrl;
+
+    button?.addEventListener('click', () => {
+      if (!url || !placeholder) return;
+      const frame = document.createElement('iframe');
+      frame.src = url;
+      frame.className = 'map__frame';
+      frame.loading = 'lazy';
+      frame.title = 'Mapa dojazdu';
+      frame.referrerPolicy = 'no-referrer-when-downgrade';
+      frame.allowFullscreen = true;
+      placeholder.replaceWith(frame);
+    });
+  });
+</script>

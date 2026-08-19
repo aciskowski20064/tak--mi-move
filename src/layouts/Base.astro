@@ -1,0 +1,91 @@
+---
+import '@fontsource/tenor-sans/latin-400.css';
+import '@fontsource/tenor-sans/latin-ext-400.css';
+import '@fontsource/figtree/latin-400.css';
+import '@fontsource/figtree/latin-ext-400.css';
+import '@fontsource/figtree/latin-500.css';
+import '@fontsource/figtree/latin-ext-500.css';
+
+import '~/styles/tokens.css';
+import '~/styles/base.css';
+
+import Meta from '~/components/seo/Meta.astro';
+import Header from '~/components/layout/Header.astro';
+import Footer from '~/components/layout/Footer.astro';
+import { site, DEMO_MODE } from '~/data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const { title, description, ogImage, noindex } = Astro.props;
+
+/**
+ * Nota o prawach w źródle każdej strony.
+ *
+ * Wyłącznie informacja — żadnych blokad prawego przycisku ani devtools:
+ * kod wysłany do przeglądarki jest z definicji jawny, a takie blokady
+ * psują dostępność i nie zatrzymują nikogo.
+ */
+const rightsNotice = `<!--
+  ${site.name} — projekt i wykonanie: Olek Ciskowski.${
+    DEMO_MODE
+      ? '\n  Wersja poglądowa, nieprzeznaczona do publikacji.\n  Prawa do kodu i projektu graficznego przechodzą na zamawiającego po rozliczeniu zlecenia.'
+      : ''
+  }
+-->`;
+---
+
+<!doctype html>
+<html lang={site.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <Fragment set:html={rightsNotice} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#f7f4eb" />
+    <Meta title={title} description={description} ogImage={ogImage} noindex={noindex} />
+  </head>
+
+  <body>
+    <a href="#main" class="skip-link">Przejdź do treści</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+
+    <style is:global>
+      body {
+        display: flex;
+        flex-direction: column;
+        min-block-size: 100svh;
+      }
+
+      main:focus {
+        outline: none;
+      }
+
+      .skip-link {
+        position: absolute;
+        inset-block-start: var(--space-2xs);
+        inset-inline-start: var(--space-2xs);
+        z-index: var(--z-skip);
+        padding: var(--space-2xs) var(--space-sm);
+        background: var(--surface-invert);
+        color: var(--text-invert);
+        border-radius: var(--radius-md);
+        text-decoration: none;
+        transform: translateY(-200%);
+        transition: transform var(--dur-fast) var(--ease);
+      }
+
+      .skip-link:focus-visible {
+        transform: translateY(0);
+      }
+    </style>
+  </body>
+</html>

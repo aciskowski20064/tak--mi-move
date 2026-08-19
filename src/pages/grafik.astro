@@ -1,0 +1,149 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHeader from '~/components/sections/PageHeader.astro';
+import Section from '~/components/ui/Section.astro';
+import Todo from '~/components/ui/Todo.astro';
+import ScheduleEmbed from '~/components/fitssey/ScheduleEmbed.astro';
+import LocationSwitch from '~/components/fitssey/LocationSwitch.astro';
+import Faq from '~/components/sections/Faq.astro';
+import { locations, formatAddress, site } from '~/data/site';
+import { pages } from '~/data/copy/pages';
+import { realOnly } from '~/lib/copy';
+
+/**
+ * Brief §15 — jedna z najważniejszych podstron projektu.
+ *
+ * §34 wymaga, żeby treść osadzona w zewnętrznym widżecie NIE była jedyną
+ * treścią tej strony. Stąd własny wstęp, zasady zapisów, FAQ i kontakt
+ * awaryjny wokół ramki — wszystko indeksowalne.
+ */
+/**
+ * Strona jest prerenderowana, więc parametr `?studio=` nie istnieje przy
+ * buildzie. Kontekst obu lokalizacji renderujemy więc zawsze, a odsłania
+ * właściwy skrypt w LocationSwitch. Filtrowanie FAQ per lokalizacja działa
+ * na podstronach /studia/[slug], które są osobnymi trasami statycznymi.
+ */
+const t = pages.schedule;
+const rules = realOnly([...t.rules], (r) => r);
+const missingRules = t.rules.filter((r) => !rules.includes(r));
+---
+
+<Base title={t.meta.title} description={t.meta.description}>
+  <PageHeader
+    eyebrow={t.eyebrow}
+    title={t.title}
+    lead={t.lead}
+    crumbs={[{ label: 'Grafik i zapisy', href: '/grafik' }]}
+  />
+
+  <Section as="div" size="sm">
+    <div class="schedule__bar">
+      <LocationSwitch />
+      {
+        locations.map((location) => (
+          <p class="schedule__context" data-studio-context={location.slug} hidden>
+            {location.name} · {formatAddress(location)} ·{' '}
+            <a href={`/studia/${location.slug}`}>dojazd i wejście</a>
+          </p>
+        ))
+      }
+    </div>
+
+    <ScheduleEmbed />
+  </Section>
+
+  <Section size="lg" tone="alt">
+    <div class="schedule__info">
+      <div>
+        <h2>{t.rulesTitle}</h2>
+        {
+          rules.length > 0 ? (
+            <ul class="schedule__rules">
+              {rules.map((rule) => (
+                <li>{rule}</li>
+              ))}
+            </ul>
+          ) : null
+        }
+        {missingRules.map((rule) => <Todo label={rule} block />)}
+      </div>
+
+      <div>
+        <h2>{t.helpTitle}</h2>
+        <p class="schedule__help">{t.helpLead}</p>
+        <p class="schedule__contact">
+          <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+          <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <Faq />
+</Base>
+
+<style>
+  .schedule__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+    margin-block-end: var(--space-md);
+  }
+
+  .schedule__context {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .schedule__context[hidden] {
+    display: none;
+  }
+
+  .schedule__context a {
+    color: var(--text-accent);
+  }
+
+  .schedule__info {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .schedule__info h2 {
+    font-size: var(--fs-h3);
+    margin-block-end: var(--space-sm);
+  }
+
+  .schedule__rules {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-inline-start: 1.1em;
+    max-width: var(--measure);
+    font-size: var(--fs-small);
+  }
+
+  .schedule__help {
+    max-width: var(--measure-narrow);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .schedule__contact {
+    display: grid;
+    gap: var(--space-3xs);
+    margin-block-start: var(--space-sm);
+  }
+
+  .schedule__contact a {
+    color: var(--text-accent);
+    padding-block: 0.25rem;
+    width: fit-content;
+  }
+
+  @media (min-width: 48rem) {
+    .schedule__info {
+      grid-template-columns: 1.4fr 1fr;
+      gap: var(--space-2xl);
+    }
+  }
+</style>

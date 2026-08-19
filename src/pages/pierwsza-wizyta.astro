@@ -1,0 +1,195 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHeader from '~/components/sections/PageHeader.astro';
+import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
+import Todo from '~/components/ui/Todo.astro';
+import Faq from '~/components/sections/Faq.astro';
+import { booking, site } from '~/data/site';
+import { pages } from '~/data/copy/pages';
+import { home } from '~/data/copy/home';
+import { copyOrNull, isPlaceholder, showPlaceholders } from '~/lib/copy';
+
+/**
+ * Brief §18 — osobna podstrona, bo odpowiada na wysokokonwersyjne pytania
+ * osób, które nigdy nie ćwiczyły. To najczęstszy powód rezygnacji przed
+ * pierwszą rezerwacją.
+ */
+const t = pages.firstVisit;
+const steps = home.firstVisit.steps.filter((step) => !isPlaceholder(step.text));
+const missingSteps = showPlaceholders
+  ? home.firstVisit.steps.filter((step) => isPlaceholder(step.text))
+  : [];
+const sections = Object.values(t.sections);
+const lead = copyOrNull(t.lead);
+---
+
+<Base title={t.meta.title} description={t.meta.description}>
+  <PageHeader
+    eyebrow={t.eyebrow}
+    title={t.title}
+    lead={lead ?? undefined}
+    crumbs={[{ label: 'Pierwsza wizyta', href: '/pierwsza-wizyta' }]}
+  />
+
+  {!lead && <Section as="div" size="sm"><Todo label={t.lead} block /></Section>}
+
+  <Section size="md">
+    <div class="visit__grid">
+      <div>
+        <h2 class="visit__heading">Krok po kroku</h2>
+        <ol class="visit__steps">
+          {
+            steps.map((step, index) => (
+              <li class="visit__step">
+                <span class="visit__num">{String(index + 1).padStart(2, '0')}</span>
+                <span>{step.text}</span>
+              </li>
+            ))
+          }
+          {
+            missingSteps.map((step, index) => (
+              <li class="visit__step visit__step--todo">
+                <span class="visit__num">{String(steps.length + index + 1).padStart(2, '0')}</span>
+                <Todo label={step.text} block />
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <aside class="visit__cta">
+        <p class="visit__cta-text">
+          Konto, karnet i płatność obsługuje system rezerwacji. Zajmuje to kilka minut.
+        </p>
+        <Button
+          href={booking.frontOfficeUrl}
+          newTab={booking.newTab}
+          size="lg"
+          source="first-visit"
+          event="first_visit_cta_click"
+        >
+          {home.firstVisit.ctaLabel}
+        </Button>
+        <p class="visit__help">
+          Wolisz zapisać się przez telefon?
+          <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+        </p>
+      </aside>
+    </div>
+  </Section>
+
+  <Section size="lg" tone="alt">
+    <div class="visit__blocks">
+      {
+        sections.map((section) => {
+          const body = copyOrNull(section.body);
+          return (
+            <section class="visit__block">
+              <h2>{section.title}</h2>
+              {body ? <p>{body}</p> : <Todo label={section.body} block />}
+            </section>
+          );
+        })
+      }
+    </div>
+  </Section>
+
+  <Faq />
+</Base>
+
+<style>
+  .visit__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .visit__heading {
+    font-size: var(--fs-h2);
+    margin-block-end: var(--space-md);
+  }
+
+  .visit__steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .visit__step {
+    display: grid;
+    grid-template-columns: 3ch 1fr;
+    gap: var(--space-md);
+    padding-block: var(--space-sm);
+    border-block-end: var(--hairline) solid var(--line);
+  }
+
+  .visit__step--todo {
+    grid-template-columns: 1fr;
+  }
+
+  .visit__num {
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    color: var(--text-accent);
+    padding-block-start: 0.35em;
+  }
+
+  .visit__cta {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-sm);
+    padding: var(--space-md);
+    background: var(--surface-soft);
+    border-radius: var(--radius-md);
+  }
+
+  .visit__cta-text {
+    font-size: var(--fs-small);
+    max-width: 32ch;
+  }
+
+  .visit__help {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .visit__help a {
+    color: var(--text-accent);
+    margin-inline-start: 0.35em;
+  }
+
+  .visit__blocks {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .visit__block {
+    padding-block-start: var(--space-md);
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .visit__block h2 {
+    font-size: var(--fs-h3);
+    margin-block-end: var(--space-sm);
+  }
+
+  .visit__block p {
+    max-width: var(--measure);
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  @media (min-width: 60rem) {
+    .visit__grid {
+      grid-template-columns: 1fr minmax(18rem, 24rem);
+      gap: var(--space-2xl);
+    }
+
+    .visit__blocks {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xl) var(--space-2xl);
+    }
+  }
+</style>

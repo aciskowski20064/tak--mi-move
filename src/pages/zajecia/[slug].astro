@@ -1,0 +1,271 @@
+---
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import PageHeader from '~/components/sections/PageHeader.astro';
+import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
+import Todo from '~/components/ui/Todo.astro';
+import { locations, booking } from '~/data/site';
+import { copyOrNull } from '~/lib/copy';
+
+/**
+ * Szablon podstrony zajęć — dwanaście elementów z briefu §14.
+ *
+ * Teksty nie mogą obiecywać leczenia schorzeń ani gwarantowanych rezultatów,
+ * dlatego nota o przeciwwskazaniach zawsze odsyła do specjalisty, a nie
+ * do nas.
+ */
+export async function getStaticPaths() {
+  const entries = await getCollection('classes', ({ data }) => import.meta.env.DEV || !data.draft);
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+
+const cityName = (slug: string) => locations.find((l) => l.slug === slug)?.city ?? slug;
+const shortDescription = copyOrNull(d.shortDescription);
+
+const intensityLabel: Record<string, string> = {
+  low: 'spokojne',
+  medium: 'umiarkowane',
+  high: 'intensywne',
+  varied: 'zmienne',
+};
+
+/** Parametry zajęć — brief §12.5 wymaga, by były zatwierdzone przez zespół. */
+const params = [
+  { label: 'Poziom', value: d.level, todo: 'TODO(klientka): poziom zaawansowania' },
+  { label: 'Intensywność', value: d.intensity ? intensityLabel[d.intensity] : undefined, todo: 'TODO(klientka): charakter zajęć' },
+  { label: 'Czas trwania', value: d.duration, todo: 'TODO(klientka): długość zajęć' },
+  { label: 'Lokalizacje', value: d.locationSlugs.map(cityName).join(' · '), todo: '' },
+];
+
+/**
+ * Miasta w tytule biorą się z `locationSlugs` konkretnych zajęć, nie ze
+ * sztywnej listy — barre odbywa się tylko w Pruszczu, więc obiecywanie
+ * Gdańska byłoby nieprawdą także w wynikach wyszukiwania.
+ */
+const cities = d.locationSlugs.map(cityName);
+const citiesLabel = cities.length > 1 ? `${cities.slice(0, -1).join(', ')} i ${cities.at(-1)}` : cities[0];
+
+const title = d.seoTitle ?? `${d.name} — ${citiesLabel}`;
+const description =
+  d.seoDescription ??
+  (shortDescription ??
+    `${d.name} w studiach TAK MI MOVE — ${citiesLabel}. Kameralne grupy, zapisy online.`);
+---
+
+<Base title={title} description={description}>
+  <PageHeader
+    eyebrow="Zajęcia"
+    title={d.name}
+    lead={shortDescription ?? undefined}
+    crumbs={[
+      { label: 'Zajęcia', href: '/zajecia' },
+      { label: d.name, href: `/zajecia/${entry.id}` },
+    ]}
+  />
+
+  {!shortDescription && <Section as="div" size="sm"><Todo label={d.shortDescription} block /></Section>}
+
+  {
+    d.heroImage && (
+      <Section as="div" size="sm" bleed>
+        <div class="container">
+          <Image
+            src={d.heroImage}
+            alt={d.heroImageAlt ?? `Zajęcia ${d.name} w studiu TAK MI MOVE`}
+            widths={[640, 1000, 1400]}
+            sizes="100vw"
+            class="class__hero"
+          />
+        </div>
+      </Section>
+    )
+  }
+
+  <Section size="md">
+    <div class="class__grid">
+      <div class="class__main">
+        <div class="prose">
+          <Content />
+        </div>
+
+        <section class="class__block">
+          <h2>Dla kogo</h2>
+          {
+            d.audience && d.audience.length > 0 ? (
+              <ul class="class__list">
+                {d.audience.map((item) => <li>{item}</li>)}
+              </ul>
+            ) : (
+              <Todo label="TODO(klientka): dla kogo są te zajęcia — konkretnie, nie „dla każdego”" block />
+            )
+          }
+        </section>
+
+        <section class="class__block">
+          <h2>Czego się spodziewać</h2>
+          {
+            d.goals && d.goals.length > 0 ? (
+              <ul class="class__list">
+                {d.goals.map((item) => <li>{item}</li>)}
+              </ul>
+            ) : (
+              <Todo label="TODO(klientka): jak wyglądają zajęcia — przebieg, tempo, atmosfera" block />
+            )
+          }
+        </section>
+
+        <section class="class__block">
+          <h2>Co zabrać</h2>
+          {
+            d.equipment && d.equipment.length > 0 ? (
+              <ul class="class__list">
+                {d.equipment.map((item) => <li>{item}</li>)}
+              </ul>
+            ) : (
+              <Todo label="TODO(klientka): strój i sprzęt — co zapewnia studio, a co trzeba mieć swoje" block />
+            )
+          }
+        </section>
+
+        <section class="class__block">
+          <h2>Zdrowie i przeciwwskazania</h2>
+          {
+            d.contraindicationsNote ? (
+              <p>{d.contraindicationsNote}</p>
+            ) : (
+              <p class="class__health">
+                Jeśli wracasz po urazie, jesteś w ciąży albo pracujesz nad konkretną dolegliwością,
+                powiedz o tym prowadzącej przed zajęciami — dobierze warianty ćwiczeń.
+                O tym, czy dana aktywność jest dla Ciebie bezpieczna, decyduje jednak lekarz
+                lub fizjoterapeuta. Nie zastępujemy konsultacji medycznej.
+              </p>
+            )
+          }
+        </section>
+      </div>
+
+      <aside class="class__aside">
+        <dl class="class__params">
+          {
+            params.map((param) => (
+              <div class="class__param">
+                <dt>{param.label}</dt>
+                <dd>{param.value ? param.value : param.todo ? <Todo label={param.todo} block /> : '—'}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="class__cta">
+          <Button
+            href={booking.frontOfficeUrl}
+            newTab={booking.newTab}
+            source="class"
+            event="booking_cta_click"
+          >
+            {booking.label}
+          </Button>
+          <a class="class__schedule" href="/grafik">Zobacz grafik</a>
+        </div>
+      </aside>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .class__hero {
+    inline-size: 100%;
+    block-size: auto;
+    max-block-size: 60svh;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  .class__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .class__block {
+    margin-block-start: var(--space-lg);
+    padding-block-start: var(--space-md);
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  .class__block h2 {
+    font-size: var(--fs-h3);
+    margin-block-end: var(--space-sm);
+  }
+
+  .class__list {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-inline-start: 1.1em;
+    max-width: var(--measure);
+  }
+
+  .class__health {
+    max-width: var(--measure);
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .class__params {
+    display: grid;
+    margin: 0;
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .class__param {
+    display: grid;
+    gap: var(--space-3xs);
+    padding-block: var(--space-sm);
+    border-block-end: var(--hairline) solid var(--line);
+  }
+
+  .class__params dt {
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .class__params dd {
+    margin: 0;
+  }
+
+  .class__cta {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-sm);
+    margin-block-start: var(--space-lg);
+  }
+
+  .class__schedule {
+    font-size: var(--fs-small);
+    color: var(--text-accent);
+    padding-block: 0.25rem;
+  }
+
+  .prose :global(p) {
+    max-width: var(--measure);
+  }
+
+  .prose :global(p + p) {
+    margin-block-start: var(--space-sm);
+  }
+
+  @media (min-width: 60rem) {
+    .class__grid {
+      grid-template-columns: 1fr minmax(16rem, 22rem);
+      gap: var(--space-2xl);
+    }
+  }
+</style>

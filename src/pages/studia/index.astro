@@ -1,0 +1,157 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHeader from '~/components/sections/PageHeader.astro';
+import Section from '~/components/ui/Section.astro';
+import Mark from '~/components/ui/Mark.astro';
+import Todo from '~/components/ui/Todo.astro';
+import { locations, formatAddress, site } from '~/data/site';
+import { pages } from '~/data/copy/pages';
+import { home } from '~/data/copy/home';
+import { copyOrNull } from '~/lib/copy';
+
+/**
+ * Rozdroże obu lokalizacji.
+ *
+ * Brief (dok. projektowy §5) ostrzega przed dublowaniem treści między
+ * podstronami lokalizacji a stroną główną — dlatego to jest zwięzły spis
+ * praktyczny (adres, kontakt, dojazd), a nie powtórzenie sekcji z „Start”.
+ */
+const t = pages.studios;
+---
+
+<Base title={t.meta.title} description={t.meta.description}>
+  <PageHeader
+    eyebrow={t.eyebrow}
+    title={t.title}
+    lead={t.lead}
+    crumbs={[{ label: 'Studia', href: '/studia' }]}
+  />
+
+  <Section size="md">
+    <ul class="studios">
+      {
+        locations.map((location) => {
+          const description = copyOrNull(home.studios.descriptions[location.slug]);
+          return (
+            <li class="studio-card">
+              <div class="studio-card__head">
+                <Mark size="0.9rem" class="studio-card__mark" />
+                <h2 class="studio-card__name">{location.city}</h2>
+              </div>
+
+              <p class="studio-card__address">{formatAddress(location)}</p>
+
+              {description ? (
+                <p class="studio-card__desc">{description}</p>
+              ) : (
+                <Todo label={home.studios.descriptions[location.slug]} block />
+              )}
+
+              <dl class="studio-card__contact">
+                <dt>Telefon</dt>
+                <dd>
+                  <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+                </dd>
+                <dt>E-mail</dt>
+                <dd>
+                  <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
+                </dd>
+              </dl>
+
+              <p class="studio-card__links">
+                <a href={`/studia/${location.slug}`} data-event="studio_location_select">
+                  Dojazd i szczegóły
+                </a>
+                <a href={`/grafik?studio=${location.slug}`} data-event="schedule_page_view">
+                  Grafik
+                </a>
+              </p>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </Section>
+</Base>
+
+<style>
+  .studios {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .studio-card {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2xs);
+    padding-block-start: var(--space-md);
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .studio-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .studio-card__head :global(.studio-card__mark) {
+    color: var(--accent);
+  }
+
+  .studio-card__name {
+    font-size: var(--fs-h2);
+  }
+
+  .studio-card__address {
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .studio-card__desc {
+    margin-block-start: var(--space-2xs);
+    max-width: var(--measure-narrow);
+  }
+
+  .studio-card__contact {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3xs) var(--space-sm);
+    margin-block-start: var(--space-sm);
+    font-size: var(--fs-small);
+  }
+
+  .studio-card__contact dt {
+    color: var(--text-muted);
+  }
+
+  .studio-card__contact dd {
+    margin: 0;
+  }
+
+  .studio-card__contact a {
+    color: var(--text-accent);
+  }
+
+  .studio-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    margin-block-start: var(--space-md);
+    font-size: var(--fs-small);
+  }
+
+  .studio-card__links a {
+    color: var(--text-accent);
+    padding-block: 0.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    .studios {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+    }
+  }
+</style>

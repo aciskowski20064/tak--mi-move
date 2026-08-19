@@ -1,0 +1,113 @@
+---
+import Base from '~/layouts/Base.astro';
+import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
+import Mark from '~/components/ui/Mark.astro';
+import { booking } from '~/data/site';
+
+/**
+ * Strona błędu 404.
+ *
+ * Nie przeprasza w nieskończoność i nie żartuje — daje trzy wyjścia,
+ * z których każde prowadzi tam, gdzie użytkowniczka najprawdopodobniej
+ * zmierzała: grafik, zajęcia albo kontakt.
+ */
+const exits = [
+  { href: '/grafik', label: 'Grafik i zapisy', desc: 'Aktualne terminy w obu studiach.' },
+  { href: '/zajecia', label: 'Zajęcia', desc: 'Joga, pilates, stretching, aerial yoga i barre.' },
+  { href: '/kontakt', label: 'Kontakt', desc: 'Telefon, e-mail i adresy obu studiów.' },
+];
+---
+
+<Base
+  title="Nie znaleziono strony"
+  description="Ta strona nie istnieje. Przejdź do grafiku zajęć, oferty albo kontaktu TAK MI MOVE."
+  noindex
+>
+  <Section size="lg" class="notfound">
+    <Mark size="clamp(2.5rem, 8vw, 4rem)" class="notfound__mark" />
+    <p class="eyebrow">Błąd 404</p>
+    <h1 class="notfound__title">Tej strony tu nie ma.</h1>
+    <p class="lead notfound__lead">
+      Adres mógł się zmienić albo zawierać literówkę. Poniżej najczęstsze kierunki.
+    </p>
+
+    <ul class="notfound__exits">
+      {
+        exits.map((exit) => (
+          <li>
+            <a href={exit.href}>
+              <span class="notfound__exit-label">{exit.label}</span>
+              <span class="notfound__exit-desc">{exit.desc}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="notfound__cta">
+      <Button href={booking.frontOfficeUrl} newTab source="not-found" event="booking_cta_click">
+        {booking.label}
+      </Button>
+    </p>
+  </Section>
+</Base>
+
+<style>
+  .notfound {
+    padding-block: var(--space-3xl);
+  }
+
+  .notfound :global(.notfound__mark) {
+    color: var(--accent);
+    margin-block-end: var(--space-md);
+  }
+
+  .notfound__title {
+    margin-block: var(--space-2xs) var(--space-sm);
+    max-width: 16ch;
+  }
+
+  .notfound__lead {
+    max-width: var(--measure-narrow);
+  }
+
+  .notfound__exits {
+    list-style: none;
+    padding: 0;
+    margin-block: var(--space-xl) 0;
+    max-width: var(--measure);
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .notfound__exits li {
+    border-block-end: var(--hairline) solid var(--line);
+  }
+
+  .notfound__exits a {
+    display: grid;
+    gap: var(--space-3xs);
+    padding-block: var(--space-sm);
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .notfound__exits a:hover {
+    color: var(--text-accent);
+  }
+
+  .notfound__exit-label {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+  }
+
+  .notfound__exit-desc {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .notfound__cta {
+    margin-block-start: var(--space-xl);
+  }
+</style>

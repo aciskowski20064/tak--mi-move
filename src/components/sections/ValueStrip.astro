@@ -1,0 +1,51 @@
+---
+import Mark from '~/components/ui/Mark.astro';
+import { home } from '~/data/copy/home';
+
+/**
+ * Brief §12.3: subtelny pas informacyjny, NIE pięć identycznych kart z ikonami.
+ * Separatorem jest symbol marki — jedyny element dekoracyjny w projekcie.
+ */
+---
+
+<aside class="strip" aria-label="Najważniejsze informacje o studiach">
+  <ul class="strip__list container">
+    {
+      home.values.map((value) => (
+        <li class="strip__item">
+          <Mark size="0.55rem" class="strip__mark" />
+          {value}
+        </li>
+      ))
+    }
+  </ul>
+</aside>
+
+<style>
+  .strip {
+    background: var(--surface-alt);
+    border-block: var(--hairline) solid var(--line);
+  }
+
+  .strip__list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2xs) var(--space-lg);
+    padding-block: var(--space-sm);
+    margin: 0;
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .strip__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .strip__item :global(.strip__mark) {
+    color: var(--accent);
+  }
+</style>

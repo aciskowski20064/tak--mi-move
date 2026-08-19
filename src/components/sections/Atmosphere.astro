@@ -1,0 +1,93 @@
+---
+import { Image } from 'astro:assets';
+import Section from '~/components/ui/Section.astro';
+import { home } from '~/data/copy/home';
+import zespolGrupa from '~/assets/photos/zespol-grupa.jpg';
+import aerial from '~/assets/photos/instruktorka-aerial-yoga.jpg';
+
+/**
+ * Brief §12.8: duże zdjęcia z krótkimi podpisami zamiast galerii miniatur.
+ *
+ * Układ celowo wyrównany — równe kolumny, wspólna linia góry i dołu.
+ * Kadry są pionowe (3:4) i przycinamy je do wspólnych proporcji,
+ * żeby wiersz nie „schodkował”.
+ *
+ * UWAGA: żadne z tych zdjęć nie jest przypisane do konkretnej lokalizacji.
+ * Potwierdzony jest wyłącznie kadr z hero (Pruszcz Gdański).
+ */
+const photoMap: Record<string, ImageMetadata> = {
+  'zespol-grupa': zespolGrupa,
+  'instruktorka-aerial-yoga': aerial,
+};
+
+const t = home.atmosphere;
+---
+
+<Section size="lg">
+  <header class="atmo__head">
+    <p class="eyebrow">{t.eyebrow}</p>
+    <h2>{t.title}</h2>
+    <p class="lead">{t.lead}</p>
+  </header>
+
+  <div class="atmo__grid">
+    {
+      t.photos.map((photo) => (
+        <figure class="atmo__figure">
+          <Image
+            src={photoMap[photo.key]!}
+            alt={photo.alt}
+            widths={[480, 760, 1000]}
+            sizes="(min-width: 48rem) 46vw, 100vw"
+            loading="lazy"
+            class="atmo__image"
+          />
+          <figcaption class="atmo__caption">{photo.caption}</figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</Section>
+
+<style>
+  .atmo__head {
+    max-width: var(--container-text);
+    margin-block-end: var(--space-lg);
+  }
+
+  .atmo__head h2 {
+    margin-block: var(--space-2xs) var(--space-sm);
+  }
+
+  .atmo__grid {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .atmo__figure {
+    margin: 0;
+  }
+
+  .atmo__image {
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  .atmo__caption {
+    margin-block-start: var(--space-2xs);
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 48rem) {
+    .atmo__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+  }
+</style>

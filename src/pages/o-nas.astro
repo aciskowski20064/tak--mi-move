@@ -1,0 +1,185 @@
+---
+import { Image } from 'astro:assets';
+import Base from '~/layouts/Base.astro';
+import PageHeader from '~/components/sections/PageHeader.astro';
+import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
+import Todo from '~/components/ui/Todo.astro';
+import Team from '~/components/sections/Team.astro';
+import { booking, locations, formatAddress } from '~/data/site';
+import { pages } from '~/data/copy/pages';
+import { copyOrNull } from '~/lib/copy';
+import zespolGrupa from '~/assets/photos/zespol-grupa.jpg';
+
+/**
+ * Brief §17. Kluczowe zastrzeżenie: „Nie należy tworzyć historii marki
+ * bez materiału od właścicielki”. Dlatego manifest, historia, wartości
+ * i część o społeczności są tu strukturą, a nie treścią — dopóki nie
+ * dostaniemy materiału, w produkcji te bloki nie istnieją.
+ */
+const t = pages.about;
+const lead = copyOrNull(t.lead);
+
+const blocks = [t.manifesto, t.values, t.spaces, t.community];
+---
+
+<Base title={t.meta.title} description={t.meta.description}>
+  <PageHeader
+    eyebrow={t.eyebrow}
+    title={t.title}
+    lead={lead ?? undefined}
+    crumbs={[{ label: 'O nas', href: '/o-nas' }]}
+  />
+
+  {!lead && <Section as="div" size="sm"><Todo label={t.lead} block /></Section>}
+
+  <Section as="div" size="sm" bleed>
+    <div class="container">
+      <figure class="about__figure">
+        <Image
+          src={zespolGrupa}
+          alt="Zespół instruktorek TAK MI MOVE w jasnym wnętrzu studia"
+          widths={[640, 1000, 1440]}
+          sizes="100vw"
+          class="about__image"
+        />
+      </figure>
+    </div>
+  </Section>
+
+  <Section size="lg">
+    <div class="about__blocks">
+      {
+        blocks.map((block) => {
+          const body = copyOrNull(block.body);
+          return (
+            <section class="about__block">
+              <h2>{block.title}</h2>
+              {body ? <p>{body}</p> : <Todo label={block.body} block />}
+            </section>
+          );
+        })
+      }
+    </div>
+  </Section>
+
+  <Section size="md" tone="alt">
+    <h2 class="about__heading">Gdzie nas znajdziesz</h2>
+    <ul class="about__studios">
+      {
+        locations.map((location) => (
+          <li>
+            <a href={`/studia/${location.slug}`} data-event="studio_location_select">
+              <strong>{location.city}</strong>
+              <span>{formatAddress(location)}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
+
+  <Team />
+
+  <Section size="md" tone="soft">
+    <div class="about__cta">
+      <h2>Przyjdź na pierwsze zajęcia</h2>
+      <Button
+        href={booking.frontOfficeUrl}
+        newTab={booking.newTab}
+        size="lg"
+        source="final"
+        event="booking_cta_click"
+      >
+        {booking.label}
+      </Button>
+    </div>
+  </Section>
+</Base>
+
+<style>
+  .about__figure {
+    margin: 0;
+  }
+
+  .about__image {
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center 35%;
+    border-radius: var(--radius-md);
+  }
+
+  .about__blocks {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .about__block {
+    padding-block-start: var(--space-md);
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .about__block h2 {
+    font-size: var(--fs-h3);
+    margin-block-end: var(--space-sm);
+  }
+
+  .about__block p {
+    max-width: var(--measure);
+  }
+
+  .about__heading {
+    font-size: var(--fs-h3);
+    margin-block-end: var(--space-md);
+  }
+
+  .about__studios {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  .about__studios a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.2em var(--space-sm);
+    padding-block: var(--space-2xs);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .about__studios strong {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    font-weight: 400;
+  }
+
+  .about__studios span {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .about__studios a:hover strong {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .about__cta {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-md);
+    text-align: center;
+  }
+
+  @media (min-width: 60rem) {
+    .about__blocks {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xl) var(--space-2xl);
+    }
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+import type { NavItem } from '~/data/nav';
+
+/**
+ * Okruszki na głębszych podstronach (brief §34).
+ * Ostatnia pozycja to bieżąca strona — nie jest linkiem.
+ */
+interface Props {
+  items: NavItem[];
+}
+
+const { items } = Astro.props;
+const trail: NavItem[] = [{ label: 'Start', href: '/' }, ...items];
+---
+
+<nav class="crumbs" aria-label="Ścieżka nawigacji">
+  <ol class="crumbs__list">
+    {
+      trail.map((item, index) => {
+        const last = index === trail.length - 1;
+        return (
+          <li class="crumbs__item">
+            {last ? (
+              <span aria-current="page">{item.label}</span>
+            ) : (
+              <a href={item.href}>{item.label}</a>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
+</nav>
+
+<style>
+  .crumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--fs-caption);
+    color: var(--text-muted);
+  }
+
+  .crumbs__item + .crumbs__item::before {
+    content: '/';
+    margin-inline-end: var(--space-2xs);
+    color: var(--line-strong);
+  }
+
+  .crumbs__item a {
+    display: inline-block;
+    color: inherit;
+    text-decoration: none;
+    padding-block: 0.35rem;
+  }
+
+  .crumbs__item a:hover {
+    color: var(--text);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+</style>

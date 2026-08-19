@@ -1,0 +1,121 @@
+---
+import { getCollection, render } from 'astro:content';
+import Section from '~/components/ui/Section.astro';
+import Mark from '~/components/ui/Mark.astro';
+import Todo from '~/components/ui/Todo.astro';
+import { home } from '~/data/copy/home';
+
+/**
+ * Brief §12.10: źródłem mogą być wyłącznie zweryfikowane opinie Google
+ * albo wiadomości klientów za zgodą. Nie wolno przepisywać opinii bez źródła
+ * ani tworzyć cytatów „w duchu” prawdziwych.
+ *
+ * Filtr `consent` jest twardy — brak zgody oznacza brak publikacji.
+ */
+const entries = await getCollection('reviews', ({ data }) => data.consent);
+const sorted = entries.sort((a, b) => a.data.order - b.data.order).slice(0, 6);
+const reviews = await Promise.all(
+  sorted.map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+
+const t = home.reviews;
+import { showPlaceholders } from '~/lib/copy';
+const isDev = showPlaceholders;
+
+const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', direct: 'Wiadomość od klientki' };
+---
+
+{
+  (reviews.length > 0 || isDev) && (
+    <Section size="lg">
+      <header class="reviews__head">
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h2>{t.title}</h2>
+      </header>
+
+      {reviews.length > 0 ? (
+        <ul class="reviews__grid">
+          {reviews.map(({ entry, Content }) => (
+            <li class="review">
+              <Mark size="1rem" class="review__mark" />
+              <blockquote class="review__quote">
+                <Content />
+              </blockquote>
+              <figcaption class="review__meta">
+                <span class="review__author">{entry.data.author}</span>
+                {entry.data.sourceUrl ? (
+                  <a href={entry.data.sourceUrl} target="_blank" rel="noopener nofollow">
+                    {sourceLabel[entry.data.source]}
+                  </a>
+                ) : (
+                  <span>{sourceLabel[entry.data.source]}</span>
+                )}
+              </figcaption>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <Todo
+          label="TODO(klientka): 3–6 realnych opinii z linkiem do źródła i zgodą autorek — bez tego sekcja opinii nie renderuje się w ogóle"
+          block
+        />
+      )}
+    </Section>
+  )
+}
+
+<style>
+  .reviews__head {
+    max-width: var(--container-text);
+    margin-block-end: var(--space-lg);
+  }
+
+  .reviews__head h2 {
+    margin-block-start: var(--space-2xs);
+  }
+
+  .reviews__grid {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .review {
+    display: grid;
+    gap: var(--space-sm);
+    padding-block-start: var(--space-md);
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .review :global(.review__mark) {
+    color: var(--accent);
+  }
+
+  .review__quote {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    line-height: var(--lh-heading);
+  }
+
+  .review__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+    font-size: var(--fs-caption);
+    color: var(--text-muted);
+  }
+
+  .review__author {
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  @media (min-width: 48rem) {
+    .reviews__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

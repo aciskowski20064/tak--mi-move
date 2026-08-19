@@ -1,0 +1,310 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHeader from '~/components/sections/PageHeader.astro';
+import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
+import Mark from '~/components/ui/Mark.astro';
+import Todo from '~/components/ui/Todo.astro';
+import MapEmbed from '~/components/ui/MapEmbed.astro';
+import { locations, formatAddress, site, booking, contactForm } from '~/data/site';
+import { pages } from '~/data/copy/pages';
+
+/**
+ * Brief §19. Najważniejsze zadanie tej strony: rozdzielić sprawy, które
+ * obsługuje Fitssey, od tych, które trafiają bezpośrednio do studia.
+ * Formularz nie zastępuje rezerwacji.
+ */
+const t = pages.contact;
+---
+
+<Base title={t.meta.title} description={t.meta.description}>
+  <PageHeader
+    eyebrow={t.eyebrow}
+    title={t.title}
+    lead={t.lead}
+    crumbs={[{ label: 'Kontakt', href: '/kontakt' }]}
+  />
+
+  <Section size="md">
+    <div class="routes">
+      <section class="route">
+        <h2>{t.whenFitssey.title}</h2>
+        <ul>
+          {t.whenFitssey.items.map((item) => <li>{item}</li>)}
+        </ul>
+        <Button
+          href={booking.frontOfficeUrl}
+          newTab={booking.newTab}
+          variant="secondary"
+          source="footer"
+          event="booking_cta_click"
+        >
+          Otwórz system rezerwacji
+        </Button>
+      </section>
+
+      <section class="route">
+        <h2>{t.whenDirect.title}</h2>
+        <ul>
+          {t.whenDirect.items.map((item) => <li>{item}</li>)}
+        </ul>
+        <p class="route__direct">
+          <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+          <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
+        </p>
+      </section>
+    </div>
+  </Section>
+
+  <Section size="lg" tone="alt">
+    <h2 class="contact__heading">Studia</h2>
+    <div class="contact__studios">
+      {
+        locations.map((location) => (
+          <article class="contact-studio">
+            <div class="contact-studio__head">
+              <Mark size="0.85rem" class="contact-studio__mark" />
+              <h3>{location.city}</h3>
+            </div>
+
+            <address class="contact-studio__address">
+              {formatAddress(location)}
+              <br />
+              <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+              <br />
+              <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
+            </address>
+
+            <ul class="contact-studio__social">
+              {location.social.map((s) => (
+                <li>
+                  <a href={s.url} target="_blank" rel="noopener me">{s.label}</a>
+                </li>
+              ))}
+            </ul>
+
+            <MapEmbed address={formatAddress(location)} label={`TAK MI MOVE ${location.city}`} />
+
+            <p class="contact-studio__more">
+              <a href={`/studia/${location.slug}`}>Dojazd, wejście i parking</a>
+            </p>
+          </article>
+        ))
+      }
+    </div>
+  </Section>
+
+  {
+    contactForm.endpoint ? (
+      <Section size="lg">
+        <form class="form" method="post" action={contactForm.endpoint}>
+          <h2 class="contact__heading">Napisz do nas</h2>
+
+          <p class="form__row">
+            <label for="name">Imię</label>
+            <input id="name" name="name" type="text" required autocomplete="given-name" />
+          </p>
+
+          <p class="form__row">
+            <label for="email">E-mail lub telefon</label>
+            <input id="email" name="contact" type="text" required autocomplete="email" />
+          </p>
+
+          <p class="form__row">
+            <label for="studio">Której lokalizacji dotyczy pytanie?</label>
+            <select id="studio" name="studio">
+              <option value="">Nie wiem / obu</option>
+              {locations.map((l) => <option value={l.slug}>{l.city}</option>)}
+            </select>
+          </p>
+
+          <p class="form__row">
+            <label for="message">Wiadomość</label>
+            <textarea id="message" name="message" rows="5" required />
+          </p>
+
+          {/* Pułapka antyspamowa — pole niewidoczne dla człowieka. */}
+          <p class="form__trap" aria-hidden="true">
+            <label for="company">Nie wypełniaj tego pola</label>
+            <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
+          </p>
+
+          <p class="form__consent">
+            Wysyłając wiadomość, zgadzasz się na kontakt zwrotny.
+            Zasady opisuje <a href="/polityka-prywatnosci">polityka prywatności</a>.
+          </p>
+
+          <button type="submit" class="form__submit">Wyślij wiadomość</button>
+        </form>
+      </Section>
+    ) : (
+      <Section size="sm">
+        <Todo
+          label="TODO(decyzja): formularz kontaktowy jest zbudowany, ale nie ma usługi wysyłkowej ani osoby, która go obsłuży — ustaw contactForm.endpoint w src/data/site.ts, żeby go włączyć"
+          block
+        />
+      </Section>
+    )
+  }
+</Base>
+
+<style>
+  .routes {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .route {
+    padding-block-start: var(--space-md);
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .route h2 {
+    font-size: var(--fs-h3);
+    margin-block-end: var(--space-sm);
+  }
+
+  .route ul {
+    display: grid;
+    gap: var(--space-3xs);
+    padding-inline-start: 1.1em;
+    margin-block-end: var(--space-md);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .route__direct {
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .route__direct a {
+    color: var(--text-accent);
+    padding-block: 0.25rem;
+    width: fit-content;
+  }
+
+  .contact__heading {
+    font-size: var(--fs-h2);
+    margin-block-end: var(--space-lg);
+  }
+
+  .contact__studios {
+    display: grid;
+    gap: var(--space-xl);
+  }
+
+  .contact-studio__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-block-end: var(--space-sm);
+  }
+
+  .contact-studio__head :global(.contact-studio__mark) {
+    color: var(--accent);
+  }
+
+  .contact-studio__head h3 {
+    font-size: var(--fs-h3);
+  }
+
+  .contact-studio__address {
+    font-style: normal;
+    font-size: var(--fs-small);
+    line-height: var(--lh-loose);
+  }
+
+  .contact-studio__address a {
+    color: var(--text-accent);
+    display: inline-block;
+    padding-block: 0.15rem;
+  }
+
+  .contact-studio__social {
+    list-style: none;
+    padding: 0;
+    margin-block: var(--space-sm) var(--space-md);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+    font-size: var(--fs-small);
+  }
+
+  .contact-studio__social a {
+    color: var(--text-accent);
+    padding-block: 0.25rem;
+  }
+
+  .contact-studio__more {
+    margin-block-start: var(--space-sm);
+    font-size: var(--fs-small);
+  }
+
+  .contact-studio__more a {
+    color: var(--text-accent);
+    padding-block: 0.25rem;
+  }
+
+  .form {
+    display: grid;
+    gap: var(--space-md);
+    max-width: 34rem;
+  }
+
+  .form__row {
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .form__row label {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .form__row input,
+  .form__row select,
+  .form__row textarea {
+    padding: 0.7em 0.9em;
+    border: var(--hairline) solid var(--line-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-size: var(--fs-small);
+  }
+
+  .form__trap {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .form__consent {
+    font-size: var(--fs-caption);
+    color: var(--text-muted);
+  }
+
+  .form__consent a {
+    color: var(--text-accent);
+  }
+
+  .form__submit {
+    justify-self: start;
+    padding: 0.72em 1.5em;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+
+  @media (min-width: 48rem) {
+    .routes,
+    .contact__studios {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2xl);
+    }
+  }
+</style>

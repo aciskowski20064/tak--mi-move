@@ -1,0 +1,219 @@
+---
+import { booking, site } from '~/data/site';
+import type { Studio } from '~/types';
+
+/**
+ * Osadzenie systemu Fitssey.
+ *
+ * Wariant docelowy (natywny widżet JS z panelu Studio → Integracje) nie jest
+ * dostępny — nie mamy dostępu do konta klientki. Do tego czasu działa wariant
+ * awaryjny z briefu §6.2: iframe do FrontOffice w oprawie marki.
+ *
+ * Konstrukcja jest tak przygotowana, żeby podmiana na natywny widżet
+ * nie wymagała zmian w żadnej podstronie — wystarczy ustawić
+ * `booking.widgetScript` i `fitsseyLocationId` w src/data/site.ts.
+ *
+ * Twarde wymagania z briefu §21, których pilnuje ten komponent:
+ *  - czytelny stan ładowania,
+ *  - minimalna wysokość (brak skoku layoutu),
+ *  - brak poziomego scrolla całej strony,
+ *  - fallback do pełnej strony Fitssey, gdy ramka nie wstanie,
+ *  - `loading="lazy"`, żeby nie blokować renderu reszty treści.
+ */
+interface Props {
+  /** Kontekst lokalizacji — filtrowanie zadziała dopiero z ID z panelu Fitssey. */
+  studio?: Studio;
+  title?: string;
+}
+
+const { studio, title = 'Grafik zajęć i zapisy — system rezerwacji Fitssey' } = Astro.props;
+
+const embedUrl = booking.frontOfficeUrl;
+/** Czy da się przefiltrować grafik do jednej lokalizacji. */
+const canFilter = false; // ustawić na true po otrzymaniu fitsseyLocationId
+---
+
+<div class="embed" data-embed data-studio={studio}>
+  <div class="embed__status" data-embed-status role="status">
+    <span class="embed__spinner" aria-hidden="true"></span>
+    <span>Wczytuję grafik…</span>
+  </div>
+
+  <iframe
+    class="embed__frame"
+    src={embedUrl}
+    title={title}
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+    data-embed-frame></iframe>
+
+  <noscript>
+    <p class="embed__fallback-text">
+      Grafik wymaga JavaScriptu.
+      <a href={booking.frontOfficeUrl} target="_blank" rel="noopener">
+        Otwórz system rezerwacji Fitssey
+      </a>.
+    </p>
+  </noscript>
+
+  {/* Brief §15.4 — komunikat pojawia się dopiero, gdy ramka faktycznie zawiedzie. */}
+  <div class="embed__fallback" data-embed-fallback hidden>
+    <p class="embed__fallback-title">Grafik nie załadował się poprawnie.</p>
+    <p class="embed__fallback-text">
+      System rezerwacji działa niezależnie od strony — otwórz go bezpośrednio.
+    </p>
+    <p class="embed__fallback-actions">
+      <a
+        class="embed__fallback-link"
+        href={booking.frontOfficeUrl}
+        target="_blank"
+        rel="noopener"
+        data-event="fitssey_fallback_click"
+      >
+        Otwórz system rezerwacji Fitssey
+      </a>
+      <a href={`tel:${site.phone}`} data-event="phone_click">
+        albo zadzwoń: {site.phoneDisplay}
+      </a>
+    </p>
+  </div>
+</div>
+
+{
+  !canFilter && (
+    <p class="embed__note">
+      Grafik pokazuje zajęcia w obu studiach — lokalizację widać przy każdym terminie.
+      Filtrowanie po studiu włączymy razem z natywnym widżetem Fitssey.
+    </p>
+  )
+}
+
+<style>
+  .embed {
+    position: relative;
+    /* Minimalna wysokość liczona z viewportu, ale nie mniejsza niż użyteczna —
+       dzięki temu ramka nie przesuwa treści pod sobą po załadowaniu. */
+    min-block-size: clamp(34rem, 78svh, 56rem);
+    background: var(--surface-alt);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .embed__frame {
+    display: block;
+    inline-size: 100%;
+    block-size: clamp(34rem, 78svh, 56rem);
+    border: 0;
+    background: transparent;
+  }
+
+  .embed__status,
+  .embed__fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--space-2xs);
+    padding: var(--space-lg);
+    text-align: center;
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .embed__status[hidden],
+  .embed__fallback[hidden] {
+    display: none;
+  }
+
+  .embed__spinner {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+    border: 2px solid var(--line-strong);
+    border-block-start-color: var(--accent-strong);
+    border-radius: 50%;
+    animation: embed-spin 900ms linear infinite;
+  }
+
+  @keyframes embed-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .embed__spinner {
+      animation: none;
+      border-block-start-color: var(--line-strong);
+    }
+  }
+
+  .embed__fallback-title {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    color: var(--text);
+  }
+
+  .embed__fallback-actions {
+    display: grid;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-sm);
+  }
+
+  .embed__fallback-link {
+    display: inline-block;
+    padding: 0.72em 1.5em;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    color: var(--on-accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .embed__note {
+    margin-block-start: var(--space-sm);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-embed]');
+  const frame = document.querySelector<HTMLIFrameElement>('[data-embed-frame]');
+  const status = document.querySelector<HTMLElement>('[data-embed-status]');
+  const fallback = document.querySelector<HTMLElement>('[data-embed-fallback]');
+
+  if (root && frame && status && fallback) {
+    let settled = false;
+
+    const showFallback = () => {
+      if (settled) return;
+      settled = true;
+      status.hidden = true;
+      frame.hidden = true;
+      fallback.hidden = false;
+    };
+
+    const showFrame = () => {
+      if (settled) return;
+      settled = true;
+      status.hidden = true;
+    };
+
+    frame.addEventListener('load', () => {
+      // Ramka blokowana przez X-Frame-Options / CSP też emituje `load`,
+      // ale zostaje pusta. Cross-origin nie pozwala zajrzeć do środka,
+      // więc jedynym pewnym sygnałem jest to, czy zdarzenie w ogóle przyszło.
+      showFrame();
+    });
+
+    frame.addEventListener('error', showFallback);
+
+    // Zabezpieczenie na wolne łącze i na ciche zablokowanie ramki.
+    setTimeout(() => {
+      if (!settled) showFallback();
+    }, 12000);
+  }
+</script>

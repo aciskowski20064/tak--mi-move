@@ -1,0 +1,41 @@
+---
+import Section from '~/components/ui/Section.astro';
+import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
+import type { NavItem } from '~/data/nav';
+
+/**
+ * Wspólny nagłówek podstron. Utrzymuje jeden H1 na stronę i stały rytm
+ * wejścia w treść, żeby podstrony nie wyglądały jak zlepek osobnych projektów.
+ */
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+  crumbs?: NavItem[];
+  tone?: 'default' | 'alt' | 'soft';
+}
+
+const { eyebrow, title, lead, crumbs, tone = 'default' } = Astro.props;
+---
+
+<Section as="div" size="sm" tone={tone} class="page-header">
+  {crumbs && <Breadcrumbs items={crumbs} />}
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h1 class="page-header__title">{title}</h1>
+  {lead && <p class="lead page-header__lead">{lead}</p>}
+</Section>
+
+<style>
+  .page-header {
+    padding-block-end: var(--space-lg);
+  }
+
+  .page-header__title {
+    margin-block-start: var(--space-2xs);
+    max-width: 20ch;
+  }
+
+  .page-header__lead {
+    margin-block-start: var(--space-sm);
+  }
+</style>

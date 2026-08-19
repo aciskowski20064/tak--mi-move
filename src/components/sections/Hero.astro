@@ -1,0 +1,155 @@
+---
+import { Image } from 'astro:assets';
+import Button from '~/components/ui/Button.astro';
+import Mark from '~/components/ui/Mark.astro';
+import Section from '~/components/ui/Section.astro';
+import { booking, locations, formatAddress } from '~/data/site';
+import { home } from '~/data/copy/home';
+import heroImage from '~/assets/photos/studio-pruszcz-zespol.jpg';
+
+const t = home.hero;
+---
+
+<Section as="div" size="lg" class="hero">
+  <div class="hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow hero__eyebrow">{t.eyebrow}</p>
+
+      <h1 class="hero__title">{t.title}</h1>
+
+      <p class="lead">{t.lead}</p>
+
+      <div class="hero__actions">
+        <Button
+          href={booking.frontOfficeUrl}
+          newTab={booking.newTab}
+          size="lg"
+          source="hero"
+          event="booking_cta_click"
+        >
+          {booking.label}
+        </Button>
+        <Button href="/grafik" variant="secondary" size="lg" source="hero">
+          {t.secondaryCta}
+        </Button>
+      </div>
+
+      <ul class="hero__studios">
+        {
+          locations.map((location) => (
+            <li class="hero__studio">
+              <Mark size="0.7rem" />
+              <a href={`/studia/${location.slug}`} data-event="studio_location_select">
+                <strong>{location.city}</strong>
+                <span>{formatAddress(location)}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <figure class="hero__figure">
+      <Image
+        src={heroImage}
+        alt={t.imageAlt}
+        widths={[480, 720, 1040]}
+        sizes="(min-width: 64rem) 46vw, 100vw"
+        loading="eager"
+        fetchpriority="high"
+        class="hero__image"
+      />
+      <figcaption class="hero__caption">{t.imageCaption}</figcaption>
+    </figure>
+  </div>
+</Section>
+
+<style>
+  .hero__grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  .hero__eyebrow {
+    max-width: 34ch;
+  }
+
+  .hero__title {
+    margin-block: var(--space-md) var(--space-sm);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-lg);
+  }
+
+  .hero__studios {
+    list-style: none;
+    padding: 0;
+    margin-block-start: var(--space-xl);
+    display: grid;
+    gap: var(--space-sm);
+    border-block-start: var(--hairline) solid var(--line);
+    padding-block-start: var(--space-md);
+  }
+
+  .hero__studio {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    color: var(--text-accent);
+  }
+
+  .hero__studio a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15em var(--space-2xs);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .hero__studio strong {
+    font-weight: 500;
+  }
+
+  .hero__studio span {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .hero__studio a:hover strong {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  /* Zdjęcia zespołu są pionowe (3:4) — układ musi to uszanować,
+     a nie kadrować ich na siłę do panoramy. */
+  .hero__figure {
+    margin: 0;
+  }
+
+  .hero__image {
+    inline-size: 100%;
+    block-size: auto;
+    border-radius: var(--radius-md);
+  }
+
+  .hero__caption {
+    margin-block-start: var(--space-2xs);
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  @media (min-width: 64rem) {
+    .hero__grid {
+      grid-template-columns: 1fr minmax(20rem, 30rem);
+      gap: var(--space-2xl);
+    }
+  }
+</style>

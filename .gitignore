@@ -1,0 +1,15 @@
+# Zależności
+node_modules/
+
+# Build i cache Astro
+dist/
+.astro/
+
+# Środowisko lokalne
+.env
+.env.*
+!.env.example
+
+# System / edytor
+.DS_Store
+Thumbs.db

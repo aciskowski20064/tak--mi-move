@@ -1,0 +1,280 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '~/layouts/Base.astro';
+import PageHeader from '~/components/sections/PageHeader.astro';
+import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
+import Mark from '~/components/ui/Mark.astro';
+import Todo from '~/components/ui/Todo.astro';
+import MapEmbed from '~/components/ui/MapEmbed.astro';
+import Faq from '~/components/sections/Faq.astro';
+import { locations, formatAddress, booking, site } from '~/data/site';
+import { home } from '~/data/copy/home';
+import { copyOrNull } from '~/lib/copy';
+
+/**
+ * Podstrona pojedynczego studia (brief §16).
+ *
+ * §16.4 zabrania stron typu doorway — czyli kopii z podmienioną nazwą miasta.
+ * Dlatego cała treść lokalna (wejście, parking, dojazd, dostępność, opis)
+ * pochodzi z danych konkretnej lokalizacji i dopóki jej nie ma, po prostu
+ * się nie renderuje. Żadna z tych sekcji nie ma treści domyślnej.
+ */
+export function getStaticPaths() {
+  return locations.map((location) => ({
+    params: { slug: location.slug },
+    props: { location },
+  }));
+}
+
+const { location } = Astro.props;
+
+const classes = await getCollection('classes', ({ data }) => import.meta.env.DEV || !data.draft);
+const available = classes
+  .filter((entry) => entry.data.locationSlugs.includes(location.slug))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const description = copyOrNull(home.studios.descriptions[location.slug]);
+const address = formatAddress(location);
+
+/** Praktyczne informacje lokalne — każda osobno, bo każdej może brakować. */
+const practical = [
+  { label: 'Wejście', value: location.entranceInfo, todo: 'TODO(klientka): jak trafić do lokalu, od której ulicy wejście, które piętro' },
+  { label: 'Parking', value: location.parkingInfo, todo: 'TODO(klientka): gdzie zaparkować, czy jest płatna strefa' },
+  { label: 'Dojazd', value: location.transitInfo, todo: 'TODO(klientka): komunikacja miejska, najbliższe przystanki' },
+  { label: 'Dostępność', value: location.accessibilityInfo, todo: 'TODO(klientka): schody, winda, dostępność dla osób z ograniczoną mobilnością' },
+];
+
+const title = `${location.city} — studio jogi, pilatesu i aerial yogi`;
+const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates, stretching i aerial yoga w kameralnych grupach. Zapisy online.`;
+---
+
+<Base title={title} description={metaDescription}>
+  <PageHeader
+    eyebrow="Studio"
+    title={location.city}
+    crumbs={[
+      { label: 'Studia', href: '/studia' },
+      { label: location.city, href: `/studia/${location.slug}` },
+    ]}
+  />
+
+  <Section as="div" size="sm">
+    <div class="studio__intro">
+      <div>
+        <p class="studio__address">{address}</p>
+        {
+          description ? (
+            <p class="studio__desc lead">{description}</p>
+          ) : (
+            <Todo label={home.studios.descriptions[location.slug]} block />
+          )
+        }
+
+        <div class="studio__actions">
+          <Button
+            href={booking.frontOfficeUrl}
+            newTab={booking.newTab}
+            source="location"
+            event="booking_cta_click"
+          >
+            {booking.label}
+          </Button>
+          <Button href={`/grafik?studio=${location.slug}`} variant="secondary" source="location">
+            Grafik tej lokalizacji
+          </Button>
+        </div>
+
+        <dl class="studio__contact">
+          <dt>Telefon</dt>
+          <dd><a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a></dd>
+          <dt>E-mail</dt>
+          <dd><a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a></dd>
+          <dt>Social media</dt>
+          <dd class="studio__social">
+            {
+              location.social.map((s) => (
+                <a href={s.url} target="_blank" rel="noopener me">
+                  {s.label}
+                </a>
+              ))
+            }
+          </dd>
+        </dl>
+      </div>
+
+      <MapEmbed address={address} label={`TAK MI MOVE ${location.city}`} />
+    </div>
+  </Section>
+
+  <Section size="lg" tone="alt">
+    <h2 class="studio__heading">Zanim przyjdziesz</h2>
+    <dl class="practical">
+      {
+        practical.map((item) => (
+          <div class="practical__row">
+            <dt>{item.label}</dt>
+            <dd>{item.value ? item.value : <Todo label={item.todo} block />}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </Section>
+
+  {
+    available.length > 0 && (
+      <Section size="lg">
+        <h2 class="studio__heading">Zajęcia w tym studiu</h2>
+        <ul class="studio__classes">
+          {available.map((entry) => (
+            <li>
+              <a href={`/zajecia/${entry.id}`} data-event="class_detail_view">
+                <Mark size="0.7rem" />
+                {entry.data.name}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="studio__note">
+          Dostępność poszczególnych zajęć w tej lokalizacji wymaga potwierdzenia — sprawdź
+          aktualny <a href={`/grafik?studio=${location.slug}`}>grafik</a>.
+        </p>
+      </Section>
+    )
+  }
+
+  <Faq scope={location.slug} />
+</Base>
+
+<style>
+  .studio__intro {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
+  .studio__address {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+  }
+
+  .studio__desc {
+    margin-block-start: var(--space-sm);
+  }
+
+  .studio__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-block-start: var(--space-lg);
+  }
+
+  .studio__contact {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2xs) var(--space-md);
+    margin-block-start: var(--space-lg);
+    padding-block-start: var(--space-md);
+    border-block-start: var(--hairline) solid var(--line);
+    font-size: var(--fs-small);
+  }
+
+  .studio__contact dt {
+    color: var(--text-muted);
+  }
+
+  .studio__contact dd {
+    margin: 0;
+  }
+
+  .studio__contact a {
+    color: var(--text-accent);
+    padding-block: 0.2rem;
+  }
+
+  .studio__social {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+  }
+
+  .studio__heading {
+    font-size: var(--fs-h2);
+    margin-block-end: var(--space-md);
+  }
+
+  .practical {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  .practical__row {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-block: var(--space-sm);
+    border-block-end: var(--hairline) solid var(--line);
+  }
+
+  .practical dt {
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .practical dd {
+    margin: 0;
+    max-width: var(--measure);
+  }
+
+  .studio__classes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-sm);
+  }
+
+  .studio__classes a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: 0.5em 1em;
+    border: var(--hairline) solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    color: var(--text);
+    text-decoration: none;
+    font-size: var(--fs-small);
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .studio__classes a:hover {
+    background: var(--surface-alt);
+  }
+
+  .studio__note {
+    margin-block-start: var(--space-md);
+    max-width: var(--measure);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .studio__note a {
+    color: var(--text-accent);
+  }
+
+  @media (min-width: 60rem) {
+    .studio__intro {
+      grid-template-columns: 1fr minmax(20rem, 28rem);
+      gap: var(--space-2xl);
+    }
+
+    .practical {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0 var(--space-2xl);
+    }
+  }
+</style>

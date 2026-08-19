@@ -1,0 +1,62 @@
+---
+/**
+ * Wzorzec sekcji. Brief §25 wymaga sekcji o RÓŻNEJ skali, nie ciągu
+ * identycznych bloków — stąd `tone` i `size` zamiast jednego domyślnego rytmu.
+ */
+interface Props {
+  tone?: 'default' | 'alt' | 'soft' | 'invert';
+  size?: 'sm' | 'md' | 'lg';
+  as?: 'section' | 'div' | 'article' | 'aside';
+  id?: string;
+  class?: string;
+  /** Zawartość na pełnej szerokości okna — np. duże kadry fotograficzne. */
+  bleed?: boolean;
+}
+
+const {
+  tone = 'default',
+  size = 'md',
+  as: Tag = 'section',
+  id,
+  class: className,
+  bleed = false,
+}: Props = Astro.props;
+---
+
+<Tag id={id} class:list={['section', `section--${tone}`, `section--${size}`, className]}>
+  {bleed ? <slot /> : <div class="container"><slot /></div>}
+</Tag>
+
+<style>
+  .section {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .section--alt {
+    background: var(--surface-alt);
+  }
+
+  .section--soft {
+    background: var(--surface-soft);
+  }
+
+  .section--invert {
+    background: var(--surface-invert);
+    color: var(--text-invert);
+    --text: var(--text-invert);
+    --text-muted: color-mix(in srgb, var(--bone) 68%, transparent);
+    --line: color-mix(in srgb, var(--bone) 22%, transparent);
+    --line-strong: color-mix(in srgb, var(--bone) 40%, transparent);
+  }
+
+  .section--sm {
+    padding-block: var(--space-lg);
+  }
+  .section--md {
+    padding-block: var(--space-xl);
+  }
+  .section--lg {
+    padding-block: var(--space-2xl);
+  }
+</style>

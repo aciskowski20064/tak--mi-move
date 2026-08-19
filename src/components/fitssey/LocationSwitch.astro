@@ -1,0 +1,99 @@
+---
+import { locations } from '~/data/site';
+import type { Studio } from '~/types';
+
+/**
+ * Przełącznik lokalizacji na podstronie grafiku (brief §15.3).
+ *
+ * Wybór zapisuje się w adresie (`?studio=gdansk`), więc link da się wysłać
+ * i wrócić do niego przyciskiem wstecz.
+ *
+ * WAŻNE: strona jest generowana statycznie, więc `Astro.url.searchParams`
+ * przy buildzie jest puste — serwer nie wie, którą lokalizację wybrano.
+ * Stan aktywny ustawia się więc po stronie przeglądarki. Bez JavaScriptu
+ * przełącznik nadal działa jako zwykłe linki, a strona pokazuje oba studia.
+ */
+interface Props {
+  current?: Studio;
+  basePath?: string;
+}
+
+const { current, basePath = '/grafik' } = Astro.props;
+---
+
+<nav class="switch" aria-label="Wybór lokalizacji" data-switch>
+  <a
+    href={basePath}
+    class="switch__option"
+    data-studio=""
+    aria-current={!current ? 'true' : undefined}
+    data-event="studio_location_select"
+  >
+    Oba studia
+  </a>
+  {
+    locations.map((location) => (
+      <a
+        href={`${basePath}?studio=${location.slug}`}
+        class="switch__option"
+        data-studio={location.slug}
+        aria-current={current === location.slug ? 'true' : undefined}
+        data-event="studio_location_select"
+      >
+        {location.city}
+      </a>
+    ))
+  }
+</nav>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-switch]');
+  if (nav) {
+    const selected = new URLSearchParams(location.search).get('studio') ?? '';
+    nav.querySelectorAll<HTMLAnchorElement>('[data-studio]').forEach((link) => {
+      if ((link.dataset.studio ?? '') === selected) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
+
+    // Kontekst lokalizacji renderowany jest dla obu studiów i odsłaniany tutaj.
+    document.querySelectorAll<HTMLElement>('[data-studio-context]').forEach((el) => {
+      el.hidden = (el.dataset.studioContext ?? '') !== selected;
+    });
+  }
+</script>
+
+<style>
+  .switch {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+    padding: var(--space-3xs);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    inline-size: fit-content;
+    max-inline-size: 100%;
+  }
+
+  .switch__option {
+    padding: 0.55em 1.1em;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+
+  .switch__option:hover {
+    color: var(--text);
+  }
+
+  /* Stan wybrany niesie też tekst dla czytników — nie tylko kolor (brief §44). */
+  .switch__option[aria-current='true'] {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+</style>

@@ -1,0 +1,149 @@
+---
+import Section from '~/components/ui/Section.astro';
+import Todo from '~/components/ui/Todo.astro';
+import { home } from '~/data/copy/home';
+import { copyOrNull } from '~/lib/copy';
+
+/**
+ * Brief §12.6 — sekcja krytyczna dla osób, które nigdy nie ćwiczyły.
+ * Brief wprost odradza budowanie quizu: „prosta, dobrze napisana sekcja
+ * może działać lepiej”. Trzy scenariusze, żadnej mechaniki.
+ */
+const t = home.choose;
+---
+
+<Section size="md" tone="soft">
+  <div class="choose">
+    <header class="choose__head">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2>{t.title}</h2>
+    </header>
+
+    <ul class="choose__list">
+      {
+        t.scenarios.map((scenario) => {
+          const hint = copyOrNull(scenario.hint);
+          return (
+            <li class="choose__item">
+              <a class="choose__link" href={scenario.href}>
+                {scenario.label}
+              </a>
+              {hint ? <p class="choose__hint">{hint}</p> : <Todo label={scenario.hint} block />}
+            </li>
+          );
+        })
+      }
+    </ul>
+
+    <p class="choose__contact">
+      {t.contactLead}{' '}
+      <a href="/kontakt" data-event="email_click">{t.contactLabel}</a>
+    </p>
+  </div>
+</Section>
+
+<style>
+  .choose {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .choose__head h2 {
+    margin-block-start: var(--space-2xs);
+    max-width: 24ch;
+    text-wrap: balance;
+  }
+
+  .choose__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .choose__item {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-block-start: var(--space-sm);
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .choose__link {
+    display: flex;
+    align-items: start;
+    min-block-size: 44px;
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    line-height: var(--lh-tight, 1.2);
+    color: var(--text);
+    text-decoration: none;
+    text-wrap: balance;
+  }
+
+  .choose__link:hover {
+    color: var(--text-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+  }
+
+  .choose__hint {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    max-width: var(--measure-narrow);
+  }
+
+  .choose__contact {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .choose__contact a {
+    color: var(--text-accent);
+  }
+
+  /**
+   * Nagłówek zostaje nad listą na pełnej szerokości, a trzy scenariusze
+   * dzielą cały kontener. Wcześniej nagłówek zabierał lewą kolumnę i na
+   * ekranie 1024 px na kartę zostawało 131 px — osiemnaście znaków w linii,
+   * czyli dziewięć linii łamanego tekstu. Trzy równe kolumny czytają się
+   * lepiej i wyglądają na uporządkowane, a nie poupychane z boku.
+   */
+  /* Trzy kolumny dopiero od 1024 px. Niżej każda z nich miałaby ~26 znaków
+     w linii — poniżej progu czytelności. Do tego momentu scenariusze stoją
+     jeden pod drugim na pełnej szerokości. */
+  @media (min-width: 64rem) {
+    .choose__list {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg) var(--space-xl);
+    }
+
+    /**
+     * Tytuły mają różną długość — jeden łamie się na dwie linie, inny na
+     * jedną. Bez tego opisy startowały w trzech różnych miejscach.
+     * `subgrid` wpina wiersze kart w siatkę listy, więc tytuł i opis leżą
+     * na wspólnych liniach niezależnie od długości tekstu.
+     */
+    .choose__list {
+      grid-template-rows: auto auto;
+    }
+
+    .choose__item {
+      grid-row: span 2;
+      grid-template-rows: subgrid;
+      row-gap: var(--space-2xs);
+    }
+
+    /* Przeglądarki bez subgrid: rezerwujemy dwie linie na tytuł. */
+    @supports not (grid-template-rows: subgrid) {
+      .choose__item {
+        grid-row: auto;
+        grid-template-rows: none;
+      }
+
+      .choose__link {
+        min-block-size: calc(2 * 1.2em);
+      }
+    }
+  }
+</style>

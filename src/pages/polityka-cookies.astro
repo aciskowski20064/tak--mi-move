@@ -1,0 +1,31 @@
+---
+import Base from '~/layouts/Base.astro';
+import PageHeader from '~/components/sections/PageHeader.astro';
+import Section from '~/components/ui/Section.astro';
+import Todo from '~/components/ui/Todo.astro';
+import { pages } from '~/data/copy/pages';
+
+/**
+ * Patrz uwaga w polityka-prywatnosci.astro — ta sama zasada (brief §49).
+ * Dokument musi wymienić usługi osadzone na stronie: Fitssey (grafik
+ * i rezerwacje) oraz mapy Google (ładowane dopiero po kliknięciu).
+ */
+const t = pages.legal.cookies;
+---
+
+<Base title={t.meta.title} description={t.meta.description} noindex>
+  <PageHeader title={t.title} crumbs={[{ label: t.title, href: '/polityka-cookies' }]} />
+
+  <Section size="md">
+    <p class="legal__notice">{pages.legal.notice}</p>
+    <Todo label={t.body} block />
+  </Section>
+</Base>
+
+<style>
+  .legal__notice {
+    max-width: var(--measure);
+    margin-block-end: var(--space-md);
+    color: var(--text-muted);
+  }
+</style>

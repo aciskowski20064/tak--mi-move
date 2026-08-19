@@ -1,0 +1,130 @@
+---
+import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
+import Todo from '~/components/ui/Todo.astro';
+import { booking } from '~/data/site';
+import { home } from '~/data/copy/home';
+import { isPlaceholder, showPlaceholders } from '~/lib/copy';
+
+/**
+ * Brief §12.7 i §18. To najwyżej konwertująca treść dla początkujących —
+ * odpowiada na realną obawę „czy sobie poradzę”.
+ *
+ * Kroki bez potwierdzonej treści nie renderują się w produkcji, a numeracja
+ * przelicza się sama, więc lista nigdy nie ma dziury.
+ */
+const t = home.firstVisit;
+const steps = t.steps.filter((step) => !isPlaceholder(step.text));
+// W produkcji lista braków musi zniknąć RAZEM z elementami <li>. Samo ukrycie
+// zawartości przez <Todo> zostawiało pusty wiersz z kreską na dole listy.
+const missing = showPlaceholders ? t.steps.filter((step) => isPlaceholder(step.text)) : [];
+---
+
+<Section size="lg" tone="invert">
+  <div class="visit">
+    <div class="visit__head">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2>{t.title}</h2>
+
+      <div class="visit__actions">
+        <Button
+          href={booking.frontOfficeUrl}
+          newTab={booking.newTab}
+          source="first-visit"
+          event="first_visit_cta_click"
+        >
+          {t.ctaLabel}
+        </Button>
+        <a class="visit__more" href="/pierwsza-wizyta">{t.moreLabel}</a>
+      </div>
+    </div>
+
+    <ol class="visit__steps">
+      {
+        steps.map((step, index) => (
+          <li class="visit__step">
+            <span class="visit__num">{String(index + 1).padStart(2, '0')}</span>
+            <span>{step.text}</span>
+          </li>
+        ))
+      }
+      {
+        missing.map((step, index) => (
+          <li class="visit__step visit__step--todo">
+            <span class="visit__num">{String(steps.length + index + 1).padStart(2, '0')}</span>
+            <Todo label={step.text} block />
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</Section>
+
+<style>
+  .visit {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .visit__head h2 {
+    margin-block-start: var(--space-2xs);
+    max-width: 16ch;
+  }
+
+  .visit__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-md);
+    margin-block-start: var(--space-lg);
+  }
+
+  .visit__more {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    font-size: var(--fs-small);
+    color: var(--accent);
+    padding-block: 0.25rem;
+  }
+
+  .visit__steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0;
+  }
+
+  .visit__step {
+    display: grid;
+    grid-template-columns: 3ch 1fr;
+    gap: var(--space-md);
+    padding-block: var(--space-sm);
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  .visit__step:last-child {
+    border-block-end: var(--hairline) solid var(--line);
+  }
+
+  .visit__step--todo {
+    grid-template-columns: 1fr;
+  }
+
+  .visit__num {
+    font-family: var(--font-text);
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    color: var(--accent);
+    padding-block-start: 0.35em;
+  }
+
+  @media (min-width: 60rem) {
+    .visit {
+      grid-template-columns: minmax(16rem, 24rem) 1fr;
+      gap: var(--space-2xl);
+      align-items: start;
+    }
+  }
+</style>

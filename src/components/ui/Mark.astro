@@ -1,0 +1,31 @@
+---
+/**
+ * Symbol marki — organiczna kropla z litery „O” w słowie MOVE.
+ *
+ * Ścieżki obrysowane programowo z logo (Moore-neighbor tracing + RDP + Catmull-Rom),
+ * zgodność z oryginałem 93,5% IoU. To jedyny element dekoracyjny w całym serwisie —
+ * zastępuje bibliotekę ikon (brief §8, §50).
+ *
+ * `ring`  — pierścień z licznikiem, do znaczników i akcentów.
+ * `solid` — pełna sylwetka, do masek kadrów fotograficznych.
+ */
+import ringSvg from '~/assets/brand/mark.svg?raw';
+import solidSvg from '~/assets/brand/mark-solid.svg?raw';
+
+interface Props {
+  variant?: 'ring' | 'solid';
+  size?: string;
+  class?: string;
+}
+
+const { variant = 'ring', size = '1em', class: className } = Astro.props;
+
+const svg = (variant === 'ring' ? ringSvg : solidSvg)
+  .trim()
+  .replace(
+    '<svg',
+    `<svg class="${className ?? ''}" style="inline-size:${size};block-size:${size};flex:none" aria-hidden="true" focusable="false"`,
+  );
+---
+
+<Fragment set:html={svg} />

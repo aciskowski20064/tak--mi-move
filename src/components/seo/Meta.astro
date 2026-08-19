@@ -1,0 +1,52 @@
+---
+import { site, DEMO_MODE } from '~/data/site';
+
+/**
+ * Brief §34: unikalny title i description dla KAŻDEJ podstrony.
+ * Komponent celowo nie ma domyślnego opisu — brak `description`
+ * ma być widoczny jako błąd na etapie budowy, a nie cicho wypełniony.
+ */
+interface Props {
+  title: string;
+  description: string;
+  /** Ścieżka do obrazu OG w /public. Domyślnie sygnatura marki. */
+  ogImage?: string;
+  noindex?: boolean;
+}
+
+const { title, description, ogImage = site.ogImage, noindex = false } = Astro.props;
+
+const fullTitle = title === site.name ? site.name : `${title} | ${site.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? site.url);
+const ogUrl = ogImage ? new URL(ogImage, Astro.site ?? site.url) : undefined;
+
+/** W trybie demo blokada indeksowania obowiązuje na każdej podstronie. */
+const blockIndexing = noindex || DEMO_MODE;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical.href} />
+{blockIndexing && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:locale" content={site.locale} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical.href} />
+{
+  ogUrl && (
+    <>
+      <meta property="og:image" content={ogUrl.href} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={`${site.name} — ${site.tagline}`} />
+    </>
+  )
+}
+
+<meta name="twitter:card" content={ogUrl ? 'summary_large_image' : 'summary'} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+{ogUrl && <meta name="twitter:image" content={ogUrl.href} />}

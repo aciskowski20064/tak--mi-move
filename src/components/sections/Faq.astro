@@ -1,0 +1,145 @@
+---
+import { getCollection, render } from 'astro:content';
+import Section from '~/components/ui/Section.astro';
+import Todo from '~/components/ui/Todo.astro';
+import { home } from '~/data/copy/home';
+
+/**
+ * Brief §12.13. Odpowiedzi muszą być zatwierdzone przez właścicielkę —
+ * stąd twardy filtr `approved`. To samo źródło zasili później dane
+ * strukturalne FAQPage, które wolno wystawiać wyłącznie dla pytań
+ * faktycznie widocznych na stronie (§35).
+ *
+ * Akordeon na natywnych <details> — zero JavaScriptu, działa z klawiatury
+ * i czytnikami ekranu bez dodatkowej obsługi.
+ */
+interface Props {
+  scope?: 'all' | 'gdansk' | 'pruszcz-gdanski';
+  limit?: number;
+}
+
+const { scope = 'all', limit = 8 } = Astro.props;
+
+const entries = await getCollection('faq', ({ data }) => data.approved);
+const items = await Promise.all(
+  entries
+    .filter((entry) => scope === 'all' || entry.data.scope === 'all' || entry.data.scope === scope)
+    .sort((a, b) => a.data.order - b.data.order)
+    .slice(0, limit)
+    .map(async (entry) => ({ entry, Content: (await render(entry)).Content })),
+);
+
+const t = home.faq;
+import { showPlaceholders } from '~/lib/copy';
+const isDev = showPlaceholders;
+---
+
+{
+  (items.length > 0 || isDev) && (
+    <Section size="lg" tone="alt" id="faq">
+      <div class="faq">
+        <header class="faq__head">
+          <p class="eyebrow">{t.eyebrow}</p>
+          <h2>{t.title}</h2>
+          <p class="faq__more">
+            <a href="/kontakt">{t.moreLabel}</a>
+          </p>
+        </header>
+
+        {items.length > 0 ? (
+          <div class="faq__list">
+            {items.map(({ entry, Content }) => (
+              <details class="faq__item" name="faq">
+                <summary class="faq__question">{entry.data.question}</summary>
+                <div class="faq__answer">
+                  <Content />
+                </div>
+              </details>
+            ))}
+          </div>
+        ) : (
+          <Todo
+            label="TODO(klientka): odpowiedzi na 10 pytań z briefu §12.13 — renderujemy tylko zatwierdzone, więc sekcja jest teraz pusta"
+            block
+          />
+        )}
+      </div>
+    </Section>
+  )
+}
+
+<style>
+  .faq {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .faq__head h2 {
+    margin-block-start: var(--space-2xs);
+    max-width: 14ch;
+  }
+
+  .faq__more {
+    margin-block-start: var(--space-md);
+    font-size: var(--fs-small);
+  }
+
+  .faq__more a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    padding-block: 0.25rem;
+    color: var(--text-accent);
+  }
+
+  .faq__list {
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .faq__item {
+    border-block-end: var(--hairline) solid var(--line);
+  }
+
+  .faq__question {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-block: var(--space-sm);
+    cursor: pointer;
+    font-size: var(--fs-body);
+    list-style: none;
+  }
+
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__question::after {
+    content: '+';
+    flex: none;
+    color: var(--accent-strong);
+    font-size: 1.2em;
+    line-height: 1;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .faq__item[open] .faq__question::after {
+    content: '−';
+  }
+
+  .faq__answer {
+    padding-block-end: var(--space-md);
+    max-width: var(--measure);
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  @media (min-width: 60rem) {
+    .faq {
+      grid-template-columns: minmax(16rem, 22rem) 1fr;
+      gap: var(--space-2xl);
+      align-items: start;
+    }
+  }
+</style>

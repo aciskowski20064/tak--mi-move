@@ -1,0 +1,234 @@
+---
+import Logo from '~/components/ui/Logo.astro';
+import Button from '~/components/ui/Button.astro';
+import SiteNav from '~/components/layout/SiteNav.astro';
+import { booking, site } from '~/data/site';
+
+/**
+ * Brief §12.1: header nie może być wysoki ani zapchany małymi linkami,
+ * a CTA rezerwacji musi być dostępne bez szukania — także na mobile,
+ * dlatego przycisk zostaje widoczny obok hamburgera, a nie chowa się w menu.
+ */
+const currentPath = Astro.url.pathname;
+---
+
+<div id="header-sentinel" aria-hidden="true"></div>
+
+<header class="header" data-header>
+  <div class="header__inner container">
+    <a href="/" class="header__brand" aria-label={`${site.name} — strona główna`}>
+      <Logo width={76} />
+    </a>
+
+    <nav class="header__nav" aria-label="Nawigacja główna">
+      <SiteNav variant="desktop" currentPath={currentPath} />
+    </nav>
+
+    <div class="header__actions">
+      <Button href={booking.frontOfficeUrl} newTab={booking.newTab} source="header" event="booking_cta_click">
+        {booking.label}
+      </Button>
+
+      <button
+        type="button"
+        class="header__toggle"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+      >
+        <span class="header__toggle-bars" aria-hidden="true"><span></span><span></span></span>
+        <span class="visually-hidden">Menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div id="mobile-menu" class="menu" data-menu hidden>
+  <nav class="menu__inner container" aria-label="Nawigacja mobilna">
+    <SiteNav variant="mobile" currentPath={currentPath} />
+
+    <div class="menu__foot">
+      <a href={`tel:${site.phone}`} class="menu__contact" data-event="phone_click">
+        {site.phoneDisplay}
+      </a>
+      <a href={`mailto:${site.email}`} class="menu__contact" data-event="email_click">
+        {site.email}
+      </a>
+    </div>
+  </nav>
+</div>
+
+<style>
+  #header-sentinel {
+    position: absolute;
+    inset-block-start: 0;
+    block-size: 1px;
+    inline-size: 100%;
+    pointer-events: none;
+  }
+
+  .header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: var(--z-header);
+    background: var(--surface);
+    border-block-end: var(--hairline) solid transparent;
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  /* Kreska pojawia się dopiero po rozpoczęciu scrollowania (brief §12.1). */
+  .header[data-stuck] {
+    border-block-end-color: var(--line);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding-block: var(--space-2xs);
+    min-block-size: calc(var(--header-h) - var(--space-2xs) * 2);
+  }
+
+  .header__brand {
+    display: block;
+    flex: none;
+    line-height: 0;
+  }
+
+  .header__nav {
+    display: none;
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .header__toggle {
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    padding: 0;
+    background: none;
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-pill);
+    color: var(--text);
+  }
+
+  .header__toggle-bars {
+    display: grid;
+    gap: 5px;
+    inline-size: 1.05rem;
+  }
+
+  .header__toggle-bars span {
+    display: block;
+    block-size: 1px;
+    background: currentColor;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .header__toggle[aria-expanded='true'] .header__toggle-bars span:first-child {
+    transform: translateY(3px) rotate(45deg);
+  }
+
+  .header__toggle[aria-expanded='true'] .header__toggle-bars span:last-child {
+    transform: translateY(-3px) rotate(-45deg);
+  }
+
+  /* ——— panel mobilny ——— */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-menu);
+    padding-block-start: var(--header-h);
+    background: var(--surface);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .menu[hidden] {
+    display: none;
+  }
+
+  .menu__inner {
+    display: grid;
+    gap: var(--space-lg);
+    padding-block: var(--space-lg) var(--space-xl);
+  }
+
+  .menu__foot {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-block-start: var(--space-md);
+    border-block-start: var(--hairline) solid var(--line);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .menu__contact {
+    text-decoration: none;
+  }
+
+  .menu__contact:hover {
+    text-decoration: underline;
+  }
+
+  @media (min-width: 60rem) {
+    .header__nav {
+      display: block;
+    }
+
+    .header__toggle,
+    .menu {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const sentinel = document.getElementById('header-sentinel');
+
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      if (open) menu.querySelector<HTMLAnchorElement>('a')?.focus();
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    // Menu zamyka się po przejściu w widok desktopowy, żeby blokada scrolla
+    // nie została na dokumencie po obrocie urządzenia.
+    const wide = window.matchMedia('(min-width: 60rem)');
+    wide.addEventListener('change', (e) => {
+      if (e.matches) setOpen(false);
+    });
+  }
+
+  // Stan „przyklejony” liczony obserwatorem, nie nasłuchem scrolla.
+  if (header && sentinel) {
+    new IntersectionObserver(
+      ([entry]) => {
+        if (entry) header.toggleAttribute('data-stuck', !entry.isIntersecting);
+      },
+      { threshold: 0 },
+    ).observe(sentinel);
+  }
+</script>

@@ -1,0 +1,75 @@
+---
+import { showPlaceholders } from '~/lib/copy';
+
+/**
+ * Znacznik brakującej treści.
+ *
+ * Widoczny w trybie deweloperskim ORAZ w wersji poglądowej (`DEMO_MODE`).
+ * W wersji poglądowej to celowe: klientka ma zobaczyć, gdzie znajdzie się
+ * jej treść i co dokładnie trzeba dostarczyć — układ jest wtedy kompletny,
+ * a lista braków czytelna bez osobnego dokumentu.
+ *
+ * Po `DEMO_MODE = false` cały blok znika razem ze stylami, więc brief §50
+ * („żadnych placeholderów na produkcji”) zostaje dotrzymany.
+ */
+interface Props {
+  /** Czego brakuje — krótko, w formie zadania dla klientki. */
+  label: string;
+  block?: boolean;
+}
+
+const { label, block = false } = Astro.props;
+
+/** Etykieta z konwencji `TODO(kto): treść` — pokazujemy samą treść. */
+const text = label.replace(/^TODO\([^)]*\):\s*/, '');
+
+const visible = showPlaceholders;
+---
+
+{
+  visible && (
+    <span class:list={['todo', block && 'todo--block']} role="note">
+      <span class="todo__tag">Do uzupełnienia</span>
+      <span class="todo__text">{text}</span>
+    </span>
+  )
+}
+
+<style>
+  /* Kolory liczone z `currentColor`, żeby znacznik działał tak samo
+     na jasnej sekcji, jak na ciemnej (sekcja „Pierwsza wizyta”). */
+  .todo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6em;
+    padding: 0.55em 0.85em;
+    border: 1px dashed color-mix(in srgb, currentColor 40%, transparent);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, currentColor 6%, transparent);
+    color: inherit;
+    opacity: 0.85;
+    font-family: var(--font-text);
+    font-size: var(--fs-caption);
+    line-height: 1.45;
+    text-transform: none;
+    letter-spacing: 0;
+    max-width: var(--measure);
+  }
+
+  .todo--block {
+    display: flex;
+  }
+
+  .todo__tag {
+    flex: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.82em;
+    opacity: 0.85;
+  }
+
+  .todo__text {
+    font-style: italic;
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+import { Image } from 'astro:assets';
+import wordmarkDark from '~/assets/brand/logo-wordmark-dark.png';
+import wordmarkLight from '~/assets/brand/logo-wordmark-light.png';
+import { site } from '~/data/site';
+
+/**
+ * UWAGA — materiał tymczasowy.
+ * Wordmark odzyskany z dostarczonego JPG-a przez wyliczenie kanału alfa
+ * z luminancji (1206 px źródła, przycięty do zawartości). Jakość wystarcza
+ * do buildu i podglądu, ale PRZED PUBLIKACJĄ trzeba go zastąpić plikiem
+ * wektorowym od klientki albo naszą wektoryzacją zatwierdzoną przez nią.
+ * Patrz docs/content-inventory.md §6.
+ */
+interface Props {
+  tone?: 'dark' | 'light';
+  width?: number;
+  class?: string;
+}
+
+const { tone = 'dark', width = 76, class: className } = Astro.props;
+const source = tone === 'light' ? wordmarkLight : wordmarkDark;
+---
+
+<Image
+  src={source}
+  alt={`${site.name} — logo`}
+  width={width}
+  densities={[1, 2]}
+  loading="eager"
+  class:list={['logo', className]}
+/>
+
+<style>
+  .logo {
+    height: auto;
+  }
+</style>

@@ -1,0 +1,155 @@
+---
+import { getCollection } from 'astro:content';
+import Section from '~/components/ui/Section.astro';
+import Mark from '~/components/ui/Mark.astro';
+import Todo from '~/components/ui/Todo.astro';
+import { home } from '~/data/copy/home';
+import { copyOrNull } from '~/lib/copy';
+import { locations } from '~/data/site';
+
+/**
+ * Brief §12.5 i §13: NIE ciąg identycznych kart z tym samym zdjęciem
+ * i jednozdaniowym opisem. Układ edytorialny — lista z wyraźną typografią,
+ * cienkimi liniami i informacją, gdzie dane zajęcia się odbywają.
+ *
+ * Opisy pochodzą z kolekcji treści. Dopóki zespół ich nie napisze,
+ * wiersz pokazuje samą nazwę i lokalizacje — nic nie jest dogenerowywane.
+ */
+const entries = await getCollection('classes', ({ data }) => import.meta.env.DEV || !data.draft);
+const classes = entries.sort((a, b) => a.data.order - b.data.order);
+
+const cityName = (slug: string) => locations.find((l) => l.slug === slug)?.city ?? slug;
+
+const t = home.classes;
+---
+
+{
+  classes.length > 0 && (
+    <Section size="lg" tone="alt" id="zajecia">
+      <header class="classes__head">
+        <p class="eyebrow">{t.eyebrow}</p>
+        <h2>{t.title}</h2>
+        <p class="lead">{t.lead}</p>
+      </header>
+
+      <ol class="classes__list">
+        {classes.map((entry, index) => {
+          const description = copyOrNull(entry.data.shortDescription);
+
+          return (
+            <li class="class-row">
+              <a class="class-row__link" href={`/zajecia/${entry.id}`} data-event="class_detail_view">
+                <span class="class-row__index">{String(index + 1).padStart(2, '0')}</span>
+
+                <span class="class-row__body">
+                  <span class="class-row__name">{entry.data.name}</span>
+                  {description && <span class="class-row__desc">{description}</span>}
+                  <span class="class-row__where">
+                    {entry.data.locationSlugs.map((slug) => cityName(slug)).join(' · ')}
+                  </span>
+                </span>
+
+                <Mark size="0.9rem" class="class-row__mark" />
+              </a>
+
+              {!description && <Todo label={entry.data.shortDescription} block />}
+            </li>
+          );
+        })}
+      </ol>
+
+      <p class="classes__all">
+        <a href="/zajecia">{t.allLabel}</a>
+      </p>
+    </Section>
+  )
+}
+
+<style>
+  .classes__head {
+    max-width: var(--container-text);
+    margin-block-end: var(--space-lg);
+  }
+
+  .classes__head h2 {
+    margin-block: var(--space-2xs) var(--space-sm);
+  }
+
+  .classes__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-block-start: var(--hairline) solid var(--line-strong);
+  }
+
+  .class-row {
+    border-block-end: var(--hairline) solid var(--line);
+  }
+
+  .class-row__link {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+    padding-block: var(--space-md);
+    text-decoration: none;
+    color: inherit;
+    transition: color var(--dur) var(--ease);
+  }
+
+  .class-row__link:hover {
+    color: var(--text-accent);
+  }
+
+  .class-row__index {
+    font-family: var(--font-text);
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    color: var(--text-muted);
+  }
+
+  .class-row__body {
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .class-row__name {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    letter-spacing: 0.02em;
+  }
+
+  .class-row__desc {
+    max-width: var(--measure);
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .class-row__where {
+    font-size: var(--fs-caption);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .class-row__link :global(.class-row__mark) {
+    color: var(--accent);
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .class-row__link:hover :global(.class-row__mark) {
+    transform: translateX(0.25rem);
+  }
+
+  .classes__all {
+    margin-block-start: var(--space-lg);
+    font-size: var(--fs-small);
+  }
+
+  .classes__all a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    color: var(--text-accent);
+  }
+</style>

@@ -1,0 +1,38 @@
+---
+import Base from '~/layouts/Base.astro';
+import Hero from '~/components/sections/Hero.astro';
+import ValueStrip from '~/components/sections/ValueStrip.astro';
+import StudiosSplit from '~/components/sections/StudiosSplit.astro';
+import ClassesEditorial from '~/components/sections/ClassesEditorial.astro';
+import ChooseHelp from '~/components/sections/ChooseHelp.astro';
+import FirstVisitSteps from '~/components/sections/FirstVisitSteps.astro';
+import Atmosphere from '~/components/sections/Atmosphere.astro';
+import Team from '~/components/sections/Team.astro';
+import Reviews from '~/components/sections/Reviews.astro';
+import Faq from '~/components/sections/Faq.astro';
+import FinalCta from '~/components/sections/FinalCta.astro';
+import { home } from '~/data/copy/home';
+
+/**
+ * Kolejność sekcji wg briefu §54. Strona główna jest skrótem marki,
+ * nie katalogiem wszystkich treści (§12).
+ *
+ * Sekcje Zespół, Opinie i FAQ są w pełni zbudowane, ale renderują się dopiero,
+ * gdy w kolekcjach treści pojawią się dane z potwierdzoną zgodą i akceptacją.
+ * Na produkcji bez tych danych po prostu ich nie ma.
+ */
+---
+
+<Base title={home.meta.title} description={home.meta.description}>
+  <Hero />
+  <ValueStrip />
+  <StudiosSplit />
+  <ClassesEditorial />
+  <ChooseHelp />
+  <FirstVisitSteps />
+  <Atmosphere />
+  <Team />
+  <Reviews />
+  <Faq />
+  <FinalCta />
+</Base>
