@@ -14,6 +14,24 @@
   --clay-deep: #8f4c3b;
   --clay-wash: #f1ded7;
 
+  /* Szałwia — drugi akcent marki, zmierzona pikselowo z szablonu pod social
+     media (`tak_mi_move_studio_zielen.jpg`). Klientka wskazuje dwa kolory
+     dodatkowe, terakotę i szałwię, przy kremie jako wiodącym.
+
+     Trzy siły dokładnie jak przy glinie:
+       --sage       tło pełne i znaczniki — espresso na nim daje 6.03 (glina 6.19)
+       --sage-deep  tekst i akcenty — 5.75 na --bone, 4.75 na --sand
+                    (clay-deep ma 5.85 i 4.84, czyli równa waga)
+       --sage-wash  tło sekcji — ta sama proporcja co --clay-wash, 21% akcentu
+                    w kremie, stąd bliźniacze kontrasty: 11.53 wobec 11.42
+
+     UWAGA: szałwia i glina mają niemal identyczną jasność (kontrast 1.03),
+     a przy daltonizmie czerwono-zielonym stają się nierozróżnialne (1.09).
+     Nigdy nie kodować nimi samego znaczenia — zawsze z podpisem lub kształtem. */
+  --sage: #90aba2;
+  --sage-deep: #54635e;
+  --sage-wash: #e1e4db;
+
   --bone: #f7f4eb; /* kremowe bluzy zespołu */
   --sand: #e8ded0;
   --oak: #c2a98f; /* podłoga jodełka */
@@ -27,12 +45,14 @@
   --surface: var(--bone);
   --surface-alt: var(--sand);
   --surface-soft: var(--clay-wash);
+  --surface-sage: var(--sage-wash);
   --surface-invert: var(--espresso);
 
   --text: var(--espresso);
   --text-muted: var(--stone);
   --text-invert: var(--bone);
   --text-accent: var(--clay-deep); /* 5.4:1 na --bone */
+  --text-accent-sage: var(--sage-deep); /* 5.75:1 na --bone, 4.75 na --sand */
 
   --line: color-mix(in srgb, var(--oak) 45%, transparent);
   --line-strong: var(--oak);
@@ -40,6 +60,10 @@
 
   --accent: var(--clay);
   --accent-strong: var(--clay-deep);
+  --accent-sage: var(--sage);
+  --accent-sage-strong: var(--sage-deep);
+  /* Espresso na --sage daje 6.03; biel, tak samo jak na glinie, jest zakazana. */
+  --on-accent-sage: var(--espresso);
   /* CTA: tło --accent + tekst --espresso = 6.2:1.
      Biel na --clay daje 2.4:1 i jest zakazana. */
   --on-accent: var(--espresso);

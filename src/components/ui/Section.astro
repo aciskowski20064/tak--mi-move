@@ -4,7 +4,8 @@
  * identycznych bloków — stąd `tone` i `size` zamiast jednego domyślnego rytmu.
  */
 interface Props {
-  tone?: 'default' | 'alt' | 'soft' | 'invert';
+  /** `soft` to wash gliny, `sage` — wash szałwii. Dwa akcenty marki, równa waga. */
+  tone?: 'default' | 'alt' | 'soft' | 'sage' | 'invert';
   size?: 'sm' | 'md' | 'lg';
   as?: 'section' | 'div' | 'article' | 'aside';
   id?: string;
@@ -39,6 +40,17 @@ const {
 
   .section--soft {
     background: var(--surface-soft);
+  }
+
+  /* Sekcja szałwiowa podmienia całą rodzinę akcentu, tak jak `invert`
+     podmienia kolory tekstu. Dzięki temu komponent w środku nie musi
+     wiedzieć, w jakim tonie stoi — bierze --accent i dostaje szałwię. */
+  .section--sage {
+    background: var(--surface-sage);
+    --accent: var(--accent-sage);
+    --accent-strong: var(--accent-sage-strong);
+    --text-accent: var(--text-accent-sage);
+    --on-accent: var(--on-accent-sage);
   }
 
   .section--invert {
