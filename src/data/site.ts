@@ -60,19 +60,15 @@ export const booking = {
   widgetScript: null as string | null,
 } as const;
 
-/**
- * Formularz kontaktowy.
+/*
+ * Formularza kontaktowego nie ma — decyzja klientki z 20.08.2026.
  *
- * Briefy są tu rozbieżne: dokument projektowy §6.5 wymaga formularza,
- * analiza §19 dopuszcza go „tylko wtedy, gdy ktoś będzie go obsługiwać”.
- * Rozstrzygnięcie: formularz jest zbudowany, ale renderuje się dopiero po
- * ustawieniu `endpoint`. Formularz, który po cichu gubi wiadomości, jest
- * gorszy niż jego brak — a klientka i tak musi zdecydować, kto go obsługuje.
+ * Briefy były tu rozbieżne: dokument projektowy §6.5 wymagał formularza,
+ * analiza §19 dopuszczała go „tylko wtedy, gdy ktoś będzie go obsługiwać”.
+ * Rozstrzygnięte na korzyść tej drugiej: kontakt idzie telefonem i mailem,
+ * oba wprost na /kontakt i w stopce. Formularz, którego nikt nie odbiera,
+ * jest gorszy niż jego brak.
  */
-export const contactForm = {
-  /** TODO: adres usługi wysyłkowej (Formspree / Resend / API route). */
-  endpoint: null as string | null,
-};
 
 export const locations: StudioLocation[] = [
   {

@@ -4,9 +4,8 @@ import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
 import Mark from '~/components/ui/Mark.astro';
-import Todo from '~/components/ui/Todo.astro';
 import MapEmbed from '~/components/ui/MapEmbed.astro';
-import { locations, formatAddress, site, booking, contactForm } from '~/data/site';
+import { locations, formatAddress, site, booking } from '~/data/site';
 import { pages } from '~/data/copy/pages';
 
 /**
@@ -94,58 +93,10 @@ const t = pages.contact;
     </div>
   </Section>
 
-  {
-    contactForm.endpoint ? (
-      <Section size="lg">
-        <form class="form" method="post" action={contactForm.endpoint}>
-          <h2 class="contact__heading">Napisz do nas</h2>
-
-          <p class="form__row">
-            <label for="name">Imię</label>
-            <input id="name" name="name" type="text" required autocomplete="given-name" />
-          </p>
-
-          <p class="form__row">
-            <label for="email">E-mail lub telefon</label>
-            <input id="email" name="contact" type="text" required autocomplete="email" />
-          </p>
-
-          <p class="form__row">
-            <label for="studio">Której lokalizacji dotyczy pytanie?</label>
-            <select id="studio" name="studio">
-              <option value="">Nie wiem / obu</option>
-              {locations.map((l) => <option value={l.slug}>{l.city}</option>)}
-            </select>
-          </p>
-
-          <p class="form__row">
-            <label for="message">Wiadomość</label>
-            <textarea id="message" name="message" rows="5" required />
-          </p>
-
-          {/* Pułapka antyspamowa — pole niewidoczne dla człowieka. */}
-          <p class="form__trap" aria-hidden="true">
-            <label for="company">Nie wypełniaj tego pola</label>
-            <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
-          </p>
-
-          <p class="form__consent">
-            Wysyłając wiadomość, zgadzasz się na kontakt zwrotny.
-            Zasady opisuje <a href="/polityka-prywatnosci">polityka prywatności</a>.
-          </p>
-
-          <button type="submit" class="form__submit">Wyślij wiadomość</button>
-        </form>
-      </Section>
-    ) : (
-      <Section size="sm">
-        <Todo
-          label="TODO(decyzja): formularz kontaktowy jest zbudowany, ale nie ma usługi wysyłkowej ani osoby, która go obsłuży — ustaw contactForm.endpoint w src/data/site.ts, żeby go włączyć"
-          block
-        />
-      </Section>
-    )
-  }
+  {/* Formularza tu nie ma i nie będzie — decyzja z 20.08.2026. Kontakt idzie
+      telefonem i mailem, oba wprost na stronie i klikalne. Formularz stał
+      zbudowany, ale wyłączony brakiem endpointu; czekanie na usługę wysyłkową
+      i osobę, która miałaby go obsługiwać, przestało mieć sens. */}
 </Base>
 
 <style>
@@ -178,9 +129,15 @@ const t = pages.contact;
     gap: var(--space-3xs);
   }
 
+  /* Telefon i mail są od 20.08.2026 jedynym kanałem kontaktu — formularza
+     nie ma. Dlatego dostają pełne pole dotyku 44 px, tak jak w stopce.
+     Wcześniej miały 34 i 29 px, czyli poniżej progu wygodnego kliknięcia
+     na telefonie, a stamtąd idzie większość ruchu. */
   .route__direct a {
     color: var(--text-accent);
-    padding-block: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
     width: fit-content;
   }
 
@@ -217,8 +174,9 @@ const t = pages.contact;
 
   .contact-studio__address a {
     color: var(--text-accent);
-    display: inline-block;
-    padding-block: 0.15rem;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
   }
 
   .contact-studio__social {
@@ -244,60 +202,6 @@ const t = pages.contact;
   .contact-studio__more a {
     color: var(--text-accent);
     padding-block: 0.25rem;
-  }
-
-  .form {
-    display: grid;
-    gap: var(--space-md);
-    max-width: 34rem;
-  }
-
-  .form__row {
-    display: grid;
-    gap: var(--space-3xs);
-  }
-
-  .form__row label {
-    font-size: var(--fs-small);
-    color: var(--text-muted);
-  }
-
-  .form__row input,
-  .form__row select,
-  .form__row textarea {
-    padding: 0.7em 0.9em;
-    border: var(--hairline) solid var(--line-strong);
-    border-radius: var(--radius-sm);
-    background: var(--surface);
-    font-size: var(--fs-small);
-  }
-
-  .form__trap {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-
-  .form__consent {
-    font-size: var(--fs-caption);
-    color: var(--text-muted);
-  }
-
-  .form__consent a {
-    color: var(--text-accent);
-  }
-
-  .form__submit {
-    justify-self: start;
-    padding: 0.72em 1.5em;
-    border: 0;
-    border-radius: var(--radius-pill);
-    background: var(--accent);
-    color: var(--on-accent);
-    font-size: var(--fs-small);
-    font-weight: 500;
   }
 
   @media (min-width: 48rem) {
