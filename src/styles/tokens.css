@@ -18,12 +18,22 @@
      media (`tak_mi_move_studio_zielen.jpg`). Klientka wskazuje dwa kolory
      dodatkowe, terakotę i szałwię, przy kremie jako wiodącym.
 
-     Trzy siły dokładnie jak przy glinie:
-       --sage       tło pełne i znaczniki — espresso na nim daje 6.03 (glina 6.19)
-       --sage-deep  tekst i akcenty — 5.75 na --bone, 4.75 na --sand
-                    (clay-deep ma 5.85 i 4.84, czyli równa waga)
-       --sage-wash  tło sekcji — ta sama proporcja co --clay-wash, 21% akcentu
-                    w kremie, stąd bliźniacze kontrasty: 11.53 wobec 11.42
+     Decyzja klientki z 20.08.2026 o rozłożeniu palety: kremy niosą całą
+     stronę, terakota zostaje przy CTA, a szałwia pojawia się w JEDNYM
+     miejscu — w stopce. Dlatego z całej rodziny w użyciu jest dziś tylko
+     --sage-darkest. Pozostałe zostają udokumentowane, bo to zmierzone
+     wartości marki i wracają, gdyby zieleń miała dostać więcej miejsca.
+
+       --sage          #90aba2  wartość wprost z szablonu
+       --sage-deep     #54635e  tekst i akcenty — 5.75 na --bone, 4.75 na --sand
+       --sage-wash     #e1e4db  tło sekcji — 21% akcentu w kremie, jak --clay-wash
+       --sage-darkest  #2a4139  tło stopki, jedyne użycie
+
+     Jasność --sage-darkest jest ograniczona od góry przez odsyłacz „Umów
+     wizytę", który w stopce jest tekstem w kolorze --accent: jaśniejsze
+     zielenie zbijały glinę poniżej AA. Przy tym ograniczeniu to najbardziej
+     nasycony odcień, jaki przechodzi — glina 4.56, tekst przygaszony 5.57,
+     krem 9.94.
 
      UWAGA: szałwia i glina mają niemal identyczną jasność (kontrast 1.03),
      a przy daltonizmie czerwono-zielonym stają się nierozróżnialne (1.09).
@@ -31,13 +41,23 @@
   --sage: #90aba2;
   --sage-deep: #54635e;
   --sage-wash: #e1e4db;
+  --sage-darkest: #2a4139;
 
   --bone: #f7f4eb; /* kremowe bluzy zespołu */
   --sand: #e8ded0;
   --oak: #c2a98f; /* podłoga jodełka */
   --concrete: #b9b9bb;
   --stone: #665d54;
-  --espresso: #2e2621; /* industrialny sufit */
+  /* Najciemniejszy ton — tło stopki i sekcji odwróconych oraz kolor tekstu.
+     Do 20.08.2026 stał tu --espresso #2e2621, brąz wzięty z industrialnego
+     sufitu, czyli ze zdjęć wnętrz, a nie z palety marki. Klientka wskazuje
+     krem plus terakotę i szałwię — brązu tam nie ma.
+
+     Zamiennik to szałwia przyciemniona do 24%. Podmiana jest neutralna dla
+     dostępności, bo kontrasty zgadzają się co do setnej:
+       krem  13.48 wobec 13.49      przygaszony tekst  7.03 wobec 7.04
+       glina  6.18 wobec  6.19      szałwia            6.02 wobec 6.03 */
+  --ink: #232927;
   --brass: #a8875c; /* ramy luster — tylko cienkie linie */
 
   /* ——————————————————————————— role semantyczne ——————————————————————————
@@ -45,14 +65,15 @@
   --surface: var(--bone);
   --surface-alt: var(--sand);
   --surface-soft: var(--clay-wash);
-  --surface-sage: var(--sage-wash);
-  --surface-invert: var(--espresso);
+  --surface-invert: var(--ink);
+  /* Jedyne miejsce z szałwią. Stopka nie jest komponentem Section, więc
+     bierze ten token bezpośrednio, zamiast tonu sekcji. */
+  --surface-footer: var(--sage-darkest);
 
-  --text: var(--espresso);
+  --text: var(--ink);
   --text-muted: var(--stone);
   --text-invert: var(--bone);
   --text-accent: var(--clay-deep); /* 5.4:1 na --bone */
-  --text-accent-sage: var(--sage-deep); /* 5.75:1 na --bone, 4.75 na --sand */
 
   --line: color-mix(in srgb, var(--oak) 45%, transparent);
   --line-strong: var(--oak);
@@ -60,13 +81,9 @@
 
   --accent: var(--clay);
   --accent-strong: var(--clay-deep);
-  --accent-sage: var(--sage);
-  --accent-sage-strong: var(--sage-deep);
-  /* Espresso na --sage daje 6.03; biel, tak samo jak na glinie, jest zakazana. */
-  --on-accent-sage: var(--espresso);
-  /* CTA: tło --accent + tekst --espresso = 6.2:1.
+  /* CTA: tło --accent + tekst --ink = 6.18:1.
      Biel na --clay daje 2.4:1 i jest zakazana. */
-  --on-accent: var(--espresso);
+  --on-accent: var(--ink);
 
   --focus-ring: var(--clay-deep);
 

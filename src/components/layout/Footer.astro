@@ -67,8 +67,11 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
+  /* Jedyne miejsce z szałwią w całym serwisie — decyzja klientki z 20.08.2026.
+     Sekcje odwrócone na stronie głównej i /zajecia zostają przy neutralnym
+     --surface-invert, więc zieleń nie rozlewa się poza stopkę. */
   .footer {
-    background: var(--surface-invert);
+    background: var(--surface-footer);
     color: var(--text-invert);
     padding-block: var(--space-xl) var(--space-md);
     margin-block-start: auto;
