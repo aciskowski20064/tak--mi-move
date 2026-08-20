@@ -5,7 +5,6 @@ import Section from '~/components/ui/Section.astro';
 import Todo from '~/components/ui/Todo.astro';
 import ScheduleEmbed from '~/components/fitssey/ScheduleEmbed.astro';
 import LocationSwitch from '~/components/fitssey/LocationSwitch.astro';
-import Faq from '~/components/sections/Faq.astro';
 import { locations, formatAddress, site } from '~/data/site';
 import { pages } from '~/data/copy/pages';
 import { realOnly } from '~/lib/copy';
@@ -14,14 +13,13 @@ import { realOnly } from '~/lib/copy';
  * Brief §15 — jedna z najważniejszych podstron projektu.
  *
  * §34 wymaga, żeby treść osadzona w zewnętrznym widżecie NIE była jedyną
- * treścią tej strony. Stąd własny wstęp, zasady zapisów, FAQ i kontakt
- * awaryjny wokół ramki — wszystko indeksowalne.
- */
-/**
+ * treścią tej strony. Stąd własny wstęp, zasady zapisów i kontakt awaryjny
+ * wokół ramki — wszystko indeksowalne. FAQ stało tu do 20.08.2026; warunek
+ * §34 spełniają pozostałe trzy bloki.
+ *
  * Strona jest prerenderowana, więc parametr `?studio=` nie istnieje przy
  * buildzie. Kontekst obu lokalizacji renderujemy więc zawsze, a odsłania
- * właściwy skrypt w LocationSwitch. Filtrowanie FAQ per lokalizacja działa
- * na podstronach /studia/[slug], które są osobnymi trasami statycznymi.
+ * właściwy skrypt w LocationSwitch.
  */
 const t = pages.schedule;
 const rules = realOnly([...t.rules], (r) => r);
@@ -79,7 +77,10 @@ const missingRules = t.rules.filter((r) => !rules.includes(r));
     </div>
   </Section>
 
-  <Faq />
+  {/* FAQ zdjęte 20.08.2026: te same pięć pytań stało na pięciu podstronach.
+      Zostaje na stronie głównej (pierwszy kontakt) i na /pierwsza-wizyta.
+      Tutaj było najbardziej zbędne — sekcja „Zasady zapisów" wyżej odpowiada
+      na to samo, konkretniej i wprost z odpowiedzi klientki. */}
 </Base>
 
 <style>

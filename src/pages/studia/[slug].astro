@@ -5,7 +5,6 @@ import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
-import Faq from '~/components/sections/Faq.astro';
 import { locations, formatAddress, booking, site } from '~/data/site';
 import { home } from '~/data/copy/home';
 import { copyOrNull } from '~/lib/copy';
@@ -270,7 +269,11 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     </div>
   </Section>
 
-  <Faq scope={location.slug} />
+  {/* FAQ zdjęte 20.08.2026. Żadne z pięciu pytań nie dotyczy konkretnej
+      lokalizacji, więc obie podstrony studiów pokazywały ten sam blok co
+      strona główna. Jedyne, które mogłoby być lokalne — „czy wszystkie
+      zajęcia odbywają się w obu studiach" — opiera się na moim wniosku,
+      bo pytanie 25 klientka przekreśliła bez odpowiedzi. */}
 </Base>
 
 <style>
