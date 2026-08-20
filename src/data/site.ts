@@ -80,7 +80,8 @@ export const locations: StudioLocation[] = [
     phone: site.phone,
     email: site.email,
     /** FAKT: odpowiedź 33 — ulica i piętro potwierdzone. */
-    entranceInfo: 'Wejście od ulicy Kossaka, pierwsze piętro.',
+    // Bez słowa „Wejście" na początku — stoi już w etykiecie karty obok.
+    entranceInfo: 'Od ulicy Kossaka, pierwsze piętro',
     // TODO(klientka): czy parking przy studiu jest płatny (odpowiedź 34 tego
     // nie rozstrzyga — dla Gdańska tak, dla Pruszcza zostało nieokreślone).
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
@@ -103,9 +104,9 @@ export const locations: StudioLocation[] = [
      * klientka wpisała ją ze znakiem zapytania („Bądkowskiego"?), więc do
      * czasu potwierdzenia zostaje sam adres z nagłówka.
      */
-    entranceInfo: 'Studio jest na parterze.',
+    entranceInfo: 'Parter budynku',
     /** FAKT: odpowiedź 34. */
-    parkingInfo: 'Parking w okolicy jest płatny.',
+    parkingInfo: 'Płatna strefa w okolicy',
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga'],
     social: [

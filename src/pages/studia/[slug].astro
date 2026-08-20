@@ -5,8 +5,6 @@ import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
-import Mark from '~/components/ui/Mark.astro';
-import MapEmbed from '~/components/ui/MapEmbed.astro';
 import Faq from '~/components/sections/Faq.astro';
 import { locations, formatAddress, booking, site } from '~/data/site';
 import { home } from '~/data/copy/home';
@@ -62,7 +60,22 @@ const available = classes
   .filter((entry) => entry.data.locationSlugs.includes(location.slug))
   .sort((a, b) => a.data.order - b.data.order);
 
+/**
+ * Polszczyzna odmienia rzeczownik za liczebnikiem: dwa, trzy i cztery
+ * „rodzaje", ale pięć i więcej „rodzajów". Pruszcz ma pięć zajęć, Gdańsk
+ * cztery, więc obie formy realnie występują — sklejenie liczby z jednym
+ * napisem dałoby błąd na jednej z podstron.
+ */
+function rodzajeRuchu(ile: number): string | undefined {
+  if (ile === 0) return undefined;
+  const slowa = ['', 'Jeden', 'Dwa', 'Trzy', 'Cztery', 'Pięć', 'Sześć'];
+  const liczba = slowa[ile] ?? String(ile);
+  if (ile === 1) return 'Jeden rodzaj ruchu';
+  return `${liczba} ${ile < 5 ? 'rodzaje' : 'rodzajów'} ruchu`;
+}
+
 const description = copyOrNull(home.studios.descriptions[location.slug]);
+const descriptionTitle = home.studios.descriptionTitles[location.slug];
 const address = formatAddress(location);
 const kadry = kadryStudiow[location.slug];
 
@@ -75,7 +88,14 @@ const kadry = kadryStudiow[location.slug];
  * co już odrzuciła.
  */
 const fakty = [
-  { ikona: 'pin' as const, label: 'Lokalizacja', value: address },
+  /* Adres łamany po ulicy, tak jak na makiecie — jednym ciągiem zawijał się
+     na trzy wiersze i rozpychał rząd faktów. */
+  {
+    ikona: 'pin' as const,
+    label: 'Lokalizacja',
+    value: location.street,
+    drugaLinia: `${location.postalCode} ${location.city}`,
+  },
   { ikona: 'door' as const, label: 'Wejście', value: location.entranceInfo },
   { ikona: 'locker' as const, label: 'Parking', value: location.parkingInfo },
   {
@@ -87,8 +107,9 @@ const fakty = [
   {
     ikona: 'move' as const,
     label: 'Zajęcia',
-    // FAKT: przypisanie zajęć do lokalizacji z `classSlugs`.
-    value: available.map((entry) => entry.data.name).join(', '),
+    /* Liczba, nie wyliczanka: nazwy pięciu zajęć łamałyby tor faktu na
+       cztery wiersze. Pełna lista z opisami stoi na /zajecia. */
+    value: rodzajeRuchu(available.length),
   },
 ]
   /* Fakt bez wartości znika w całości, razem z etykietą i piktogramem.
@@ -101,9 +122,10 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
 ---
 
 <Base title={title} description={metaDescription}>
+  {/* Bez nadtytułu: „Studio" wchodzi do samego tytułu, tak jak na makiecie.
+      Osobny nadtytuł powtarzałby słowo, które i tak stoi wiersz niżej. */}
   <PageHeader
-    eyebrow="Studio"
-    title={location.city}
+    title={`Studio ${location.city}`}
     crumbs={[
       { label: 'Studia', href: '/studia' },
       { label: location.city, href: `/studia/${location.slug}` },
@@ -120,7 +142,15 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
                 <FactIcon name={f.ikona} />
               </span>
               <h2 class="fakt__label">{f.label}</h2>
-              <p class="fakt__tekst">{f.value}</p>
+              <p class="fakt__tekst">
+                {f.value}
+                {'drugaLinia' in f && f.drugaLinia && (
+                  <>
+                    <br />
+                    {f.drugaLinia}
+                  </>
+                )}
+              </p>
             </li>
           ))
         }
@@ -169,73 +199,58 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
       {
         description && (
           <article class="karta karta--opis">
-            <h2 class="karta__tytul">Ta przestrzeń</h2>
-            <p class="karta__tekst">{description}</p>
+            <span class="karta__ikona" aria-hidden="true">
+              <FactIcon name="sun" size="1.6rem" />
+            </span>
+            <div>
+              <h2 class="karta__tytul">{descriptionTitle}</h2>
+              <p class="karta__tekst">{description}</p>
+            </div>
           </article>
         )
       }
 
       <article class="karta karta--kontakt">
         <h2 class="karta__tytul">Dane kontaktowe</h2>
-        <dl class="studio__contact">
-          <dt>Telefon</dt>
-          <dd><a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a></dd>
-          <dt>E-mail</dt>
-          <dd>
+
+        <ul class="kontakt">
+          <li>
+            <span class="kontakt__ikona" aria-hidden="true">
+              <FactIcon name="phone" size="1.1rem" />
+            </span>
+            <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+          </li>
+          <li>
+            <span class="kontakt__ikona" aria-hidden="true">
+              <FactIcon name="mail" size="1.1rem" />
+            </span>
             <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
-          </dd>
-          <dt>Profile</dt>
-          <dd class="studio__social">
-            {location.social.map((s) => (
-              <a
-                href={s.url}
-                target="_blank"
-                rel="noopener me"
-                aria-label={`${s.platform === 'instagram' ? 'Instagram' : 'Facebook'}: ${s.label}`}
-                title={s.label}
-              >
-                <SocialIcon platform={s.platform} />
-              </a>
-            ))}
-          </dd>
-        </dl>
+          </li>
+          <li>
+            <span class="kontakt__ikona" aria-hidden="true">
+              <SocialIcon platform="instagram" size="1.1rem" />
+            </span>
+            <span class="kontakt__profile">
+              {location.social.map((s) => (
+                <a href={s.url} target="_blank" rel="noopener me">
+                  {s.label}
+                </a>
+              ))}
+            </span>
+          </li>
+        </ul>
 
-        <div class="karta__akcje">
-          <Button
-            href={`/grafik?studio=${location.slug}`}
-            source="location"
-            event="schedule_page_view"
-          >
-            Zobacz grafik i zapisz się
-          </Button>
-        </div>
-
-        <MapEmbed address={address} label={`TAK MI MOVE ${location.city}`} />
+        <Button
+          href={`/grafik?studio=${location.slug}`}
+          source="location"
+          event="schedule_page_view"
+          class="kontakt__cta"
+        >
+          Zobacz grafik i zapisz się
+        </Button>
       </article>
     </div>
   </Section>
-
-  {
-    available.length > 0 && (
-      <Section size="lg">
-        <h2 class="studio__heading">Zajęcia w tym studiu</h2>
-        <ul class="studio__classes">
-          {available.map((entry) => (
-            <li>
-              <a href={`/zajecia/${entry.id}`} data-event="class_detail_view">
-                <Mark size="0.7rem" />
-                {entry.data.name}
-              </a>
-            </li>
-          ))}
-        </ul>
-        <p class="studio__note">
-          Dostępność poszczególnych zajęć w tej lokalizacji wymaga potwierdzenia — sprawdź
-          aktualny <a href={`/grafik?studio=${location.slug}`}>grafik</a>.
-        </p>
-      </Section>
-    )
-  }
 
   <Faq scope={location.slug} />
 </Base>
@@ -254,11 +269,10 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     padding: 0;
     margin: 0;
     display: grid;
-    /* 15 rem, nie 9 — przy niższym progu kolumna mieściła trzy fakty w rzędzie
-       i czwarty zostawał sam w drugim wierszu. Teraz układ jest równy 2×2,
-       a najdłuższy fakt („Joga, pilates, stretching, aerial yoga i barre")
-       ma gdzie się zmieścić. */
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    /* minmax(0, …), nie minmax(8rem, …): najdłuższe słowo w adresie
+       („Grunwaldzka") ma większą szerokość min-content niż 8 rem, więc
+       auto-fit liczył węższe tory i fakty łamały się na dwa wiersze. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-lg) var(--space-md);
   }
 
@@ -280,8 +294,10 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     margin-block-end: var(--space-3xs);
   }
 
+  /* Stopień pisma jak na makiecie. Przy --fs-small „ul. Grunwaldzka 55/7"
+     nie mieściło się w torze i adres rozpadał się na pięć wierszy. */
   .fakt__tekst {
-    font-size: var(--fs-small);
+    font-size: var(--fs-caption);
     color: var(--text-muted);
     line-height: 1.55;
   }
@@ -317,7 +333,7 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     display: block;
     inline-size: 100%;
     block-size: auto;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 2;
     object-fit: cover;
     border-radius: var(--radius-md);
   }
@@ -344,6 +360,22 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     border: var(--hairline) solid var(--line);
   }
 
+  /* Piktogram stoi obok tekstu, nie nad nim — inaczej niż w faktach, bo tu
+     jest jeden na całą kartę i pełni rolę znacznika, a nie etykiety. */
+  .karta--opis {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-md);
+    align-items: start;
+  }
+
+  .karta__ikona {
+    color: var(--accent);
+    display: grid;
+    place-items: center;
+    margin-block-start: 0.15em;
+  }
+
   .karta__tytul {
     font-size: var(--fs-h3);
     margin-block-end: var(--space-sm);
@@ -354,79 +386,51 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     line-height: var(--lh-loose);
   }
 
-  .karta__akcje {
-    margin-block: var(--space-lg);
-  }
+  /* ————————————————— dane kontaktowe ————————————————— */
 
-  .studio__contact {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-2xs) var(--space-md);
-    margin-block-start: var(--space-lg);
-    padding-block-start: var(--space-md);
-    border-block-start: var(--hairline) solid var(--line);
-    font-size: var(--fs-small);
-  }
-
-  .studio__contact dt {
-    color: var(--text-muted);
-  }
-
-  .studio__contact dd {
-    margin: 0;
-  }
-
-  .studio__contact a {
-    color: var(--text-accent);
-    padding-block: 0.2rem;
-  }
-
-  .studio__social {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-sm);
-  }
-
-  .studio__heading {
-    font-size: var(--fs-h2);
-    margin-block-end: var(--space-md);
-  }
-
-  .studio__classes {
+  .kontakt {
     list-style: none;
     padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-sm);
+    margin: 0 0 var(--space-lg);
+    display: grid;
+    gap: var(--space-sm);
   }
 
-  .studio__classes a {
-    display: inline-flex;
+  .kontakt li {
+    display: grid;
+    grid-template-columns: 2rem 1fr;
     align-items: center;
     gap: var(--space-2xs);
-    padding: 0.5em 1em;
-    border: var(--hairline) solid var(--line-strong);
-    border-radius: var(--radius-pill);
-    color: var(--text);
-    text-decoration: none;
-    font-size: var(--fs-small);
-    transition: background-color var(--dur) var(--ease);
   }
 
-  .studio__classes a:hover {
-    background: var(--surface-alt);
+  .kontakt__ikona {
+    color: var(--accent);
+    display: grid;
+    place-items: center;
   }
 
-  .studio__note {
-    margin-block-start: var(--space-md);
-    max-width: var(--measure);
-    font-size: var(--fs-small);
-    color: var(--text-muted);
-  }
-
-  .studio__note a {
+  .kontakt a {
     color: var(--text-accent);
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+  }
+
+  .kontakt__profile {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    font-size: var(--fs-small);
+  }
+
+  /* Przycisk na całą szerokość karty, tak jak na makiecie.
+     :global, bo klasa podana propem ląduje na korzeniu komponentu Button,
+     a ten nosi swój własny scope Astro — reguła bez :global po prostu
+     nigdy by nie trafiła. */
+  .karta--kontakt :global(.kontakt__cta) {
+    display: flex;
+    inline-size: 100%;
+    justify-content: center;
   }
 
   @media (min-width: 48rem) {
@@ -438,8 +442,21 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
 
   @media (min-width: 60rem) {
     .studio__top {
-      grid-template-columns: 1fr minmax(20rem, 30rem);
+      /* Kadr zwężony, żeby tor faktu zmieścił „83-000 Pruszcz Gdański"
+         w jednym wierszu — przy szerszym kadrze brakowało kilkunastu pikseli
+         i kod pocztowy zjeżdżał do trzeciej linii. */
+      grid-template-columns: 1fr minmax(16rem, 24rem);
       gap: var(--space-2xl);
+    }
+
+    /* Wszystkie fakty w jednym rzędzie, niezależnie od tego, ile ich jest:
+       Pruszcz ma cztery, Gdańsk pięć (dochodzi parking). `grid-auto-flow`
+       radzi sobie z obiema liczbami bez wpisywania ich do arkusza. */
+    .fakty {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      gap: var(--space-md);
     }
 
     /* Karta z opisem szersza od kontaktowej: opis to tekst ciągły, dane

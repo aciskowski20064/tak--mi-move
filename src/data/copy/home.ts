@@ -73,6 +73,16 @@ export const home = {
       gdansk:
         'Kameralna, przytulna sala w centrum miasta: surowy betonowy słup, czarny sufit z odsłoniętymi rurami i dąb w jodełkę. Elegancko, ale bez chłodu — mniejsza przestrzeń robi intymną atmosferę.',
     },
+    /**
+     * Nagłówek karty z opisem, osobny dla każdej sali — jeden wspólny byłby
+     * albo nieprawdziwy, albo pusty. Oba wprost z przymiotników klientki:
+     * Pruszcz „jasne" (odpowiedź 4), Gdańsk „przytulne, intymna atmosfera"
+     * (odpowiedź 5).
+     */
+    descriptionTitles: {
+      'pruszcz-gdanski': 'Światło i przestrzeń',
+      gdansk: 'Kameralnie i przytulnie',
+    },
     linkLabel: 'Poznaj studio',
     scheduleLabel: 'Grafik tej lokalizacji',
     // Zdjęcie mamy tylko dla Pruszcza (potwierdzone przez klienta).
