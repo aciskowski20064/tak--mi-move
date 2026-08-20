@@ -160,12 +160,6 @@ export const home = {
     ],
   },
 
-  team: {
-    eyebrow: 'Zespół',
-    title: 'Prowadzące',
-    lead: 'TODO(klientka): kilka zdań o tym, co łączy zespół',
-    allLabel: 'Poznaj cały zespół',
-  },
 
   reviews: {
     eyebrow: 'Opinie',

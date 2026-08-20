@@ -1,132 +1,106 @@
 ---
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
 import Section from '~/components/ui/Section.astro';
-import Todo from '~/components/ui/Todo.astro';
-import { home } from '~/data/copy/home';
-import { copyOrNull, showPlaceholders } from '~/lib/copy';
+import { pages } from '~/data/copy/pages';
 
 /**
- * Brief §12.9. Na dostarczonych zdjęciach jest sześć instruktorek, ale
- * nie znamy ich imion ani nie mamy zgód na publikację wizerunku.
+ * Sekcja „Prowadzące" po decyzji klientki (odpowiedź 1): bez nazwisk,
+ * bez zdjęć, bez kart osób. Zostaje ogólna informacja, cztery cechy wspólne
+ * z odpowiedzi 13–16 i odesłanie do grafiku — dokładnie to, o co prosiła.
  *
- * Filtr `photoConsent` jest twardy: osoba bez zgody nie pojawi się na stronie
- * niezależnie od tego, co ktoś wpisze w pozostałych polach.
+ * Poprzednia wersja czytała kolekcję `team` bramkowaną zgodami na wizerunek.
+ * Kolekcja zniknęła razem z modelem: nie ma już czego bramkować, a sekcja
+ * prosiła w demie o dane, które klientka wcześniej odrzuciła.
+ *
+ * Cztery cechy celowo nie są siatką kafli. Strona ma już „Co jest dla nas
+ * ważne" w tej formie, a treść obu bloków się zazębia („fachowe
+ * przygotowanie" ≈ „Bezpiecznie", „otwartość" ≈ „Ze wsparciem"). Jedna
+ * linia czyta się jak zdanie, siatka czytałaby się jak powtórzenie.
  */
-const entries = await getCollection('team', ({ data }) => !data.draft && data.photoConsent);
-const members = entries.sort((a, b) => a.data.order - b.data.order).slice(0, 4);
-
-const t = home.team;
-const lead = copyOrNull(t.lead);
-const isDev = showPlaceholders;
+const t = pages.about.crew;
 ---
 
-{
-  (members.length > 0 || isDev) && (
-    <Section size="lg" tone="alt">
-      <header class="team__head">
-        <p class="eyebrow">{t.eyebrow}</p>
-        <h2>{t.title}</h2>
-        {lead ? <p class="lead">{lead}</p> : <Todo label={t.lead} block />}
-      </header>
+<Section size="lg" tone="alt">
+  <div class="crew">
+    <div class="crew__head">
+      <p class="eyebrow">{t.eyebrow}</p>
+      <h2 class="crew__title">{t.title}</h2>
+    </div>
 
-      {members.length > 0 ? (
-        <>
-          <ul class="team__grid">
-            {members.map((member) => (
-              <li class="member">
-                {member.data.photo && (
-                  <Image
-                    src={member.data.photo}
-                    alt={member.data.photoAlt ?? `${member.data.name} — instruktorka TAK MI MOVE`}
-                    widths={[280, 560]}
-                    sizes="(min-width: 48rem) 22vw, 45vw"
-                    loading="lazy"
-                    class="member__photo"
-                  />
-                )}
-                <h3 class="member__name">{member.data.name}</h3>
-                {member.data.role && <p class="member__role">{member.data.role}</p>}
-                {member.data.specialties && (
-                  <p class="member__specialties">{member.data.specialties.join(' · ')}</p>
-                )}
-              </li>
-            ))}
-          </ul>
+    <div class="crew__body">
+      <p class="lead crew__lead">{t.body}</p>
 
-          <p class="team__all">
-            <a href="/o-nas">{t.allLabel}</a>
-          </p>
-        </>
-      ) : (
-        <Todo
-          label="TODO(klientka): imiona, role, specjalizacje, bio i ZGODY na publikację wizerunku — bez tego sekcja zespołu nie renderuje się w ogóle"
-          block
-        />
-      )}
-    </Section>
-  )
-}
+      <ul class="crew__values">
+        {t.values.map((value) => <li class="crew__value">{value}</li>)}
+      </ul>
+
+      <a class="crew__link" href={t.linkHref}>{t.linkLabel}</a>
+    </div>
+  </div>
+</Section>
 
 <style>
-  .team__head {
-    max-width: var(--container-text);
-    margin-block-end: var(--space-lg);
+  .crew {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: start;
   }
 
-  .team__head h2 {
-    margin-block: var(--space-2xs) var(--space-sm);
+  .crew__title {
+    font-size: var(--fs-h2);
+    margin-block-start: var(--space-2xs);
   }
 
-  .team__grid {
+  .crew__body {
+    display: grid;
+    gap: var(--space-lg);
+    justify-items: start;
+  }
+
+  .crew__lead {
+    max-width: var(--measure);
+  }
+
+  /* Cechy jako spokojna lista rozdzielona włoskowymi liniami, nie jako
+     kafle i nie jako jeden ciąg. Ciąg zostawiał sierotę w drugim wierszu
+     (3 + 1), a przy każdej zmianie szerokości łamał się gdzie indziej —
+     lista wygląda tak samo na telefonie i na monitorze. */
+  .crew__values {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
-    gap: var(--space-lg);
-  }
-
-  .member__photo {
-    inline-size: 100%;
-    block-size: auto;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    border-radius: var(--radius-md);
-    margin-block-end: var(--space-sm);
-  }
-
-  .member__name {
+    inline-size: min(100%, 30rem);
+    font-family: var(--font-display);
     font-size: var(--fs-h4);
+    line-height: 1.3;
   }
 
-  .member__role,
-  .member__specialties {
+  .crew__value {
+    padding-block: var(--space-sm);
+  }
+
+  .crew__value + .crew__value {
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  .crew__link {
     font-size: var(--fs-small);
-    color: var(--text-muted);
-  }
-
-  .member__specialties {
-    margin-block-start: var(--space-3xs);
-  }
-
-  .team__all {
-    margin-block-start: var(--space-lg);
-    font-size: var(--fs-small);
-  }
-
-  .team__all a {
     color: var(--text-accent);
+    text-decoration: none;
+    border-block-end: var(--hairline) solid currentColor;
+    padding-block-end: 0.2em;
   }
 
-  @media (min-width: 40rem) {
-    .team__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .crew__link:hover {
+    border-block-end-width: 2px;
   }
 
-  @media (min-width: 64rem) {
-    .team__grid {
-      grid-template-columns: repeat(4, 1fr);
+  @media (min-width: 48rem) {
+    /* Ten sam podział co w sekcji lokalizacji niżej — nagłówek trzyma lewą
+       kolumnę, treść bierze resztę. */
+    .crew {
+      grid-template-columns: auto 1fr;
+      gap: var(--space-2xl);
     }
   }
 </style>

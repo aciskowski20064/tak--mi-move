@@ -45,24 +45,6 @@ const classes = defineCollection({
     }),
 });
 
-const team = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/team' }),
-  schema: ({ image }) =>
-    z.object({
-      name: z.string(),
-      order: z.number().default(99),
-      role: z.string().optional(),
-      specialties: z.array(z.string()).optional(),
-      photo: image().optional(),
-      photoAlt: z.string().optional(),
-      /** Bez zgody osoba nie pojawia się na stronie. */
-      photoConsent: z.boolean().default(false),
-      locationSlugs: z.array(studioEnum).optional(),
-      classSlugs: z.array(z.string()).optional(),
-      draft: z.boolean().default(false),
-    }),
-});
-
 const faq = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/faq' }),
   schema: z.object({
@@ -107,4 +89,4 @@ const blog = defineCollection({
     }),
 });
 
-export const collections = { classes, team, faq, reviews, blog };
+export const collections = { classes, faq, reviews, blog };

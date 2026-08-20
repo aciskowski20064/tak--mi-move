@@ -159,6 +159,31 @@ export const pages = {
       // FAKT: cztery specjalizacje wymienione przez klientkę w pierwszym zdaniu.
       tags: ['trenerka medyczna', 'joga', 'pilates', 'stretching'],
     },
+
+    /**
+     * FAKT: odpowiedzi 1 oraz 13–16. Klientka odrzuciła karty osób
+     * („NIE — bez nazwisk i zdjęć"), ale sama wskazała, czym je zastąpić:
+     * ogólna informacja, cechy wspólne i odesłanie do grafiku.
+     *
+     * Zakaz dotyczy instruktorek. Blok o założycielce wyżej go nie łamie —
+     * Katarzyna przysłała własny opis i jest właścicielką, nie osobą
+     * z zespołu, o której publikacji ktoś decydowałby za nią.
+     */
+    crew: {
+      eyebrow: 'Zespół',
+      title: 'Prowadzące',
+      // ROBOCZE: rama dla czterech cech. Bez liczby osób i bez opisów —
+      // tego nie wiemy, a brief zabrania wymyślania.
+      body: 'Kto prowadzi dany termin, widać w grafiku. Niezależnie od tego, na kogo trafisz, sposób pracy jest wspólny.',
+      values: [
+        'Profesjonalizm',
+        'Fachowe przygotowanie',
+        'Pasja',
+        'Otwartość na drugiego człowieka',
+      ],
+      linkLabel: 'Zobacz grafik i zapisy',
+      linkHref: '/grafik',
+    },
     values: {
       title: 'Co jest dla nas ważne',
       // FAKT: hasło marki z mediów społecznościowych i z maila (odpowiedź 55).
