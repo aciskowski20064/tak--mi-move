@@ -49,12 +49,29 @@ export const home = {
     // ROBOCZE
     title: 'Wybierz studio blisko siebie',
     lead: 'Obie przestrzenie prowadzi ten sam zespół. Różnią się charakterem wnętrza i grafikiem — wybierz to, do którego łatwiej Ci dotrzeć.',
-    // Brief §16.4 zabrania identycznych opisów obu lokalizacji.
-    // Opisy pisze zespół — my dajemy tylko miejsce i wskazówkę, co ma zawierać.
+    /**
+     * Brief §16.4 zabrania identycznych opisów obu lokalizacji — i faktycznie
+     * te dwie sale różnią się na zdjęciach na tyle, że opisy same się rozeszły.
+     *
+     * Każdy opis stoi na dwóch nogach:
+     *
+     * FAKT — przymiotniki klientki. Pruszcz „jasne, wspaniała społeczność"
+     * (odpowiedź 4), Gdańsk „przytulne, w centrum, eleganckie, intymna
+     * atmosfera" (odpowiedź 5). Że Pruszcz jest macierzysty — z materiałów marki.
+     *
+     * ROBOCZE — opis wnętrza. To, co widać na zdjęciach z sesji (20.08.2026):
+     * jodełka, łuk w terakocie i hamaki w Pruszczu, betonowy słup i czarny
+     * sufit z rurami w Gdańsku. Nie są to zmyślone fakty o marce, tylko opis
+     * pomieszczenia — ta sama zasada co przy opisach dyscyplin. Do akceptacji.
+     *
+     * Czego tu świadomie NIE ma: godzin otwarcia (odpowiedź 37 bez odpowiedzi)
+     * i nazwy ulicy wejścia w Gdańsku (odpowiedź 33 niepewna).
+     */
     descriptions: {
       'pruszcz-gdanski':
-        'TODO(klientka): 2–3 zdania o studiu w Pruszczu — charakter miejsca, wejście, atmosfera',
-      gdansk: 'TODO(klientka): 2–3 zdania o studiu w Gdańsku — charakter miejsca, wejście, atmosfera',
+        'Jasna sala z oknami z dwóch stron: dąb w jodełkę, biel ścian i łuk w kolorze terakoty. Hamaki do aerial yogi wiszą u sufitu na stałe, a przy oknie biegnie drążek do barre. To nasze pierwsze studio i to tutaj zebrała się wspaniała społeczność.',
+      gdansk:
+        'Kameralna, przytulna sala w centrum miasta: surowy betonowy słup, czarny sufit z odsłoniętymi rurami i dąb w jodełkę. Elegancko, ale bez chłodu — mniejsza przestrzeń robi intymną atmosferę.',
     },
     linkLabel: 'Poznaj studio',
     scheduleLabel: 'Grafik tej lokalizacji',

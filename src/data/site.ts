@@ -79,8 +79,11 @@ export const locations: StudioLocation[] = [
     postalCode: '83-000',
     phone: site.phone,
     email: site.email,
-    // TODO(klientka): potwierdzić wejście od ul. Kossaka.
-    // TODO(klientka): parking, dojazd, dostępność, godziny otwarcia.
+    /** FAKT: odpowiedź 33 — ulica i piętro potwierdzone. */
+    entranceInfo: 'Wejście od ulicy Kossaka, pierwsze piętro.',
+    // TODO(klientka): czy parking przy studiu jest płatny (odpowiedź 34 tego
+    // nie rozstrzyga — dla Gdańska tak, dla Pruszcza zostało nieokreślone).
+    // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga', 'barre'],
     social: [
       { platform: 'instagram', label: '@tak_mi_move', url: 'https://www.instagram.com/tak_mi_move/' },
@@ -95,6 +98,15 @@ export const locations: StudioLocation[] = [
     postalCode: '80-756', // FAKT: potwierdzone w mailu klientki (19.08.2026)
     phone: site.phone,
     email: site.email, // FAKT: jeden wspólny adres — odpowiedź 59
+    /**
+     * FAKT: parter — odpowiedź 33. Nazwy ulicy świadomie nie podajemy:
+     * klientka wpisała ją ze znakiem zapytania („Bądkowskiego"?), więc do
+     * czasu potwierdzenia zostaje sam adres z nagłówka.
+     */
+    entranceInfo: 'Studio jest na parterze.',
+    /** FAKT: odpowiedź 34. */
+    parkingInfo: 'Parking w okolicy jest płatny.',
+    // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga'],
     social: [
       {

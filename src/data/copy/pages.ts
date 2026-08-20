@@ -37,7 +37,10 @@ export const pages = {
     },
     eyebrow: 'Studia',
     title: 'Dwa miejsca, jeden zespół',
-    lead: 'Wybierz studio, do którego łatwiej Ci dotrzeć. Na podstronie każdego znajdziesz dojazd, wejście i grafik.',
+    // Lead obiecywał wcześniej „dojazd", a sekcja dojazdu zniknęła z podstron
+    // studiów — klientka odpowiedziała na to pytanie „nie opisujemy"
+    // (odpowiedź 35). Zapowiedź musi zgadzać się z tym, co stoi niżej.
+    lead: 'Wybierz studio, do którego łatwiej Ci dotrzeć. Na podstronie każdego znajdziesz adres, wejście i listę zajęć, które się w nim odbywają.',
   },
 
   classes: {

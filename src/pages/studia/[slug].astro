@@ -10,7 +10,7 @@ import MapEmbed from '~/components/ui/MapEmbed.astro';
 import Faq from '~/components/sections/Faq.astro';
 import { locations, formatAddress, booking, site } from '~/data/site';
 import { home } from '~/data/copy/home';
-import { copyOrNull } from '~/lib/copy';
+import { copyOrNull, showPlaceholders } from '~/lib/copy';
 
 /**
  * Podstrona pojedynczego studia (brief §16).
@@ -37,13 +37,34 @@ const available = classes
 const description = copyOrNull(home.studios.descriptions[location.slug]);
 const address = formatAddress(location);
 
-/** Praktyczne informacje lokalne — każda osobno, bo każdej może brakować. */
-const practical = [
-  { label: 'Wejście', value: location.entranceInfo, todo: 'TODO(klientka): jak trafić do lokalu, od której ulicy wejście, które piętro' },
-  { label: 'Parking', value: location.parkingInfo, todo: 'TODO(klientka): gdzie zaparkować, czy jest płatna strefa' },
-  { label: 'Dojazd', value: location.transitInfo, todo: 'TODO(klientka): komunikacja miejska, najbliższe przystanki' },
-  { label: 'Dostępność', value: location.accessibilityInfo, todo: 'TODO(klientka): schody, winda, dostępność dla osób z ograniczoną mobilnością' },
+/**
+ * Praktyczne informacje lokalne — każda osobno, bo każdej może brakować.
+ *
+ * Dojazdu komunikacją i dostępności tu nie ma i nie będzie: na oba pytania
+ * klientka odpowiedziała „nie opisujemy" (odpowiedzi 35 i 36). To decyzja,
+ * nie brak danych, więc wiersze zniknęły, zamiast wisieć jako prośba o coś,
+ * co już odrzuciła.
+ */
+const practicalAll = [
+  {
+    label: 'Wejście',
+    value: location.entranceInfo,
+    todo: 'TODO(klientka): od której ulicy wejście i które piętro',
+  },
+  {
+    label: 'Parking',
+    value: location.parkingInfo,
+    todo: 'TODO(klientka): gdzie zaparkować, czy obowiązuje płatna strefa',
+  },
 ];
+
+/**
+ * W produkcji wiersz bez wartości znika w całości, nie tylko jego treść.
+ * Sam `<Todo>` nic wtedy nie renderuje, ale etykieta w `<dt>` zostawała —
+ * czyli „Parking" z pustym miejscem obok. Widać to dopiero po wyłączeniu
+ * DEMO_MODE, więc filtr stoi tutaj, a nie w szablonie.
+ */
+const practical = showPlaceholders ? practicalAll : practicalAll.filter((row) => row.value);
 
 const title = `${location.city} — studio jogi, pilatesu i aerial yogi`;
 const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates, stretching i aerial yoga w kameralnych grupach. Zapisy online.`;
