@@ -71,7 +71,6 @@ export const pages = {
     photos: {
       // Zdjęcia od klientki (19.08.2026). Lokalizacja niepotwierdzona,
       // dlatego opisy nie nazywają studia.
-      hero: 'Kubek kawy na tacy w studiu, w porannym słońcu',
       gear: 'Regał ze sprzętem: klocki, piłki, wałki, koce i bolstery, obok różowy łuk na ścianie',
       changing: 'Szatnia — ręczniki na mosiężnych wieszakach, ławka i czarne szafki',
     },

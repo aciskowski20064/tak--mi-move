@@ -1,8 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
-import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
 import Section from '~/components/ui/Section.astro';
+import PageHeader from '~/components/sections/PageHeader.astro';
 import Mark from '~/components/ui/Mark.astro';
 import Todo from '~/components/ui/Todo.astro';
 import Faq from '~/components/sections/Faq.astro';
@@ -11,7 +11,6 @@ import { pages } from '~/data/copy/pages';
 import { home } from '~/data/copy/home';
 import { copyOrNull, isPlaceholder, showPlaceholders } from '~/lib/copy';
 
-import photoKawa from '~/assets/photos/studio-kawa.jpg';
 import photoSprzet from '~/assets/photos/studio-sprzet.jpg';
 import photoSzatnia from '~/assets/photos/studio-szatnia.jpg';
 
@@ -42,30 +41,17 @@ const blocks = [
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
-  <Section as="div" size="md" class="intro">
-    <div class="intro__grid">
-      <div class="intro__text">
-        <Breadcrumbs items={[{ label: 'Pierwsza wizyta', href: '/pierwsza-wizyta' }]} />
-        <p class="eyebrow">{t.eyebrow}</p>
-        {/* Te same klasy co w `PageHeader` — rytm wejścia definiuje `base.css`,
-            żeby dwukolumnowy nagłówek nie rozjechał się z resztą podstron. */}
-        <h1 class="page-header__title">{t.title}</h1>
-        <span class="page-header__rule" aria-hidden="true"></span>
-        {lead ? <p class="lead page-header__lead">{lead}</p> : <Todo label={t.lead} block />}
-      </div>
-
-      <figure class="intro__figure">
-        <Image
-          src={photoKawa}
-          alt={t.photos.hero}
-          widths={[520, 780, 1100]}
-          sizes="(min-width: 60rem) 46vw, 100vw"
-          loading="eager"
-          class="intro__image"
-        />
-      </figure>
-    </div>
-  </Section>
+  {/* Bez zdjęcia nagłówek nie ma czego stawiać w drugiej kolumnie, więc
+      wraca do wspólnego komponentu podstron. Zostawienie pustej prawej
+      połowy czytałoby się jak niezaładowany obrazek, a nie jak decyzja. */}
+  <PageHeader
+    eyebrow={t.eyebrow}
+    title={t.title}
+    lead={lead ?? undefined}
+    crumbs={[{ label: 'Pierwsza wizyta', href: '/pierwsza-wizyta' }]}
+    size="md"
+    rule
+  />
 
   <Section size="lg" tone="alt">
     {/* Nagłówek trzyma lewą kolumnę, oś czasu bierze resztę. Wcześniej oba
@@ -79,20 +65,20 @@ const blocks = [
       </header>
 
       <ol class="steps">
-      {
-        steps.map((step, index) => (
-          <li class="step">
-            <span class="step__marker" aria-hidden="true">
-              <Mark size="2.2rem" />
-              <span class="step__num">{String(index + 1).padStart(2, '0')}</span>
-            </span>
-            <div class="step__body">
-              <h3 class="step__title">{step.title}</h3>
-              <p class="step__text">{step.text}</p>
-            </div>
-          </li>
-        ))
-      }
+        {
+          steps.map((step, index) => (
+            <li class="step">
+              <span class="step__marker" aria-hidden="true">
+                <Mark size="2.2rem" />
+                <span class="step__num">{String(index + 1).padStart(2, '0')}</span>
+              </span>
+              <div class="step__body">
+                <h3 class="step__title">{step.title}</h3>
+                <p class="step__text">{step.text}</p>
+              </div>
+            </li>
+          ))
+        }
         {
           missingSteps.map((step) => (
             <li class="step step--todo">
@@ -186,38 +172,6 @@ const blocks = [
 </Base>
 
 <style>
-  /* ————————————————————————— nagłówek ————————————————————————— */
-
-  .intro__grid {
-    display: grid;
-    gap: var(--space-lg);
-    align-items: center;
-  }
-
-  /* Tytuł, kreska i lead biorą reguły z `base.css` (`.page-header__*`) —
-     nie powtarzamy ich tutaj, bo to jeden wzorzec na wszystkie podstrony. */
-
-  /* Kadr jak na /o-nas: zaokrąglony ze wszystkich stron, proporcja 3:2
-     i koniec na krawędzi kolumny. Wcześniej miał łuk w jednym narożniku
-     i uciekał poza prawą krawędź okna — przez to zdjęcie było wysokie,
-     a karta rezerwacji dusiła się na jego dole. */
-  .intro__figure {
-    margin: 0;
-    border-radius: var(--radius-card);
-    overflow: hidden;
-  }
-
-  .intro__image {
-    display: block;
-    inline-size: 100%;
-    block-size: 100%;
-    object-fit: cover;
-    aspect-ratio: 3 / 2;
-    /* Kubek siedzi w dolnej połowie kadru — przy przycinaniu trzymamy dół,
-       żeby go nie uciąć. */
-    object-position: 50% 68%;
-  }
-
   /* ————————————————————————— oś czasu ————————————————————————— */
 
   .stepsLayout {
@@ -425,11 +379,6 @@ const blocks = [
   }
 
   @media (min-width: 60rem) {
-    .intro__grid {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-      gap: var(--space-2xl);
-      align-items: center;
-    }
 
     /* Nagłówek sekcji trzyma stałą kolumnę, oś czasu bierze resztę. Bez tego
        kroki kończyły się w połowie ekranu, bo tekst kroku jest ograniczony
