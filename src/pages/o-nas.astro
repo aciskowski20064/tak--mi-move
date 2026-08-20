@@ -3,11 +3,9 @@ import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
 import Section from '~/components/ui/Section.astro';
-import Button from '~/components/ui/Button.astro';
 import Mark from '~/components/ui/Mark.astro';
 import Todo from '~/components/ui/Todo.astro';
 import Team from '~/components/sections/Team.astro';
-import { booking, locations, formatAddress } from '~/data/site';
 import { pages } from '~/data/copy/pages';
 import { copyOrNull, realOnly } from '~/lib/copy';
 import zespolPrzyLogo from '~/assets/photos/zespol-przy-logo.jpg';
@@ -20,9 +18,15 @@ import zalozycielka from '~/assets/photos/zalozycielka-portret.jpg';
  * różnych piktogramów i botaniczne ornamenty, czyli drugi język dekoracyjny
  * obok tego, który brief §8 wybrał zamiast biblioteki ikon.
  *
- * Blok o historii marki NIE jest cytatem. Materiał od klientki (odpowiedź 54)
- * to streszczenie maila, nie jej zdania — w makiecie stał w cudzysłowie
- * z podpisem, czyli jako słowa, których nigdy nie wypowiedziała.
+ * Blok o założycielce JEST cytatem — od 19.08.2026, kiedy klientka przysłała
+ * własny opis w pierwszej osobie. Wcześniej mieliśmy tylko streszczenie maila
+ * (odpowiedź 54) i cudzysłów byłby wtedy przypisaniem jej zdań, których
+ * nie napisała.
+ *
+ * Strona kończy się na Prowadzących. Sekcje „Gdzie nas znajdziesz"
+ * i „Przyjdź na pierwsze zajęcia" zdjęte 20.08.2026: adres studiów stoi
+ * w stopce każdej podstrony i w kaflu „Dwie przestrzenie" wyżej, a „Umów
+ * wizytę" padało na tej jednej stronie trzy razy.
  */
 const t = pages.about;
 const lead = copyOrNull(t.lead);
@@ -143,40 +147,15 @@ const cards = [t.spaces, t.community];
     </div>
   </Section>
 
-  <Section size="md" tone="alt">
-    <div class="places">
-      <h2 class="places__title">{t.locationsTitle}</h2>
-      <ul class="places__list">
-        {
-          locations.map((location) => (
-            <li class="place">
-              <a href={`/studia/${location.slug}`} data-event="studio_location_select">
-                <strong>{location.city}</strong>
-                <span>{formatAddress(location)}</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </Section>
+  {/* Sekcje „Gdzie nas znajdziesz" i „Przyjdź na pierwsze zajęcia" zdjęte
+      świadomie — powtarzały to, co i tak stoi obok. Adres obu studiów jest
+      w stopce na każdej podstronie, na /studia, na /kontakt oraz w kaflu
+      „Dwie przestrzenie" dwie sekcje wyżej. „Umów wizytę" padało na samym
+      /o-nas trzy razy: przycisk w nagłówku, ta sekcja i stopka.
 
+      Strona kończy się teraz na Prowadzących z odsyłaczem do grafiku —
+      to jedno wyjście zamiast trzech powtórzonych. */}
   <Team />
-
-  <Section size="md" tone="soft">
-    <div class="cta">
-      <h2>{t.ctaTitle}</h2>
-      <Button
-        href={booking.frontOfficeUrl}
-        newTab={booking.newTab}
-        size="lg"
-        source="final"
-        event="booking_cta_click"
-      >
-        {booking.label}
-      </Button>
-    </div>
-  </Section>
 </Base>
 
 <style>
@@ -442,54 +421,13 @@ const cards = [t.spaces, t.community];
 
   /* ————————————————————————— lokalizacje ————————————————————————— */
 
-  .places {
-    display: grid;
-    gap: var(--space-md);
-    align-items: center;
-  }
 
-  .places__title {
-    font-size: var(--fs-h3);
-  }
 
-  .places__list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: var(--space-md);
-  }
 
-  .place a {
-    display: grid;
-    gap: 0.2em;
-    padding-block: var(--space-2xs);
-    color: inherit;
-    text-decoration: none;
-  }
 
-  .place strong {
-    font-family: var(--font-display);
-    font-size: var(--fs-h4);
-    font-weight: 400;
-  }
 
-  .place span {
-    font-size: var(--fs-small);
-    color: var(--text-muted);
-  }
 
-  .place a:hover strong {
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-  }
 
-  .cta {
-    display: grid;
-    justify-items: center;
-    gap: var(--space-md);
-    text-align: center;
-  }
 
   @media (min-width: 40rem) {
     /* Portret dostaje kolumnę o stałej szerokości, żeby proporcja zdjęcia
@@ -503,15 +441,7 @@ const cards = [t.spaces, t.community];
       grid-template-columns: repeat(2, 1fr);
     }
 
-    .places {
-      grid-template-columns: auto 1fr;
-      gap: var(--space-xl);
-    }
 
-    .places__list {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-lg);
-    }
   }
 
   @media (min-width: 60rem) {

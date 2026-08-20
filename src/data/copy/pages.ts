@@ -223,8 +223,6 @@ export const pages = {
       // albo uszyte na miarę”) i o ofercie wysyłanej mailem.
       body: 'Warsztaty i wyjazdy organizujemy regularnie — terminy ogłaszamy na Facebooku i Instagramie. U nas można też zamówić własne wydarzenie: gotowy pakiet albo coś uszytego na miarę. Pełną ofertę i ceny wysyłamy mailem.',
     },
-    locationsTitle: 'Gdzie nas znajdziesz',
-    ctaTitle: 'Przyjdź na pierwsze zajęcia',
   },
 
   contact: {
