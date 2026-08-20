@@ -53,7 +53,7 @@ const blocks = [
     rule
   />
 
-  <Section size="lg" tone="alt">
+  <Section size="lg" tone="alt" class="stepsSection">
     {/* Nagłówek trzyma lewą kolumnę, oś czasu bierze resztę. Wcześniej oba
         stały jeden pod drugim na pełnej szerokości, a że tekst kroku jest
         ograniczony miarą czytelności, prawa połowa sekcji zostawała pusta.
@@ -379,13 +379,74 @@ const blocks = [
   }
 
   @media (min-width: 60rem) {
-
     /* Nagłówek sekcji trzyma stałą kolumnę, oś czasu bierze resztę. Bez tego
        kroki kończyły się w połowie ekranu, bo tekst kroku jest ograniczony
        miarą czytelności, a nie szerokością sekcji. */
     .stepsLayout {
       grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
       gap: var(--space-2xl);
+    }
+
+  }
+
+  /* ————————————————— spięcie nagłówka z osią czasu —————————————————
+
+     Piaskowe tło sekcji podnosi się prawą stroną w pas nagłówka, a oś czasu
+     zaczyna się już w nim. Zamiast dwóch bloków jeden pod drugim robi się
+     jeden ciągły kształt.
+
+     Podniesiona część to prostokąt doklejony nad sekcją, zaokrąglony tylko
+     w górnym lewym narożniku, promieniem równym własnej wysokości — wtedy
+     krawędź jest ćwiartką koła i wchodzi w dolny pas bez załamania.
+
+     UWAGA przy zmianach: krawędź piasku na wysokości `h` nad sekcją leży na
+     `lewa + wejscie - sqrt(wejscie² - h²)`. Muszą być spełnione dwa warunki
+     naraz, bo panel przechodzi między dwoma tekstami:
+
+       • na wysokości dolnej krawędzi leadu piasek musi być NA PRAWO od niego,
+       • na wysokości pierwszego kroku musi być NA LEWO od jego znacznika.
+
+     Stąd dwie rzeczy w tym bloku. Po pierwsze próg 75 rem: niżej lead i oś
+     czasu są zbyt blisko siebie i żadna krawędź nie spełnia obu warunków.
+     Po drugie szersza lewa kolumna, która odsuwa oś czasu na tyle w prawo,
+     żeby przedział na krawędź panelu w ogóle istniał.
+
+     :global, bo klasa trafia na korzeń komponentu Section, a ten nosi swój
+     własny scope Astro, nie tej strony. */
+  @media (min-width: 75rem) {
+    :global(.stepsSection) {
+      --wejscie: 12rem;
+      position: relative;
+    }
+
+    :global(.stepsSection)::before {
+      content: '';
+      position: absolute;
+      /* Krawędź liczona od kontenera treści, nie od okna. Procent okna działa
+         tylko dopóki kontener rośnie razem z nim — po przekroczeniu --container
+         kontener zaczyna się centrować, tekst odjeżdża w prawo szybciej niż
+         krawędź i przy ~1680 px panel wchodzi na lead. */
+      inset-inline-start: calc(
+        max(var(--gutter), (100% - var(--container)) / 2) + 0.44 *
+          min(100% - 2 * var(--gutter), var(--container))
+      );
+      inset-inline-end: 0;
+      inset-block-start: calc(-1 * var(--wejscie));
+      block-size: var(--wejscie);
+      background: var(--surface-alt);
+      border-start-start-radius: var(--wejscie);
+    }
+
+    .stepsLayout {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    }
+
+    /* Oś czasu wjeżdża w podniesiony pas, nagłówek sekcji zostaje na swoim
+       miejscu. Ujemny margines musi znieść własny padding sekcji, inaczej
+       kroki wchodzą w pas ledwie kilkadziesiąt pikseli i spięcia nie widać.
+       2,5 rem zostaje jako oddech nad pierwszym krokiem. */
+    .steps {
+      margin-block-start: calc(2.5rem - var(--space-2xl) - var(--wejscie));
     }
   }
 </style>
