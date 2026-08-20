@@ -1,5 +1,6 @@
 ---
 import Section from '~/components/ui/Section.astro';
+import Mark from '~/components/ui/Mark.astro';
 import { pages } from '~/data/copy/pages';
 
 /**
@@ -7,33 +8,50 @@ import { pages } from '~/data/copy/pages';
  * bez zdjęć, bez kart osób. Zostaje ogólna informacja, cztery cechy wspólne
  * z odpowiedzi 13–16 i odesłanie do grafiku — dokładnie to, o co prosiła.
  *
- * Poprzednia wersja czytała kolekcję `team` bramkowaną zgodami na wizerunek.
- * Kolekcja zniknęła razem z modelem: nie ma już czego bramkować, a sekcja
- * prosiła w demie o dane, które klientka wcześniej odrzuciła.
+ * Układ wg makiety z 20.08.2026, przełożony na nasz system: kompozycja
+ * wyśrodkowana, pigułki po dwie w rzędzie, ornament rozdzielający. Makieta
+ * miała w ornamentach botaniczne gałązki, a w kółkach słoneczka — jedno
+ * i drugie zastępuje symbol-kropla, który brief §8 wybrał zamiast
+ * biblioteki ikon.
  *
- * Cztery cechy celowo nie są siatką kafli. Strona ma już „Co jest dla nas
- * ważne" w tej formie, a treść obu bloków się zazębia („fachowe
- * przygotowanie" ≈ „Bezpiecznie", „otwartość" ≈ „Ze wsparciem"). Jedna
- * linia czyta się jak zdanie, siatka czytałaby się jak powtórzenie.
+ * To jedyna wyśrodkowana sekcja na tej podstronie i tak ma zostać: domyka
+ * stronę, która wcześniej kończyła się trzema powtórzonymi wyjściami.
  */
 const t = pages.about.crew;
 ---
 
 <Section size="lg" tone="alt">
   <div class="crew">
-    <div class="crew__head">
-      <p class="eyebrow">{t.eyebrow}</p>
-      <h2 class="crew__title">{t.title}</h2>
+    <p class="crew__eyebrow eyebrow">{t.eyebrow}</p>
+    <h2 class="crew__title">{t.title}</h2>
+
+    <div class="crew__ornament" aria-hidden="true">
+      <span class="crew__rule"></span>
+      <Mark size="1.5rem" />
+      <span class="crew__rule"></span>
     </div>
 
-    <div class="crew__body">
-      <p class="lead crew__lead">{t.body}</p>
+    <p class="lead crew__lead">{t.body}</p>
 
-      <ul class="crew__values">
-        {t.values.map((value) => <li class="crew__value">{value}</li>)}
-      </ul>
+    <ul class="crew__values">
+      {
+        t.values.map((value) => (
+          <li class="crew__value">
+            <span class="crew__badge" aria-hidden="true">
+              <Mark size="1.1rem" />
+            </span>
+            <span class="crew__label">{value}</span>
+          </li>
+        ))
+      }
+    </ul>
 
-      <a class="crew__link" href={t.linkHref}>{t.linkLabel}</a>
+    <a class="crew__link" href={t.linkHref}>{t.linkLabel}</a>
+
+    <div class="crew__ornament" aria-hidden="true">
+      <span class="crew__rule"></span>
+      <Mark size="1.5rem" />
+      <span class="crew__rule"></span>
     </div>
   </div>
 </Section>
@@ -41,50 +59,100 @@ const t = pages.about.crew;
 <style>
   .crew {
     display: grid;
-    gap: var(--space-lg);
-    align-items: start;
+    justify-items: center;
+    text-align: center;
+    gap: var(--space-md);
+  }
+
+  /* Nadtytuł dostaje kreski po obu stronach — w makiecie krótkie, więc
+     stała szerokość, a nie `flex: 1`, które rozciągnęłoby je na sekcję. */
+  .crew__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .crew__eyebrow::before,
+  .crew__eyebrow::after {
+    content: '';
+    inline-size: 1.75rem;
+    block-size: 1px;
+    background: var(--line-detail);
   }
 
   .crew__title {
     font-size: var(--fs-h2);
-    margin-block-start: var(--space-2xs);
   }
 
-  .crew__body {
-    display: grid;
-    gap: var(--space-lg);
-    justify-items: start;
+  .crew__ornament {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    inline-size: min(100%, 22rem);
+    color: var(--accent);
+  }
+
+  .crew__rule {
+    flex: 1;
+    block-size: 1px;
+    background: var(--line-detail);
   }
 
   .crew__lead {
-    max-width: var(--measure);
+    max-width: 46ch;
+    margin-block-start: var(--space-2xs);
   }
 
-  /* Cechy jako spokojna lista rozdzielona włoskowymi liniami, nie jako
-     kafle i nie jako jeden ciąg. Ciąg zostawiał sierotę w drugim wierszu
-     (3 + 1), a przy każdej zmianie szerokości łamał się gdzie indziej —
-     lista wygląda tak samo na telefonie i na monitorze. */
   .crew__values {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin-block-start: var(--space-md);
     display: grid;
-    inline-size: min(100%, 30rem);
+    gap: var(--space-md);
+    /* Węższa siatka łamała najdłuższą etykietę („Otwartość na drugiego
+       człowieka") na dwie linie i rozpychała dolny rząd o 6 px. */
+    inline-size: min(100%, 72rem);
+  }
+
+  /* Pigułka: kropla w kółku, cienka pionowa kreska, etykieta. Tekst wraca
+     do lewej — wyśrodkowana jest kompozycja sekcji, nie zawartość kafla. */
+  .crew__value {
+    display: flex;
+    align-items: stretch;
+    gap: var(--space-md);
+    text-align: start;
+    background: var(--surface);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: var(--space-sm) var(--space-lg);
+  }
+
+  .crew__badge {
+    flex: none;
+    display: grid;
+    place-items: center;
+    inline-size: 3rem;
+    block-size: 3rem;
+    border-radius: var(--radius-pill);
+    border: var(--hairline) solid var(--line-detail);
+    color: var(--accent);
+  }
+
+  /* Kreska bierze wysokość z kółka, bo to najwyższy element w rzędzie —
+     stąd `align-items: stretch` na pigułce. */
+  .crew__label {
+    display: flex;
+    align-items: center;
+    padding-inline-start: var(--space-md);
+    border-inline-start: var(--hairline) solid var(--line);
     font-family: var(--font-display);
     font-size: var(--fs-h4);
     line-height: 1.3;
   }
 
-  .crew__value {
-    padding-block: var(--space-sm);
-  }
-
-  .crew__value + .crew__value {
-    border-block-start: var(--hairline) solid var(--line);
-  }
-
   .crew__link {
-    font-size: var(--fs-small);
+    margin-block-start: var(--space-sm);
+    font-size: var(--fs-body);
     color: var(--text-accent);
     text-decoration: none;
     border-block-end: var(--hairline) solid currentColor;
@@ -96,11 +164,12 @@ const t = pages.about.crew;
   }
 
   @media (min-width: 48rem) {
-    /* Ten sam podział co w sekcji lokalizacji niżej — nagłówek trzyma lewą
-       kolumnę, treść bierze resztę. */
-    .crew {
-      grid-template-columns: auto 1fr;
-      gap: var(--space-2xl);
+    .crew__values {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-lg) var(--space-md);
+      /* Wszystkie cztery pigułki równej wysokości także wtedy, gdy przy
+         węższym oknie któraś etykieta jednak się złamie. */
+      grid-auto-rows: 1fr;
     }
   }
 </style>
