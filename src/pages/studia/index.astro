@@ -1,13 +1,20 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import Mark from '~/components/ui/Mark.astro';
-import Todo from '~/components/ui/Todo.astro';
 import { locations, formatAddress, site } from '~/data/site';
 import { pages } from '~/data/copy/pages';
-import { home } from '~/data/copy/home';
-import { copyOrNull } from '~/lib/copy';
+
+import zdjecieP from '~/assets/photos/studio-pruszcz-sala.jpg';
+import zdjecieG from '~/assets/photos/studio-gdansk-sala.jpg';
+
+/** Kadr sali dla każdej lokalizacji — po jednym, dobrane z sesji. */
+const zdjecia: Record<string, ImageMetadata> = {
+  'pruszcz-gdanski': zdjecieP,
+  gdansk: zdjecieG,
+};
 
 /**
  * Rozdroże obu lokalizacji.
@@ -31,7 +38,6 @@ const t = pages.studios;
     <ul class="studios">
       {
         locations.map((location) => {
-          const description = copyOrNull(home.studios.descriptions[location.slug]);
           return (
             <li class="studio-card">
               <div class="studio-card__head">
@@ -41,11 +47,21 @@ const t = pages.studios;
 
               <p class="studio-card__address">{formatAddress(location)}</p>
 
-              {description ? (
-                <p class="studio-card__desc">{description}</p>
-              ) : (
-                <Todo label={home.studios.descriptions[location.slug]} block />
-              )}
+              {/* Kadr zamiast opisu — decyzja z 20.08.2026. Opis sali został
+                  na podstronie studia; tutaj tę samą robotę wykonuje zdjęcie.
+                  Różnicę między jasną salą z jodełką w Pruszczu a betonem
+                  i złoconymi lustrami w Gdańsku widać szybciej, niż da się
+                  ją przeczytać. */}
+              <figure class="studio-card__figure">
+                <Image
+                  src={zdjecia[location.slug]}
+                  alt={`Sala studia TAK MI MOVE w ${location.city}`}
+                  widths={[480, 720, 1000]}
+                  sizes="(min-width: 48rem) 42vw, 100vw"
+                  loading="eager"
+                  class="studio-card__photo"
+                />
+              </figure>
 
               <dl class="studio-card__contact">
                 <dt>Telefon</dt>
@@ -83,12 +99,38 @@ const t = pages.studios;
     gap: var(--space-lg);
   }
 
+  /* Kafel zamiast kolumny z kreską u góry. Cienka linia została, ale
+     teraz siedzi w środku karty, nad nazwą — tak jak na makiecie. */
   .studio-card {
     display: grid;
     align-content: start;
     gap: var(--space-2xs);
-    padding-block-start: var(--space-md);
-    border-block-start: var(--hairline) solid var(--line-strong);
+    background: var(--surface);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-card);
+    padding: var(--space-lg);
+  }
+
+  .studio-card::before {
+    content: '';
+    block-size: 1px;
+    background: var(--line-detail);
+    margin-block-end: var(--space-sm);
+  }
+
+  .studio-card__figure {
+    margin: 0;
+    margin-block-start: var(--space-md);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .studio-card__photo {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
   }
 
   .studio-card__head {
@@ -108,11 +150,6 @@ const t = pages.studios;
   .studio-card__address {
     color: var(--text-muted);
     font-size: var(--fs-small);
-  }
-
-  .studio-card__desc {
-    margin-block-start: var(--space-2xs);
-    max-width: var(--measure-narrow);
   }
 
   .studio-card__contact {
