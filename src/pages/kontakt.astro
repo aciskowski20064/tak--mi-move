@@ -5,6 +5,7 @@ import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
 import Mark from '~/components/ui/Mark.astro';
 import MapEmbed from '~/components/ui/MapEmbed.astro';
+import SocialIcon from '~/components/ui/SocialIcon.astro';
 import { locations, formatAddress, site, booking } from '~/data/site';
 import { pages } from '~/data/copy/pages';
 
@@ -27,30 +28,38 @@ const t = pages.contact;
   <Section size="md">
     <div class="routes">
       <section class="route">
-        <h2>{t.whenFitssey.title}</h2>
-        <ul>
+        <div class="route__head">
+          <Mark size="1.1rem" class="route__mark" />
+          <h2>{t.whenFitssey.title}</h2>
+        </div>
+        <ul class="route__list">
           {t.whenFitssey.items.map((item) => <li>{item}</li>)}
         </ul>
-        <Button
-          href={booking.frontOfficeUrl}
-          newTab={booking.newTab}
-          variant="secondary"
-          source="footer"
-          event="booking_cta_click"
-        >
-          Otwórz system rezerwacji
-        </Button>
+        <div class="route__foot">
+          <Button
+            href={booking.frontOfficeUrl}
+            newTab={booking.newTab}
+            variant="secondary"
+            source="footer"
+            event="booking_cta_click"
+          >
+            Otwórz system rezerwacji
+          </Button>
+        </div>
       </section>
 
       <section class="route">
-        <h2>{t.whenDirect.title}</h2>
-        <ul>
+        <div class="route__head">
+          <Mark size="1.1rem" class="route__mark" />
+          <h2>{t.whenDirect.title}</h2>
+        </div>
+        <ul class="route__list">
           {t.whenDirect.items.map((item) => <li>{item}</li>)}
         </ul>
-        <p class="route__direct">
+        <div class="route__foot route__direct">
           <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
           <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
-        </p>
+        </div>
       </section>
     </div>
   </Section>
@@ -74,10 +83,21 @@ const t = pages.contact;
               <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
             </address>
 
+            {/* Sam znak platformy zamiast nazwy profilu. Nazwa zostaje
+                w `aria-label`, żeby czytnik ekranu ogłosił, dokąd prowadzi
+                odsyłacz — bez tego mówiłby tylko „link". */}
             <ul class="contact-studio__social">
               {location.social.map((s) => (
                 <li>
-                  <a href={s.url} target="_blank" rel="noopener me">{s.label}</a>
+                  <a
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener me"
+                    aria-label={`${s.platform === 'instagram' ? 'Instagram' : 'Facebook'}: ${s.label}`}
+                    title={s.label}
+                  >
+                    <SocialIcon platform={s.platform} />
+                  </a>
                 </li>
               ))}
             </ul>
@@ -105,23 +125,64 @@ const t = pages.contact;
     gap: var(--space-lg);
   }
 
+  /* Kafle zamiast dwóch kolumn oddzielonych kreską u góry. `align-content`
+     rozpycha zawartość tak, żeby stopka kafla — przycisk i dane kontaktowe —
+     siadała u dołu niezależnie od tego, że jedna lista ma cztery pozycje,
+     a druga pięć. Bez tego przycisk wisiał wyżej niż telefon obok. */
   .route {
-    padding-block-start: var(--space-md);
-    border-block-start: var(--hairline) solid var(--line-strong);
+    display: grid;
+    align-content: start;
+    background: var(--surface);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-card);
+    padding: var(--space-lg);
+  }
+
+  .route__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-block-end: var(--space-sm);
+  }
+
+  .route__head :global(.route__mark) {
+    color: var(--accent);
   }
 
   .route h2 {
     font-size: var(--fs-h3);
-    margin-block-end: var(--space-sm);
   }
 
-  .route ul {
+  /* Kropla jako punktor — ten sam znak co przy nagłówku kafla, tylko mniejszy.
+     `list-style` zdjęty, bo domyślna kropka rysowałaby się obok. */
+  .route__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: grid;
-    gap: var(--space-3xs);
-    padding-inline-start: 1.1em;
-    margin-block-end: var(--space-md);
+    gap: var(--space-2xs);
     font-size: var(--fs-small);
     color: var(--text-muted);
+  }
+
+  .route__list li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
+  }
+
+  .route__list li::before {
+    content: '';
+    inline-size: 0.3rem;
+    block-size: 0.3rem;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    flex: none;
+    translate: 0 -0.15em;
+  }
+
+  .route__foot {
+    margin-block-start: var(--space-lg);
   }
 
   .route__direct {
@@ -185,13 +246,27 @@ const t = pages.contact;
     margin-block: var(--space-sm) var(--space-md);
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-sm);
-    font-size: var(--fs-small);
+    gap: var(--space-2xs);
   }
 
+  /* Okrągły przycisk 44 px — sam znak platformy, nazwa profilu siedzi
+     w `aria-label` i w dymku. */
   .contact-studio__social a {
+    display: grid;
+    place-items: center;
+    inline-size: 44px;
+    block-size: 44px;
+    border-radius: var(--radius-pill);
+    border: var(--hairline) solid var(--line-strong);
     color: var(--text-accent);
-    padding-block: 0.25rem;
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+
+  .contact-studio__social a:hover {
+    background: var(--accent);
+    color: var(--on-accent);
   }
 
   .contact-studio__more {
