@@ -54,58 +54,31 @@ const blocks = [
         {lead ? <p class="lead page-header__lead">{lead}</p> : <Todo label={t.lead} block />}
       </div>
 
-      <div class="intro__media">
-        <figure class="intro__figure">
-          <Image
-            src={photoKawa}
-            alt={t.photos.hero}
-            widths={[420, 660, 900]}
-            sizes="(min-width: 60rem) 38vw, 100vw"
-            loading="eager"
-            class="intro__image"
-          />
-        </figure>
-
-        <aside class="booking">
-          <h2 class="booking__title">{home.firstVisit.ctaLabel}</h2>
-
-          <p class="booking__help">
-            Wolisz zapisać się przez telefon?
-            <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-          </p>
-
-          {/* Na szerokim ekranie zostaje sama strzałka, dlatego etykieta musi
-              przetrwać jako aria-label — inaczej czytnik ogłosiłby „link”. */}
-          <a
-            class="booking__go"
-            href={booking.frontOfficeUrl}
-            target={booking.newTab ? '_blank' : undefined}
-            rel={booking.newTab ? 'noopener' : undefined}
-            aria-label={home.firstVisit.ctaLabel}
-            data-cta-source="first-visit"
-            data-event="first_visit_cta_click"
-          >
-            <span class="booking__goLabel">{home.firstVisit.ctaLabel}</span>
-            <svg class="booking__goIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path
-                d="M4 12h15m0 0-6-6m6 6-6 6"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-            </svg>
-          </a>
-        </aside>
-      </div>
+      <figure class="intro__figure">
+        <Image
+          src={photoKawa}
+          alt={t.photos.hero}
+          widths={[520, 780, 1100]}
+          sizes="(min-width: 60rem) 46vw, 100vw"
+          loading="eager"
+          class="intro__image"
+        />
+      </figure>
     </div>
   </Section>
 
   <Section size="lg" tone="alt">
-    <p class="eyebrow">{t.stepsEyebrow}</p>
-    <h2 class="steps__title">{t.stepsTitle}</h2>
+    {/* Nagłówek trzyma lewą kolumnę, oś czasu bierze resztę. Wcześniej oba
+        stały jeden pod drugim na pełnej szerokości, a że tekst kroku jest
+        ograniczony miarą czytelności, prawa połowa sekcji zostawała pusta.
+        Ten sam podział co w bloku o założycielce na /o-nas. */}
+    <div class="stepsLayout">
+      <header class="stepsLayout__head">
+        <p class="eyebrow">{t.stepsEyebrow}</p>
+        <h2 class="steps__title">{t.stepsTitle}</h2>
+      </header>
 
-    <ol class="steps">
+      <ol class="steps">
       {
         steps.map((step, index) => (
           <li class="step">
@@ -120,14 +93,15 @@ const blocks = [
           </li>
         ))
       }
-      {
-        missingSteps.map((step) => (
-          <li class="step step--todo">
-            <Todo label={step.text} block />
-          </li>
-        ))
-      }
-    </ol>
+        {
+          missingSteps.map((step) => (
+            <li class="step step--todo">
+              <Todo label={step.text} block />
+            </li>
+          ))
+        }
+      </ol>
+    </div>
   </Section>
 
   <Section size="lg">
@@ -174,6 +148,41 @@ const blocks = [
   </Section>
 
   <Faq />
+
+  {/* Karta rezerwacji stała wcześniej na zdjęciu w nagłówku i tam się dusiła.
+      Tu domyka stronę, której wcześniej brakowało wyjścia: najpierw sześć
+      kroków i odpowiedzi na obawy, dopiero potem prośba o rezerwację. */}
+  <Section size="md" tone="soft">
+    <aside class="booking">
+      <div class="booking__text">
+        <h2 class="booking__title">{home.firstVisit.ctaLabel}</h2>
+        <p class="booking__help">
+          Wolisz zapisać się przez telefon?
+          <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+        </p>
+      </div>
+
+      <a
+        class="booking__go"
+        href={booking.frontOfficeUrl}
+        target={booking.newTab ? '_blank' : undefined}
+        rel={booking.newTab ? 'noopener' : undefined}
+        data-cta-source="first-visit"
+        data-event="first_visit_cta_click"
+      >
+        <span>{home.firstVisit.ctaLabel}</span>
+        <svg class="booking__goIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path
+            d="M4 12h15m0 0-6-6m6 6-6 6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"></path>
+        </svg>
+      </a>
+    </aside>
+  </Section>
 </Base>
 
 <style>
@@ -188,16 +197,13 @@ const blocks = [
   /* Tytuł, kreska i lead biorą reguły z `base.css` (`.page-header__*`) —
      nie powtarzamy ich tutaj, bo to jeden wzorzec na wszystkie podstrony. */
 
-  .intro__media {
-    position: relative;
-  }
-
-  /* Łuk cytuje ten namalowany na ścianie studia — patrz --radius-arch.
-     Zaokrąglony jest tylko górny lewy narożnik; pozostałe zostają ostre,
-     żeby kadr miał kierunek i nie zamienił się w medalion. */
+  /* Kadr jak na /o-nas: zaokrąglony ze wszystkich stron, proporcja 3:2
+     i koniec na krawędzi kolumny. Wcześniej miał łuk w jednym narożniku
+     i uciekał poza prawą krawędź okna — przez to zdjęcie było wysokie,
+     a karta rezerwacji dusiła się na jego dole. */
   .intro__figure {
     margin: 0;
-    border-start-start-radius: var(--radius-arch);
+    border-radius: var(--radius-card);
     overflow: hidden;
   }
 
@@ -206,16 +212,22 @@ const blocks = [
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
-    aspect-ratio: 4 / 3;
-    /* Kubek siedzi w dolnej połowie kadru — przy przycinaniu pionowego
-       zdjęcia trzymamy się dołu, żeby go nie uciąć. */
+    aspect-ratio: 3 / 2;
+    /* Kubek siedzi w dolnej połowie kadru — przy przycinaniu trzymamy dół,
+       żeby go nie uciąć. */
     object-position: 50% 68%;
   }
 
   /* ————————————————————————— oś czasu ————————————————————————— */
 
+  .stepsLayout {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: start;
+  }
+
   .steps__title {
-    margin-block: var(--space-2xs) var(--space-lg);
+    margin-block-start: var(--space-2xs);
     max-width: 18ch;
   }
 
@@ -282,16 +294,18 @@ const blocks = [
 
   /* ————————————————————————— karta rezerwacji ————————————————————————— */
 
-  /* Na wąskim ekranie karta stoi po prostu pod zdjęciem i wygląda jak
-     zwykły blok z pełnym przyciskiem. Poziomy pasek ze strzałką włącza się
-     dopiero tam, gdzie jest na niego miejsce (patrz 60rem). */
+  /* Na wąskim ekranie treść i przycisk stoją w słupku, od 40 rem rozchodzą
+     się na boki jednego paska. Karta nie leży już na zdjęciu, więc nie
+     potrzebuje ani pozycjonowania, ani chowania etykiety pod strzałkę. */
   .booking {
     display: grid;
-    gap: var(--space-sm);
-    margin-block-start: var(--space-md);
-    padding: var(--space-md);
-    background: var(--surface-soft);
-    border-radius: var(--radius-card);
+    gap: var(--space-md);
+    align-items: center;
+  }
+
+  .booking__text {
+    display: grid;
+    gap: var(--space-2xs);
   }
 
   .booking__title {
@@ -324,9 +338,8 @@ const blocks = [
   }
 
   .booking__goIcon {
-    display: none;
-    inline-size: 1.35rem;
-    block-size: 1.35rem;
+    inline-size: 1.15rem;
+    block-size: 1.15rem;
   }
 
   /* ————————————————————————— bloki informacyjne ————————————————————————— */
@@ -404,94 +417,26 @@ const blocks = [
     }
   }
 
-  @media (min-width: 60rem) {
-    /* :global, bo klasa "intro" trafia na korzeń komponentu Section, a ten
-       nosi scope Astro tamtego komponentu, nie tej strony — bez tego reguła
-       po cichu nie działa.
-
-       overflow-x: clip jest obowiązkowe przy kadrze wychodzącym poza okno:
-       100vw liczy szerokość RAZEM z paskiem przewijania, więc bez tego strona
-       dostaje poziomy pasek. clip, w odróżnieniu od hidden, nie tworzy
-       kontenera przewijania. */
-    :global(.intro) {
-      padding-block-end: var(--space-2xl);
-      overflow-x: clip;
+  @media (min-width: 40rem) {
+    /* Pasek: treść po lewej, przycisk po prawej. */
+    .booking {
+      grid-template-columns: minmax(0, 1fr) auto;
     }
+  }
 
+  @media (min-width: 60rem) {
     .intro__grid {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
       gap: var(--space-2xl);
       align-items: center;
     }
 
-    /* Kadr ucieka poza prawą krawędź okna. */
-    .intro__media {
-      margin-inline-end: calc(-1 * (var(--gutter) + max(0px, (100vw - var(--container)) / 2)));
-    }
-
-    /* Poziomy pasek zamiast pionowej karty: tytuł, kreska, telefon, strzałka.
-       Proporcje z makiety — 58% szerokości kadru przy 22% jego wysokości,
-       czyli element LEŻĄCY, a nie stojący. Poprzednia wersja miała te same
-       treści ułożone w słupek i przez to była dwa razy za wysoka. */
-    .booking {
-      position: absolute;
-      inset-block-end: calc(-1 * (var(--space-lg) + var(--space-sm)));
-      inset-inline-end: var(--space-lg);
-      inline-size: min(26rem, 58%);
-      grid-template-columns: minmax(0, 1fr) auto auto;
-      align-items: center;
-      gap: var(--space-sm);
-      padding: var(--space-sm);
-      margin-block-start: 0;
-      box-shadow: 0 2px 28px color-mix(in srgb, var(--espresso) 14%, transparent);
-    }
-
-    .booking__title {
-      font-size: var(--fs-h4);
-      line-height: var(--lh-heading);
-      max-width: 10ch;
-    }
-
-    /* Kreska oddzielająca to obramowanie akapitu z telefonem — jeden element
-       mniej w drzewie niż osobny separator. */
-    .booking__help {
-      font-size: var(--fs-caption);
-      line-height: var(--lh-body);
-      max-width: 17ch;
-      padding-inline-start: var(--space-sm);
-      border-inline-start: var(--hairline) solid
-        color-mix(in srgb, var(--clay-deep) 45%, transparent);
-    }
-
-    .booking__help a {
-      display: block;
-      margin-inline-start: 0;
-    }
-
-    /* Etykieta zostaje w drzewie dostępności przez aria-label na linku,
-       więc można ją tu schować bez straty dla czytników. */
-    .booking__goLabel {
-      display: none;
-    }
-
-    .booking__go {
-      inline-size: 2.9rem;
-      block-size: 2.9rem;
-      min-block-size: 0;
-      padding-inline: 0;
-      background: transparent;
-      color: var(--text-accent);
-      border: var(--hairline) solid color-mix(in srgb, var(--clay-deep) 78%, transparent);
-      transition: background var(--dur-fast), color var(--dur-fast);
-    }
-
-    .booking__go:hover {
-      background: var(--accent);
-      color: var(--on-accent);
-    }
-
-    .booking__goIcon {
-      display: block;
+    /* Nagłówek sekcji trzyma stałą kolumnę, oś czasu bierze resztę. Bez tego
+       kroki kończyły się w połowie ekranu, bo tekst kroku jest ograniczony
+       miarą czytelności, a nie szerokością sekcji. */
+    .stepsLayout {
+      grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+      gap: var(--space-2xl);
     }
   }
 </style>
