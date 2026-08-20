@@ -13,20 +13,56 @@ export const pages = {
     eyebrow: 'Grafik i zapisy',
     title: 'Wybierz zajęcia i termin',
     lead: 'Grafik i rezerwacje prowadzimy w systemie Fitssey. Poniżej działa on bezpośrednio na stronie — konto, karnet i płatność zostają po stronie systemu.',
-    rulesTitle: 'Zasady zapisów',
-    // FAKT: pierwsze cztery to odpowiedzi 28–31. Piąta i szósta pochodzą
-    // z odpowiedzi 27 i z maila (19.08.2026) — dotyczą tego samego tematu,
-    // więc stoją tutaj, a nie w FAQ.
+    rulesEyebrow: 'Zasady zapisów',
+    rulesTitle: 'Wszystko, co warto wiedzieć przed pierwszą wizytą',
+    /**
+     * FAKT: odpowiedzi 28–31, 27 oraz mail z 19.08.2026. Treść bez zmian —
+     * rozbita tylko na tytuł i doprecyzowanie, bo tak czyta się szybciej niż
+     * z sześciu pełnych zdań pod rząd.
+     *
+     * „Nie akceptujemy kart sportowych" zostaje samym tytułem. Makieta
+     * dopisywała tam „płatności realizujemy online lub na miejscu" — tego
+     * klientka nigdy nie powiedziała i nie wiemy, czy da się zapłacić na
+     * miejscu, więc nie ma tu żadnego opisu.
+     *
+     * Zasada o karnecie działającym w obu studiach wyszła z tej listy do
+     * osobnej karty niżej. Stała tam i tu, a to ta sama informacja.
+     */
     rules: [
-      'Rezerwację odwołasz bez utraty wejścia najpóźniej 14 godzin przed rozpoczęciem zajęć. Później wejście przepada.',
-      'Gdy termin jest zajęty, zapisz się na listę rezerwową — o zwolnionym miejscu poinformujemy Cię e-mailem.',
-      'Karnet działa w obu studiach: możesz ćwiczyć raz w Pruszczu, raz w Gdańsku.',
-      'Nie akceptujemy kart sportowych.',
-      'Karnety x4 i x8 możesz dzielić z bliskimi — na przykład z partnerem albo córką.',
-      'Jesteś w Trójmieście przejazdem? W systemie rezerwacji wybierz wejście jednorazowe i przyjdź do wybranego studia.',
+      {
+        ikona: 'clock' as const,
+        title: 'Rezerwację odwołasz bez utraty wejścia',
+        body: 'Najpóźniej 14 godzin przed rozpoczęciem zajęć. Później wejście przepada.',
+      },
+      {
+        ikona: 'mail' as const,
+        title: 'Gdy termin jest zajęty',
+        body: 'Zapisz się na listę rezerwową — o zwolnionym miejscu poinformujemy Cię e-mailem.',
+      },
+      {
+        ikona: 'card' as const,
+        title: 'Nie akceptujemy kart sportowych',
+      },
+      {
+        ikona: 'card' as const,
+        title: 'Karnety x4 i x8 możesz dzielić z bliskimi',
+        body: 'Na przykład z partnerem albo córką.',
+      },
+      {
+        ikona: 'heart' as const,
+        title: 'Jesteś w Trójmieście przejazdem?',
+        body: 'W systemie rezerwacji wybierz wejście jednorazowe i przyjdź do wybranego studia.',
+      },
     ],
-    helpTitle: 'Coś nie działa?',
+    /** FAKT: odpowiedź 30 — ta sama zasada, wyjęta z listy jako wyróżnik. */
+    passHighlight: {
+      title: 'Dwa studia, jeden karnet',
+      body: 'Możesz ćwiczyć raz w Pruszczu, raz w Gdańsku.',
+    },
+    helpEyebrow: 'Coś nie działa?',
+    helpTitle: 'Jesteśmy tu, żeby pomóc',
     helpLead: 'Jeśli grafik się nie wczytuje albo nie możesz dokończyć rezerwacji, napisz lub zadzwoń — pomożemy zapisać się ręcznie.',
+    helpPhoto: 'Prowadząca poprawia ustawienie ćwiczącej na macie',
   },
 
   studios: {

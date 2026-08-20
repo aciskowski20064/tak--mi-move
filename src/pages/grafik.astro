@@ -1,13 +1,14 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
-import Todo from '~/components/ui/Todo.astro';
+import FactIcon from '~/components/ui/FactIcon.astro';
+import fotoPomoc from '~/assets/photos/pomoc-korekta.jpg';
 import ScheduleEmbed from '~/components/fitssey/ScheduleEmbed.astro';
 import LocationSwitch from '~/components/fitssey/LocationSwitch.astro';
 import { locations, formatAddress, site } from '~/data/site';
 import { pages } from '~/data/copy/pages';
-import { realOnly } from '~/lib/copy';
 
 /**
  * Brief §15 — jedna z najważniejszych podstron projektu.
@@ -22,8 +23,6 @@ import { realOnly } from '~/lib/copy';
  * właściwy skrypt w LocationSwitch.
  */
 const t = pages.schedule;
-const rules = realOnly([...t.rules], (r) => r);
-const missingRules = t.rules.filter((r) => !rules.includes(r));
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
@@ -52,27 +51,79 @@ const missingRules = t.rules.filter((r) => !rules.includes(r));
 
   <Section size="lg" tone="alt">
     <div class="schedule__info">
-      <div>
-        <h2>{t.rulesTitle}</h2>
-        {
-          rules.length > 0 ? (
-            <ul class="schedule__rules">
-              {rules.map((rule) => (
-                <li>{rule}</li>
-              ))}
-            </ul>
-          ) : null
-        }
-        {missingRules.map((rule) => <Todo label={rule} block />)}
-      </div>
+      <article class="karta karta--zasady">
+        <span class="karta__znak" aria-hidden="true">
+          <FactIcon name="calendar" size="1.5rem" />
+        </span>
+        <p class="eyebrow">{t.rulesEyebrow}</p>
+        <h2 class="karta__tytul">{t.rulesTitle}</h2>
+        <span class="karta__kreska" aria-hidden="true"></span>
 
-      <div>
-        <h2>{t.helpTitle}</h2>
-        <p class="schedule__help">{t.helpLead}</p>
-        <p class="schedule__contact">
-          <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-          <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
-        </p>
+        <ul class="zasady">
+          {
+            t.rules.map((rule) => (
+              <li class="zasada">
+                <span class="zasada__znak" aria-hidden="true">
+                  <FactIcon name={rule.ikona} size="1.15rem" />
+                </span>
+                <div>
+                  <h3 class="zasada__tytul">{rule.title}</h3>
+                  {'body' in rule && rule.body && <p class="zasada__tekst">{rule.body}</p>}
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+
+      <div class="schedule__prawa">
+        <article class="karta karta--pomoc">
+          <div class="pomoc__tresc">
+            <span class="karta__znak karta__znak--pelny" aria-hidden="true">
+              <FactIcon name="chat" size="1.4rem" />
+            </span>
+            <p class="eyebrow">{t.helpEyebrow}</p>
+            <h2 class="karta__tytul">{t.helpTitle}</h2>
+            <span class="karta__kreska" aria-hidden="true"></span>
+            <p class="pomoc__lead">{t.helpLead}</p>
+
+            <ul class="pomoc__kontakt">
+              <li>
+                <span class="pomoc__ikona" aria-hidden="true">
+                  <FactIcon name="phone" size="1rem" />
+                </span>
+                <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+              </li>
+              <li>
+                <span class="pomoc__ikona" aria-hidden="true">
+                  <FactIcon name="mail" size="1rem" />
+                </span>
+                <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
+              </li>
+            </ul>
+          </div>
+
+          <figure class="pomoc__figura">
+            <Image
+              src={fotoPomoc}
+              alt={t.helpPhoto}
+              widths={[420, 660, 900]}
+              sizes="(min-width: 60rem) 22vw, 90vw"
+              loading="lazy"
+              class="pomoc__foto"
+            />
+          </figure>
+        </article>
+
+        <article class="karta karta--karnet">
+          <span class="karnet__znak" aria-hidden="true">
+            <FactIcon name="pin" size="1.15rem" />
+          </span>
+          <div>
+            <h2 class="karnet__tytul">{t.passHighlight.title}</h2>
+            <p class="karnet__tekst">{t.passHighlight.body}</p>
+          </div>
+        </article>
       </div>
     </div>
   </Section>
@@ -108,43 +159,219 @@ const missingRules = t.rules.filter((r) => !rules.includes(r));
   .schedule__info {
     display: grid;
     gap: var(--space-lg);
+    align-items: start;
   }
 
-  .schedule__info h2 {
-    font-size: var(--fs-h3);
-    margin-block-end: var(--space-sm);
+  /* ————————————————————— karty ————————————————————— */
+
+  .karta {
+    border-radius: var(--radius-card);
+    padding: var(--space-lg);
   }
 
-  .schedule__rules {
+  .karta--zasady,
+  .karta--pomoc {
+    background: var(--surface);
+  }
+
+  .karta--karnet {
+    background: var(--surface-alt);
     display: grid;
-    gap: var(--space-2xs);
-    padding-inline-start: 1.1em;
-    max-width: var(--measure);
-    font-size: var(--fs-small);
+    grid-template-columns: auto 1fr;
+    gap: var(--space-md);
+    align-items: center;
   }
 
-  .schedule__help {
+  /* Znacznik konturowy przy zasadach, wypełniony przy pomocy — tak jak na
+     makiecie. Wypełniony ciągnie wzrok do karty kontaktowej. */
+  .karta__znak {
+    display: grid;
+    place-items: center;
+    inline-size: 3rem;
+    block-size: 3rem;
+    border-radius: var(--radius-pill);
+    border: var(--hairline) solid var(--line-detail);
+    color: var(--accent);
+    margin-block-end: var(--space-md);
+  }
+
+  .karta__znak--pelny {
+    background: var(--accent);
+    border-color: transparent;
+    color: var(--on-accent);
+  }
+
+  .karta__tytul {
+    font-size: var(--fs-h3);
+    max-width: 20ch;
+  }
+
+  .karta__kreska {
+    display: block;
+    inline-size: 3rem;
+    block-size: 2px;
+    background: var(--accent);
+    margin-block: var(--space-sm) var(--space-md);
+  }
+
+  /* ————————————————————— lista zasad ————————————————————— */
+
+  .zasady {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* Włoskowata linia między zasadami zamiast punktorów. Ostatnia jej nie
+     dostaje, żeby lista nie kończyła się kreską w powietrzu. */
+  .zasada {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-md);
+    align-items: start;
+    padding-block: var(--space-md);
+  }
+
+  .zasada + .zasada {
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  .zasada__znak {
+    display: grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-soft);
+    color: var(--accent-strong);
+  }
+
+  .zasada__tytul {
+    font-size: var(--fs-body);
+    font-family: var(--font-text);
+    font-weight: 500;
+    margin-block-end: var(--space-3xs);
+  }
+
+  .zasada__tekst {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    line-height: 1.55;
+    max-width: var(--measure);
+  }
+
+  /* ————————————————————— karta pomocy ————————————————————— */
+
+  .schedule__prawa {
+    display: grid;
+    gap: var(--space-lg);
+    align-content: start;
+  }
+
+  .karta--pomoc {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .pomoc__lead {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    line-height: 1.7;
     max-width: var(--measure-narrow);
+    margin-block-end: var(--space-md);
+  }
+
+  .pomoc__kontakt {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  /* Każdy kontakt w osobnej ramce — to są dwa osobne działania, nie lista. */
+  .pomoc__kontakt li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: var(--space-sm);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: var(--space-2xs) var(--space-md) var(--space-2xs) var(--space-2xs);
+  }
+
+  .pomoc__ikona {
+    display: grid;
+    place-items: center;
+    inline-size: 2.25rem;
+    block-size: 2.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  .pomoc__kontakt a {
+    color: var(--text);
+    font-size: var(--fs-small);
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+  }
+
+  .pomoc__figura {
+    margin: 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .pomoc__foto {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    aspect-ratio: 4 / 3;
+  }
+
+  /* ————————————————————— karnet ————————————————————— */
+
+  .karnet__znak {
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--accent-strong);
+  }
+
+  .karnet__tytul {
+    font-size: var(--fs-h4);
+    margin-block-end: var(--space-3xs);
+  }
+
+  .karnet__tekst {
     font-size: var(--fs-small);
     color: var(--text-muted);
   }
 
-  .schedule__contact {
-    display: grid;
-    gap: var(--space-3xs);
-    margin-block-start: var(--space-sm);
-  }
-
-  .schedule__contact a {
-    color: var(--text-accent);
-    padding-block: 0.25rem;
-    width: fit-content;
-  }
-
   @media (min-width: 48rem) {
+    /* Równy podział, nie 1fr + sufit. Przy `minmax(9rem, 14rem)` tor zdjęcia
+       schodził do 147 px, czyli o jedną trzecią mniej, niż ma na makiecie. */
+    .karta--pomoc {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .pomoc__foto {
+      aspect-ratio: 3 / 4;
+    }
+  }
+
+  @media (min-width: 60rem) {
     .schedule__info {
-      grid-template-columns: 1.4fr 1fr;
-      gap: var(--space-2xl);
+      grid-template-columns: 1.15fr 1fr;
+      gap: var(--space-lg);
     }
   }
 </style>
