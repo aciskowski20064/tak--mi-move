@@ -54,10 +54,6 @@ const cards = [t.spaces, t.community];
           loading="eager"
           class="intro__image"
         />
-        <figcaption class="intro__card">
-          <span class="intro__cardLabel">{t.heroCard.label}</span>
-          <span class="intro__cardLine">{t.heroCard.line}</span>
-        </figcaption>
       </figure>
     </div>
   </Section>
@@ -169,7 +165,6 @@ const cards = [t.spaces, t.community];
 
   .intro__figure {
     margin: 0;
-    position: relative;
     border-radius: var(--radius-card);
     overflow: hidden;
   }
@@ -182,32 +177,6 @@ const cards = [t.spaces, t.community];
     aspect-ratio: 3 / 2;
     /* Kobiety siedzą w dolnych dwóch trzecich kadru. */
     object-position: 50% 62%;
-  }
-
-  /* Podpis leży na zdjęciu, więc tło musi być kryjące — półprzezroczysta
-     płytka nad fotografią daje kontrast zależny od tego, co pod nią wypadnie. */
-  .intro__card {
-    position: absolute;
-    inset-inline-start: var(--space-md);
-    /* `inset-inline` na obu krawędziach rozciągało płytkę przez cały kadr;
-       `max-inline-size` trzyma ją w rogu, ale nie pozwala wyjść poza zdjęcie. */
-    max-inline-size: calc(100% - 2 * var(--space-md));
-    bottom: var(--space-md);
-    background: var(--surface);
-    border-radius: var(--radius-md);
-    padding: var(--space-sm) var(--space-md);
-    display: inline-grid;
-    gap: 0.15em;
-  }
-
-  .intro__cardLabel {
-    font-family: var(--font-display);
-    font-size: var(--fs-h4);
-  }
-
-  .intro__cardLine {
-    font-size: var(--fs-small);
-    color: var(--text-muted);
   }
 
   /* ————————————————————————— założycielka —————————————————————————
@@ -223,10 +192,16 @@ const cards = [t.spaces, t.community];
     align-items: start;
   }
 
+  /* Na telefonie portret na pełną szerokość dawał 333 × 500 px, czyli ponad
+     połowę ekranu — przy proporcji 2:3 szerokość kolumny przekłada się na
+     półtora raza większą wysokość. Ograniczony i wyśrodkowany; od 40 rem
+     kolumna sama go trzyma i limit przestaje obowiązywać. */
   .founder__figure {
     margin: 0;
     display: grid;
     gap: var(--space-md);
+    inline-size: min(100%, 15rem);
+    margin-inline: auto;
   }
 
   /* Naturalna proporcja pliku (2:3) — bez przycinania i bez rozciągania
@@ -435,6 +410,11 @@ const cards = [t.spaces, t.community];
     .founder {
       grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
       gap: var(--space-2xl);
+    }
+
+    .founder__figure {
+      inline-size: 100%;
+      margin-inline: 0;
     }
 
     .cards {

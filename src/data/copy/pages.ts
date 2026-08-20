@@ -116,16 +116,6 @@ export const pages = {
     // przysłany mailem („bezpieczna, inkluzywna i wspierająca przestrzeń…”).
     lead: 'Jesteśmy studiem zdrowego ruchu. Tworzymy bezpieczną, inkluzywną i wspierającą przestrzeń — miejsce treningu i praktyki, spotkań oraz holistycznej troski o ciało i głowę.',
     /**
-     * Podpis na kadrze nagłówka. Świadomie same fakty: makieta miała tu
-     * powitanie „Cieszę się, że tu jesteś" pisane odręcznym krojem — zdanie,
-     * którego klientka nigdy nie napisała, w foncie, którego nie mamy.
-     */
-    heroCard: {
-      // FAKT: rok założenia i obie lokalizacje z materiałów marki.
-      label: 'Studio zdrowego ruchu',
-      line: 'Pruszcz Gdański i Gdańsk · od 2022',
-    },
-    /**
      * FAKT: tekst przysłany przez klientkę 19.08.2026 — pierwszy materiał
      * napisany przez nią w pierwszej osobie. Dlatego ten blok jest wreszcie
      * cytatem, a nie parafrazą: wcześniej mieliśmy tylko streszczenie maila
