@@ -444,9 +444,25 @@ const blocks = [
     /* Oś czasu wjeżdża w podniesiony pas, nagłówek sekcji zostaje na swoim
        miejscu. Ujemny margines musi znieść własny padding sekcji, inaczej
        kroki wchodzą w pas ledwie kilkadziesiąt pikseli i spięcia nie widać.
-       2,5 rem zostaje jako oddech nad pierwszym krokiem. */
+       2,5 rem zostaje jako oddech nad pierwszym krokiem.
+
+       Oś dosunięta do prawej krawędzi kolumny. Tekst kroku ma sufit na
+       --measure, więc przy wyrównaniu do lewej lista wisiała przy lewej
+       krawędzi, a nadmiar kolumny zostawał pustką po prawej. Teraz jej
+       prawa krawędź trafia w prawą krawędź kontenera, czyli w tę samą
+       linię co tekst nagłówka wyżej.
+
+       `justify-self` zamiast szerokości liczonej z tokenów: --measure jest
+       podane w `ch`, a `ch` liczy się od stopnia pisma elementu, na którym
+       stoi. Na liście jest większy niż na tekście kroku, więc wyliczona
+       szerokość wychodziła szersza od kolumny i cała reguła była po cichu
+       obcinana do 100%.
+
+       Przesunięcie w prawo tylko powiększa zapas w spięciu z nagłówkiem —
+       warunek „krawędź piasku na lewo od znacznika" robi się łatwiejszy. */
     .steps {
       margin-block-start: calc(2.5rem - var(--space-2xl) - var(--wejscie));
+      justify-self: end;
     }
   }
 </style>
