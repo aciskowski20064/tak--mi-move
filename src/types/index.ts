@@ -19,6 +19,8 @@ export type StudioLocation = {
   /** Nazwa w interfejsie, np. „Studio Gdańsk”. */
   name: string;
   city: string;
+  /** Miejscownik nazwy miasta — „w Gdańsku", nie „w Gdańsk". */
+  cityLocative: string;
   street: string;
   postalCode?: string;
   phone?: string;

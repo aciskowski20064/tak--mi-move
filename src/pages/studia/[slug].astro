@@ -18,13 +18,22 @@ import pruszczAerial from '~/assets/photos/pruszcz-aerial.jpg';
 import pruszczSprzet from '~/assets/photos/pruszcz-sprzet.jpg';
 import pruszczSzatnia from '~/assets/photos/pruszcz-szatnia.jpg';
 
+import gdanskPoczekalnia from '~/assets/photos/gdansk-poczekalnia.jpg';
+import gdanskSala from '~/assets/photos/gdansk-sala.jpg';
+import gdanskSprzet from '~/assets/photos/gdansk-sprzet.jpg';
+import gdanskSzatnia from '~/assets/photos/gdansk-szatnia.jpg';
+import gdanskRecepcja from '~/assets/photos/gdansk-recepcja.jpg';
+
 /**
- * Kadry sesji przypisane do lokalizacji. Gdańska tu jeszcze nie ma — hero
- * i galeria po prostu się nie renderują, a strona zostaje kompletna bez nich.
+ * Kadry sesji przypisane do lokalizacji.
  *
- * Galeria nie jest ozdobą: cztery kadry odpowiadają na cztery różne pytania
- * osoby, która nigdy tu nie była — jak wygląda sala, jak wyglądają zajęcia,
- * czy trzeba coś przynosić, gdzie się przebrać.
+ * Galeria nie jest ozdobą: każdy kadr odpowiada na inne pytanie osoby, która
+ * nigdy tu nie była — jak wygląda sala, czy trzeba coś przynosić, gdzie się
+ * przebrać. Oba studia trzymają ten sam schemat, żeby żadne nie wypadło
+ * gorzej od drugiego przy tej samej liczbie zdjęć.
+ *
+ * Różnica jest jedna i wynika z materiału: w Pruszczu mamy kadr z zajęć
+ * w hamakach, w Gdańsku takiego nie ma — jego miejsce zajmuje lada recepcji.
  */
 const kadryStudiow: Record<string, { hero: ImageMetadata; galeria: { plik: ImageMetadata; opis: string }[] }> = {
   'pruszcz-gdanski': {
@@ -34,6 +43,15 @@ const kadryStudiow: Record<string, { hero: ImageMetadata; galeria: { plik: Image
       { plik: pruszczAerial, opis: 'Zajęcia aerial yogi — ćwiczące w hamakach' },
       { plik: pruszczSprzet, opis: 'Regał ze sprzętem: klocki, piłki, wałki, koce i bolstery' },
       { plik: pruszczSzatnia, opis: 'Szatnia z ławkami i przejściem do prysznica' },
+    ],
+  },
+  gdansk: {
+    hero: gdanskPoczekalnia,
+    galeria: [
+      { plik: gdanskSala, opis: 'Sala z betonową ścianą, złoconymi lustrami i podłogą w jodełkę' },
+      { plik: gdanskSprzet, opis: 'Regał ze sprzętem: klocki, piłki, wałki i odważnik' },
+      { plik: gdanskSzatnia, opis: 'Szatnia z ławką, mosiężnymi wieszakami i szafkami' },
+      { plik: gdanskRecepcja, opis: 'Lada recepcji z dębu, z łukowym panelem na ścianie' },
     ],
   },
 };
@@ -161,7 +179,7 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
           <figure class="studio__hero">
             <Image
               src={kadry.hero}
-              alt={`Poczekalnia studia TAK MI MOVE w ${location.city}`}
+              alt={`Poczekalnia studia TAK MI MOVE w ${location.cityLocative}`}
               widths={[600, 900, 1400]}
               sizes="(min-width: 60rem) 46vw, 100vw"
               loading="eager"

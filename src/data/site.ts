@@ -75,6 +75,7 @@ export const locations: StudioLocation[] = [
     slug: 'pruszcz-gdanski',
     name: 'Studio Pruszcz Gdański',
     city: 'Pruszcz Gdański',
+    cityLocative: 'Pruszczu Gdańskim',
     street: 'ul. Grunwaldzka 55/7',
     postalCode: '83-000',
     phone: site.phone,
@@ -95,6 +96,7 @@ export const locations: StudioLocation[] = [
     slug: 'gdansk',
     name: 'Studio Gdańsk',
     city: 'Gdańsk',
+    cityLocative: 'Gdańsku',
     street: 'ul. Angielska Grobla 35/47',
     postalCode: '80-756', // FAKT: potwierdzone w mailu klientki (19.08.2026)
     phone: site.phone,
