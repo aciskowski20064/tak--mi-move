@@ -1,0 +1,57 @@
+---
+/**
+ * Piktogramy przy faktach praktycznych na podstronie studia.
+ *
+ * Brief §8 wybiera symbol-kroplę zamiast biblioteki ikon i ta zasada nadal
+ * obowiązuje w dekoracji. Tutaj znaki pełnią inną rolę: rozróżniają cztery
+ * fakty od siebie na jedno spojrzenie. Cztery identyczne krople nie
+ * rozróżniałyby niczego, więc byłyby ozdobnikiem, a nie nawigacją.
+ *
+ * Rysowane z prostych figur, bez wciągania biblioteki — tak jak SocialIcon.
+ */
+interface Props {
+  name: 'pin' | 'door' | 'locker' | 'move';
+  size?: string;
+}
+
+const { name, size = '1.35rem' } = Astro.props;
+const wspolne = {
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  'stroke-width': '1.5',
+  'stroke-linecap': 'round' as const,
+  'stroke-linejoin': 'round' as const,
+  style: `inline-size:${size};block-size:${size};flex:none`,
+  'aria-hidden': 'true',
+  focusable: 'false',
+};
+---
+
+{name === 'pin' && (
+  <svg {...wspolne}>
+    <path d="M12 21s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z" />
+    <circle cx="12" cy="10" r="2.6" />
+  </svg>
+)}
+
+{name === 'door' && (
+  <svg {...wspolne}>
+    <path d="M6 21V4.5a1 1 0 0 1 .8-1l9-1.4a1 1 0 0 1 1.2 1V21" />
+    <path d="M4 21h16" />
+    <circle cx="14" cy="12" r="0.9" fill="currentColor" stroke="none" />
+  </svg>
+)}
+
+{name === 'locker' && (
+  <svg {...wspolne}>
+    <rect x="5" y="3" width="14" height="18" rx="2" />
+    <path d="M12 3v18M8.5 9.5h1M14.5 9.5h1" />
+  </svg>
+)}
+
+{name === 'move' && (
+  <svg {...wspolne}>
+    <path d="M12 3.5c3.6 0 6.5 2.7 6.5 6.2 0 4.6-6.5 10.8-6.5 10.8S5.5 14.3 5.5 9.7C5.5 6.2 8.4 3.5 12 3.5Z" />
+  </svg>
+)}

@@ -1,16 +1,44 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
 import Mark from '~/components/ui/Mark.astro';
-import Todo from '~/components/ui/Todo.astro';
 import MapEmbed from '~/components/ui/MapEmbed.astro';
 import Faq from '~/components/sections/Faq.astro';
 import { locations, formatAddress, booking, site } from '~/data/site';
 import { home } from '~/data/copy/home';
-import { copyOrNull, showPlaceholders } from '~/lib/copy';
+import { copyOrNull } from '~/lib/copy';
+import FactIcon from '~/components/ui/FactIcon.astro';
+import SocialIcon from '~/components/ui/SocialIcon.astro';
+
+import pruszczPoczekalnia from '~/assets/photos/pruszcz-poczekalnia.jpg';
+import pruszczSala from '~/assets/photos/pruszcz-sala-hamaki.jpg';
+import pruszczAerial from '~/assets/photos/pruszcz-aerial.jpg';
+import pruszczSprzet from '~/assets/photos/pruszcz-sprzet.jpg';
+import pruszczSzatnia from '~/assets/photos/pruszcz-szatnia.jpg';
+
+/**
+ * Kadry sesji przypisane do lokalizacji. Gdańska tu jeszcze nie ma — hero
+ * i galeria po prostu się nie renderują, a strona zostaje kompletna bez nich.
+ *
+ * Galeria nie jest ozdobą: cztery kadry odpowiadają na cztery różne pytania
+ * osoby, która nigdy tu nie była — jak wygląda sala, jak wyglądają zajęcia,
+ * czy trzeba coś przynosić, gdzie się przebrać.
+ */
+const kadryStudiow: Record<string, { hero: ImageMetadata; galeria: { plik: ImageMetadata; opis: string }[] }> = {
+  'pruszcz-gdanski': {
+    hero: pruszczPoczekalnia,
+    galeria: [
+      { plik: pruszczSala, opis: 'Sala z hamakami do aerial yogi i łukiem w kolorze terakoty' },
+      { plik: pruszczAerial, opis: 'Zajęcia aerial yogi — ćwiczące w hamakach' },
+      { plik: pruszczSprzet, opis: 'Regał ze sprzętem: klocki, piłki, wałki, koce i bolstery' },
+      { plik: pruszczSzatnia, opis: 'Szatnia z ławkami i przejściem do prysznica' },
+    ],
+  },
+};
 
 /**
  * Podstrona pojedynczego studia (brief §16).
@@ -36,6 +64,7 @@ const available = classes
 
 const description = copyOrNull(home.studios.descriptions[location.slug]);
 const address = formatAddress(location);
+const kadry = kadryStudiow[location.slug];
 
 /**
  * Praktyczne informacje lokalne — każda osobno, bo każdej może brakować.
@@ -45,26 +74,27 @@ const address = formatAddress(location);
  * nie brak danych, więc wiersze zniknęły, zamiast wisieć jako prośba o coś,
  * co już odrzuciła.
  */
-const practicalAll = [
+const fakty = [
+  { ikona: 'pin' as const, label: 'Lokalizacja', value: address },
+  { ikona: 'door' as const, label: 'Wejście', value: location.entranceInfo },
+  { ikona: 'locker' as const, label: 'Parking', value: location.parkingInfo },
   {
-    label: 'Wejście',
-    value: location.entranceInfo,
-    todo: 'TODO(klientka): od której ulicy wejście i które piętro',
+    ikona: 'locker' as const,
+    label: 'Szatnia',
+    // FAKT: odpowiedzi 10 i 50 — to samo wyposażenie w obu studiach.
+    value: 'Prysznic, ręczniki i kosmetyki na miejscu',
   },
   {
-    label: 'Parking',
-    value: location.parkingInfo,
-    todo: 'TODO(klientka): gdzie zaparkować, czy obowiązuje płatna strefa',
+    ikona: 'move' as const,
+    label: 'Zajęcia',
+    // FAKT: przypisanie zajęć do lokalizacji z `classSlugs`.
+    value: available.map((entry) => entry.data.name).join(', '),
   },
-];
-
-/**
- * W produkcji wiersz bez wartości znika w całości, nie tylko jego treść.
- * Sam `<Todo>` nic wtedy nie renderuje, ale etykieta w `<dt>` zostawała —
- * czyli „Parking" z pustym miejscem obok. Widać to dopiero po wyłączeniu
- * DEMO_MODE, więc filtr stoi tutaj, a nie w szablonie.
- */
-const practical = showPlaceholders ? practicalAll : practicalAll.filter((row) => row.value);
+]
+  /* Fakt bez wartości znika w całości, razem z etykietą i piktogramem.
+     Parkingu w Pruszczu po prostu nie znamy (odpowiedź 34 go nie rozstrzyga),
+     więc ta karta tam się nie pojawia. */
+  .filter((f) => f.value);
 
 const title = `${location.city} — studio jogi, pilatesu i aerial yogi`;
 const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates, stretching i aerial yoga w kameralnych grupach. Zapisy online.`;
@@ -81,65 +111,108 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
   />
 
   <Section as="div" size="sm">
-    <div class="studio__intro">
-      <div>
-        <p class="studio__address">{address}</p>
+    <div class="studio__top">
+      <ul class="fakty">
         {
-          description ? (
-            <p class="studio__desc lead">{description}</p>
-          ) : (
-            <Todo label={home.studios.descriptions[location.slug]} block />
-          )
+          fakty.map((f) => (
+            <li class="fakt">
+              <span class="fakt__ikona" aria-hidden="true">
+                <FactIcon name={f.ikona} />
+              </span>
+              <h2 class="fakt__label">{f.label}</h2>
+              <p class="fakt__tekst">{f.value}</p>
+            </li>
+          ))
         }
+      </ul>
 
-        <div class="studio__actions">
-          <Button
-            href={booking.frontOfficeUrl}
-            newTab={booking.newTab}
-            source="location"
-            event="booking_cta_click"
-          >
-            {booking.label}
-          </Button>
-          <Button href={`/grafik?studio=${location.slug}`} variant="secondary" source="location">
-            Grafik tej lokalizacji
-          </Button>
-        </div>
+      {
+        kadry && (
+          <figure class="studio__hero">
+            <Image
+              src={kadry.hero}
+              alt={`Poczekalnia studia TAK MI MOVE w ${location.city}`}
+              widths={[600, 900, 1400]}
+              sizes="(min-width: 60rem) 46vw, 100vw"
+              loading="eager"
+              class="studio__heroFoto"
+            />
+          </figure>
+        )
+      }
+    </div>
+  </Section>
 
+  {
+    kadry && (
+      <Section as="div" size="sm">
+        <ul class="galeria">
+          {kadry.galeria.map((k) => (
+            <li>
+              <Image
+                src={k.plik}
+                alt={k.opis}
+                widths={[320, 480, 700]}
+                sizes="(min-width: 48rem) 23vw, 45vw"
+                loading="lazy"
+                class="galeria__foto"
+              />
+            </li>
+          ))}
+        </ul>
+      </Section>
+    )
+  }
+
+  <Section size="lg">
+    <div class="studio__dol">
+      {
+        description && (
+          <article class="karta karta--opis">
+            <h2 class="karta__tytul">Ta przestrzeń</h2>
+            <p class="karta__tekst">{description}</p>
+          </article>
+        )
+      }
+
+      <article class="karta karta--kontakt">
+        <h2 class="karta__tytul">Dane kontaktowe</h2>
         <dl class="studio__contact">
           <dt>Telefon</dt>
           <dd><a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a></dd>
           <dt>E-mail</dt>
-          <dd><a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a></dd>
-          <dt>Social media</dt>
+          <dd>
+            <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
+          </dd>
+          <dt>Profile</dt>
           <dd class="studio__social">
-            {
-              location.social.map((s) => (
-                <a href={s.url} target="_blank" rel="noopener me">
-                  {s.label}
-                </a>
-              ))
-            }
+            {location.social.map((s) => (
+              <a
+                href={s.url}
+                target="_blank"
+                rel="noopener me"
+                aria-label={`${s.platform === 'instagram' ? 'Instagram' : 'Facebook'}: ${s.label}`}
+                title={s.label}
+              >
+                <SocialIcon platform={s.platform} />
+              </a>
+            ))}
           </dd>
         </dl>
-      </div>
 
-      <MapEmbed address={address} label={`TAK MI MOVE ${location.city}`} />
+        <div class="karta__akcje">
+          <Button
+            href={`/grafik?studio=${location.slug}`}
+            source="location"
+            event="schedule_page_view"
+          >
+            Zobacz grafik i zapisz się
+          </Button>
+        </div>
+
+        <MapEmbed address={address} label={`TAK MI MOVE ${location.city}`} />
+      </article>
     </div>
-  </Section>
-
-  <Section size="lg" tone="alt">
-    <h2 class="studio__heading">Zanim przyjdziesz</h2>
-    <dl class="practical">
-      {
-        practical.map((item) => (
-          <div class="practical__row">
-            <dt>{item.label}</dt>
-            <dd>{item.value ? item.value : <Todo label={item.todo} block />}</dd>
-          </div>
-        ))
-      }
-    </dl>
   </Section>
 
   {
@@ -168,26 +241,121 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
 </Base>
 
 <style>
-  .studio__intro {
+  /* ————————————————— fakty praktyczne + kadr ————————————————— */
+
+  .studio__top {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .fakty {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    /* 15 rem, nie 9 — przy niższym progu kolumna mieściła trzy fakty w rzędzie
+       i czwarty zostawał sam w drugim wierszu. Teraz układ jest równy 2×2,
+       a najdłuższy fakt („Joga, pilates, stretching, aerial yoga i barre")
+       ma gdzie się zmieścić. */
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: var(--space-lg) var(--space-md);
+  }
+
+  .fakt__ikona {
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: var(--radius-pill);
+    border: var(--hairline) solid var(--line-detail);
+    color: var(--accent);
+    margin-block-end: var(--space-sm);
+  }
+
+  .fakt__label {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    font-weight: 400;
+    margin-block-end: var(--space-3xs);
+  }
+
+  .fakt__tekst {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .studio__hero {
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .studio__heroFoto {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  /* ————————————————————— galeria ————————————————————— */
+
+  /* Równy rząd, nie schodki i nie przewijany pas. Kadry są różnych proporcji
+     (pion i poziom), więc wspólne `aspect-ratio` przycina je do jednej linii. */
+  .galeria {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .galeria__foto {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+  }
+
+  /* ————————————————————— dwie karty ————————————————————— */
+
+  .studio__dol {
     display: grid;
     gap: var(--space-lg);
     align-items: start;
   }
 
-  .studio__address {
-    font-family: var(--font-display);
+  .karta {
+    border-radius: var(--radius-card);
+    padding: var(--space-lg);
+  }
+
+  .karta--opis {
+    background: var(--surface-alt);
+  }
+
+  .karta--kontakt {
+    background: var(--surface);
+    border: var(--hairline) solid var(--line);
+  }
+
+  .karta__tytul {
     font-size: var(--fs-h3);
+    margin-block-end: var(--space-sm);
   }
 
-  .studio__desc {
-    margin-block-start: var(--space-sm);
+  .karta__tekst {
+    max-width: var(--measure);
+    line-height: var(--lh-loose);
   }
 
-  .studio__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    margin-block-start: var(--space-lg);
+  .karta__akcje {
+    margin-block: var(--space-lg);
   }
 
   .studio__contact {
@@ -222,32 +390,6 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
   .studio__heading {
     font-size: var(--fs-h2);
     margin-block-end: var(--space-md);
-  }
-
-  .practical {
-    display: grid;
-    gap: 0;
-    margin: 0;
-    border-block-start: var(--hairline) solid var(--line);
-  }
-
-  .practical__row {
-    display: grid;
-    gap: var(--space-2xs);
-    padding-block: var(--space-sm);
-    border-block-end: var(--hairline) solid var(--line);
-  }
-
-  .practical dt {
-    font-size: var(--fs-caption);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  .practical dd {
-    margin: 0;
-    max-width: var(--measure);
   }
 
   .studio__classes {
@@ -287,15 +429,24 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     color: var(--text-accent);
   }
 
+  @media (min-width: 48rem) {
+    /* Cztery kadry w jednym rzędzie — układ z makiety. */
+    .galeria {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
   @media (min-width: 60rem) {
-    .studio__intro {
-      grid-template-columns: 1fr minmax(20rem, 28rem);
+    .studio__top {
+      grid-template-columns: 1fr minmax(20rem, 30rem);
       gap: var(--space-2xl);
     }
 
-    .practical {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0 var(--space-2xl);
+    /* Karta z opisem szersza od kontaktowej: opis to tekst ciągły, dane
+       kontaktowe to krótkie wiersze i przycisk. */
+    .studio__dol {
+      grid-template-columns: 1.15fr 1fr;
+      gap: var(--space-lg);
     }
   }
 </style>
