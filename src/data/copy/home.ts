@@ -205,8 +205,8 @@ export const home = {
         alt: 'Rozmowa przy herbacie w fotelach, przy oknie i dużym lustrze w złoconej ramie',
       },
       {
-        key: 'atmo-recepcja',
-        alt: 'Drewniana lada recepcji w studiu w Gdańsku, za nią ściana z łukowym wzorem',
+        key: 'atmo-praktyka',
+        alt: 'Grupa ćwiczących w pozycji dziecka na matach, w jasnej sali z podłogą w jodełkę',
       },
     ],
 
