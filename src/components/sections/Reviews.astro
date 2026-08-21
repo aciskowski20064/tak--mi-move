@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Section from '~/components/ui/Section.astro';
 import Mark from '~/components/ui/Mark.astro';
+import Button from '~/components/ui/Button.astro';
 import Todo from '~/components/ui/Todo.astro';
 import { home } from '~/data/copy/home';
 
@@ -31,6 +32,10 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
       <header class="reviews__head">
         <p class="eyebrow">{t.eyebrow}</p>
         <h2>{t.title}</h2>
+        <p class="reviews__rating">
+          <Mark size="0.7rem" />
+          {t.ratingLabel}
+        </p>
       </header>
 
       {reviews.length > 0 ? (
@@ -60,6 +65,15 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
           block
         />
       )}
+
+      {/* Zachęta do wystawienia opinii. Stoi także wtedy, gdy cytatów jeszcze
+          nie ma — prośba o opinię nie wymaga posiadania opinii. */}
+      <aside class="reviews__cta">
+        <p class="reviews__ctaLead">{t.ctaLead}</p>
+        <Button href={t.ctaUrl} newTab variant="secondary" source="reviews" event="review_click">
+          {t.ctaLabel}
+        </Button>
+      </aside>
     </Section>
   )
 }
@@ -68,6 +82,32 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
   .reviews__head {
     max-width: var(--container-text);
     margin-block-end: var(--space-lg);
+  }
+
+  .reviews__rating {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-sm);
+    font-size: var(--fs-small);
+    color: var(--text-accent);
+  }
+
+  /* Zachęta oddzielona od cytatów linią — to prośba do czytelnika, nie
+     kolejna opinia. */
+  .reviews__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+    margin-block-start: var(--space-xl);
+    padding-block-start: var(--space-lg);
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  .reviews__ctaLead {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
   }
 
   .reviews__head h2 {

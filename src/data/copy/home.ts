@@ -201,6 +201,18 @@ export const home = {
   reviews: {
     eyebrow: 'Opinie',
     title: 'Co mówią uczestniczki',
+    /**
+     * FAKT: ocena 5,0 odczytana z wizytówki Google 21.08.2026. Liczby opinii
+     * świadomie nie podajemy — Google pokazywał ją tylko przy zalogowanym
+     * widoku, więc nie mamy pewnej wartości, a wpisanie przybliżonej byłoby
+     * zmyśleniem liczby, którą każdy może sprawdzić jednym kliknięciem.
+     */
+    ratingLabel: 'Ocena 5,0 w Google',
+    ctaLead: 'Ćwiczysz z nami?',
+    ctaLabel: 'Wystaw opinię w Google',
+    /** Adres wizytówki — ten sam, z którego pochodzą cytaty. */
+    ctaUrl:
+      'https://www.google.com/maps/place/Tak+Mi+Move/@54.2585342,18.6325267,17z/data=!4m8!3m7!1s0x46fd71bbbc135c41:0xc2f3b8dc541e48b7!8m2!3d54.2585342!4d18.6351016!9m1!1b1!16s%2Fg%2F11t7xz606d',
   },
 
   faq: {
