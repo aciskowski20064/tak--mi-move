@@ -122,11 +122,18 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
     gap: var(--space-lg);
   }
 
+  /* Kafel zamiast kolumny z kreską u góry. Autor odsunięty do dołu karty
+     przez `auto 1fr auto` — bez tego karty z krótszym cytatem miały podpis
+     zawieszony w połowie wysokości, a rząd wyglądał na rozjechany. */
   .review {
     display: grid;
+    grid-template-rows: auto 1fr auto;
     gap: var(--space-sm);
-    padding-block-start: var(--space-md);
-    border-block-start: var(--hairline) solid var(--line-strong);
+    /* Piasek na kremie — ten sam wzorzec co kafle na /o-nas. Karta w kolorze
+       tła sekcji nie odcinała się wcale, a sama ramka to za mało. */
+    background: var(--surface-alt);
+    border-radius: var(--radius-card);
+    padding: var(--space-lg);
   }
 
   .review :global(.review__mark) {
@@ -141,6 +148,8 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
   }
 
   .review__meta {
+    padding-block-start: var(--space-sm);
+    border-block-start: var(--hairline) solid var(--line-strong);
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2xs) var(--space-sm);
@@ -156,6 +165,7 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
   @media (min-width: 48rem) {
     .reviews__grid {
       grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
     }
   }
 </style>
