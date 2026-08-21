@@ -12,11 +12,18 @@ import { home } from '~/data/copy/home';
 const t = home.finalCta;
 ---
 
-<Section size="lg" tone="soft">
+{/* Wąski pas domykający, nie kolejna pełnowymiarowa sekcja. Wcześniej miała
+    658 px wysokości przy 402 px samej treści — sam padding `lg` zjadał 256 px,
+    a wszystko stało w słupku: znak, tytuł, lead, przyciski i dopisek. */}
+<Section size="sm" tone="soft">
   <div class="final">
-    <Mark variant="solid" size="clamp(2.5rem, 7vw, 4rem)" class="final__mark" />
-    <h2 class="final__title">{t.title}</h2>
-    <p class="final__lead">{t.lead}</p>
+    <div class="final__text">
+      <h2 class="final__title">
+        <Mark size="0.85rem" class="final__mark" />
+        {t.title}
+      </h2>
+      <p class="final__lead">{t.lead}</p>
+    </div>
 
     <div class="final__actions">
       <Button
@@ -33,57 +40,79 @@ const t = home.finalCta;
           strony głównej 21.08.2026. Sama sekcja była nagłówkiem i przyciskiem
           bez treści między nimi, ale wyjście do /pierwsza-wizyta musi zostać:
           to podstrona dla osób, które nigdy wcześniej nie ćwiczyły. */}
-      <Button href="/pierwsza-wizyta" variant="secondary" size="lg" source="final">
+      <Button href="/pierwsza-wizyta" variant="secondary" source="final">
         {t.firstVisitLabel}
       </Button>
-    </div>
 
-    <p class="final__secondary">
-      {t.secondaryLead}{' '}
-      <a href="/kontakt" data-event="email_click">{t.secondaryLabel}</a>
-    </p>
+      <p class="final__secondary">
+        {t.secondaryLead}{' '}
+        <a href="/kontakt" data-event="email_click">{t.secondaryLabel}</a>
+      </p>
+    </div>
   </div>
 </Section>
 
 <style>
+  /* Na wąskim ekranie słupek, od 52 rem pas: treść z lewej, przyciski z prawej.
+     Dopisek o pytaniu wszedł pod przyciski zamiast tworzyć osobny wiersz. */
   .final {
     display: grid;
-    justify-items: center;
-    gap: var(--space-sm);
-    text-align: center;
+    gap: var(--space-md);
   }
 
-  .final :global(.final__mark) {
-    color: color-mix(in srgb, var(--clay) 55%, transparent);
-    margin-block-end: var(--space-2xs);
+  .final__text {
+    display: grid;
+    gap: var(--space-2xs);
   }
 
   .final__title {
-    max-width: 16ch;
+    font-size: var(--fs-h3);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
+  }
+
+  .final :global(.final__mark) {
+    color: var(--accent);
+    flex: none;
   }
 
   .final__lead {
-    max-width: 40ch;
+    max-width: 46ch;
     color: var(--text-muted);
+    font-size: var(--fs-small);
   }
 
-  /* Dwa przyciski zamiast jednego — bez tego drugi rozciągał się na całą
-     szerokość kontenera, a pierwszy zostawał wąski. */
   .final__actions {
-    margin-block-start: var(--space-md);
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    align-items: center;
     gap: var(--space-xs);
   }
 
   .final__secondary {
-    margin-block-start: var(--space-sm);
     font-size: var(--fs-small);
     color: var(--text-muted);
+    flex-basis: 100%;
   }
 
   .final__secondary a {
     color: var(--text-accent);
+  }
+
+  @media (min-width: 52rem) {
+    .final {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: var(--space-xl);
+    }
+
+    .final__actions {
+      justify-content: end;
+    }
+
+    .final__secondary {
+      text-align: end;
+    }
   }
 </style>
