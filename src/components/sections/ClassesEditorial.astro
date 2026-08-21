@@ -49,7 +49,11 @@ const t = home.classes;
                   </span>
                 </span>
 
-                <Mark size="0.9rem" class="class-row__mark" />
+                <span class="class-row__go" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 12h15m0 0-6-6m6 6-6 6" />
+                  </svg>
+                </span>
               </a>
 
               {!description && <Todo label={entry.data.shortDescription} block />}
@@ -68,77 +72,102 @@ const t = home.classes;
 <style>
   .classes__head {
     max-width: var(--container-text);
-    margin-block-end: var(--space-lg);
   }
 
   .classes__head h2 {
     margin-block: var(--space-2xs) var(--space-sm);
   }
 
+  /* Kreska oddziela wstęp od kart — na makiecie ciągnie się przez całą
+     szerokość sekcji, nie tylko pod węższym akapitem. */
   .classes__list {
     list-style: none;
     padding: 0;
     margin: 0;
-    border-block-start: var(--hairline) solid var(--line-strong);
+    margin-block-start: var(--space-lg);
+    padding-block-start: var(--space-xl);
+    border-block-start: var(--hairline) solid var(--line);
+    display: grid;
+    gap: var(--space-md);
   }
 
   .class-row {
-    border-block-end: var(--hairline) solid var(--line);
+    display: grid;
   }
 
+  /* Cały kafel jest odsyłaczem, nie sama nazwa — większy cel dotyku
+     i mniej miejsc, w które trzeba trafić palcem. */
   .class-row__link {
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: var(--space-sm) var(--space-md);
-    padding-block: var(--space-md);
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: var(--space-2xs);
+    block-size: 100%;
+    padding: var(--space-md);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-card);
     text-decoration: none;
     color: inherit;
-    transition: color var(--dur) var(--ease);
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
   }
 
   .class-row__link:hover {
-    color: var(--text-accent);
+    border-color: var(--accent);
+    background: var(--surface);
   }
 
   .class-row__index {
-    font-family: var(--font-text);
-    font-size: var(--fs-caption);
-    letter-spacing: var(--ls-eyebrow);
-    color: var(--text-muted);
-  }
-
-  .class-row__body {
-    display: grid;
-    gap: var(--space-3xs);
+    font-size: var(--fs-small);
+    color: var(--text-accent);
+    font-variant-numeric: tabular-nums;
   }
 
   .class-row__name {
     font-family: var(--font-display);
     font-size: var(--fs-h3);
-    letter-spacing: 0.02em;
+    line-height: var(--lh-heading);
+  }
+
+  .class-row__body {
+    display: contents;
   }
 
   .class-row__desc {
-    max-width: var(--measure);
-    color: var(--text-muted);
     font-size: var(--fs-small);
+    color: var(--text-muted);
+    line-height: 1.55;
   }
 
   .class-row__where {
     font-size: var(--fs-caption);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
     color: var(--text-muted);
+    margin-block-start: var(--space-sm);
   }
 
-  .class-row__link :global(.class-row__mark) {
-    color: var(--accent);
-    transition: transform var(--dur) var(--ease);
+  /* Kółko ze strzałką zamiast kropli: to jest przycisk „wejdź”, a kropla
+     jest w tym projekcie znacznikiem, nie wskazaniem kierunku. */
+  .class-row__go {
+    display: grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border-radius: var(--radius-pill);
+    border: var(--hairline) solid var(--line-detail);
+    color: var(--accent-strong);
+    margin-block-start: var(--space-sm);
+    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
   }
 
-  .class-row__link:hover :global(.class-row__mark) {
-    transform: translateX(0.25rem);
+  .class-row__go svg {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+  }
+
+  .class-row__link:hover .class-row__go {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: transparent;
   }
 
   .classes__all {
@@ -147,9 +176,21 @@ const t = home.classes;
   }
 
   .classes__all a {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: 44px;
     color: var(--text-accent);
+  }
+
+  @media (min-width: 40rem) {
+    .classes__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Pięć kolumn dopiero tam, gdzie kafel ma sensowną szerokość. Niżej
+     dwie, bo przy pięciu opis schodzi do ~14 znaków w wierszu. */
+  @media (min-width: 64rem) {
+    .classes__list {
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-sm);
+    }
   }
 </style>
