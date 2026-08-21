@@ -20,8 +20,18 @@ export const home = {
   },
 
   hero: {
-    // FAKT — dwie lokalizacje, charakter działalności.
-    eyebrow: 'Butikowe studia zdrowego ruchu · Gdańsk i Pruszcz Gdański',
+    /* FAKT — charakter działalności i dwie lokalizacje. Rozbite na dwa
+       wiersze, bo w makiecie stoją jeden pod drugim: najpierw czym jesteśmy,
+       potem gdzie. */
+    eyebrow: 'Butikowe studia zdrowego ruchu',
+    eyebrowPlaces: 'Gdańsk i Pruszcz Gdański',
+    /**
+     * FAKT — hasło marki z mediów społecznościowych, to samo, które stoi nad
+     * wartościami na /o-nas. Makieta miała w tym miejscu „Kameralnie /
+     * Autentycznie / Z oddechem" — trzy słowa, których klientka nigdy nie
+     * użyła. Prawdziwe hasło mówi to samo i jest jej.
+     */
+    badge: ['Siła', 'Spokój', 'Równowaga'],
     // ROBOCZE — brief §12.2 zabrania wyboru hasła bez rozmowy z właścicielką.
     title: 'Ruch, do którego chce się wracać.',
     // FAKT — wymienione formy zajęć i wspólny system zapisów.

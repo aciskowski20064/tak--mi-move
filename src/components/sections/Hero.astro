@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Button from '~/components/ui/Button.astro';
 import Mark from '~/components/ui/Mark.astro';
+import FactIcon from '~/components/ui/FactIcon.astro';
 import Section from '~/components/ui/Section.astro';
 import { booking, locations, formatAddress } from '~/data/site';
 import { home } from '~/data/copy/home';
@@ -13,9 +14,17 @@ const t = home.hero;
 <Section as="div" size="lg" class="hero">
   <div class="hero__grid">
     <div class="hero__copy">
-      <p class="eyebrow hero__eyebrow">{t.eyebrow}</p>
+      <p class="eyebrow hero__eyebrow">
+        {t.eyebrow}
+        <span class="hero__places">
+          <Mark size="0.45rem" />
+          {t.eyebrowPlaces}
+        </span>
+      </p>
 
       <h1 class="hero__title">{t.title}</h1>
+
+      <span class="hero__rule" aria-hidden="true"></span>
 
       <p class="lead">{t.lead}</p>
 
@@ -38,10 +47,14 @@ const t = home.hero;
         {
           locations.map((location) => (
             <li class="hero__studio">
-              <Mark size="0.7rem" />
               <a href={`/studia/${location.slug}`} data-event="studio_location_select">
-                <strong>{location.city}</strong>
-                <span>{formatAddress(location)}</span>
+                <span class="hero__studioZnak" aria-hidden="true">
+                  <FactIcon name="pin" size="1.1rem" />
+                </span>
+                <span class="hero__studioTresc">
+                  <strong>{location.city}</strong>
+                  <span>{formatAddress(location)}</span>
+                </span>
               </a>
             </li>
           ))
@@ -59,7 +72,19 @@ const t = home.hero;
         fetchpriority="high"
         class="hero__image"
       />
-      <figcaption class="hero__caption">{t.imageCaption}</figcaption>
+      {/* Plakietka wchodzi na kadr od dołu — układ z makiety. Zamiast trzech
+          wymyślonych słów niesie prawdziwe hasło marki z mediów społecznościowych,
+          to samo, które stoi nad wartościami na /o-nas. */}
+      <figcaption class="hero__badge">
+        <span class="hero__badgeZnak" aria-hidden="true">
+          <Mark size="1.35rem" />
+        </span>
+        <span class="hero__badgeTresc">
+          {t.badge.map((slowo) => (
+            <span>{slowo}</span>
+          ))}
+        </span>
+      </figcaption>
     </figure>
   </div>
 </Section>
@@ -71,12 +96,31 @@ const t = home.hero;
     align-items: center;
   }
 
+  /* Nadtytuł w dwóch wierszach: czym jesteśmy, a pod spodem gdzie. */
   .hero__eyebrow {
-    max-width: 34ch;
+    display: grid;
+    gap: var(--space-3xs);
+    margin-block-end: var(--space-md);
+  }
+
+  .hero__places {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    color: var(--text-accent);
   }
 
   .hero__title {
-    margin-block: var(--space-md) var(--space-sm);
+    max-width: 14ch;
+  }
+
+  /* Ta sama kreska co w nagłówkach podstron — zamyka tytuł przed leadem. */
+  .hero__rule {
+    display: block;
+    inline-size: 3.5rem;
+    block-size: 2px;
+    background: var(--accent);
+    margin-block: var(--space-md);
   }
 
   .hero__actions {
@@ -86,39 +130,52 @@ const t = home.hero;
     margin-block-start: var(--space-lg);
   }
 
+  /* Lokalizacje oddzielone od reszty kolumny linią, a między sobą pionową
+     kreską — jak na makiecie. */
   .hero__studios {
     list-style: none;
     padding: 0;
-    margin-block-start: var(--space-xl);
     display: grid;
-    gap: var(--space-sm);
+    gap: var(--space-md);
+    margin-block-start: var(--space-xl);
+    padding-block-start: var(--space-lg);
     border-block-start: var(--hairline) solid var(--line);
-    padding-block-start: var(--space-md);
-  }
-
-  .hero__studio {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-2xs);
-    color: var(--text-accent);
   }
 
   .hero__studio a {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.15em var(--space-2xs);
-    color: var(--text);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: var(--space-sm);
     text-decoration: none;
+    color: inherit;
+  }
+
+  .hero__studioZnak {
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: var(--radius-pill);
+    border: var(--hairline) solid var(--line-detail);
+    color: var(--accent);
+  }
+
+  .hero__studioTresc {
+    display: grid;
+    gap: 0.1em;
   }
 
   .hero__studio strong {
-    font-weight: 500;
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    font-weight: 400;
   }
 
   .hero__studio span {
     font-size: var(--fs-small);
     color: var(--text-muted);
+    line-height: 1.45;
   }
 
   .hero__studio a:hover strong {
@@ -126,10 +183,44 @@ const t = home.hero;
     text-underline-offset: 0.25em;
   }
 
-  /* Zdjęcia zespołu są pionowe (3:4) — układ musi to uszanować,
-     a nie kadrować ich na siłę do panoramy. */
+  /* Plakietka z hasłem marki, wchodzi na kadr od dołu. Tło kryjące, bo leży
+     na zdjęciu — półprzezroczyste dałoby kontrast zależny od tego, co pod nią. */
+  .hero__badge {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    align-items: center;
+    gap: var(--space-sm);
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    margin-block-start: calc(-1 * var(--space-xl));
+    margin-inline-start: auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero__badgeZnak {
+    display: grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border-radius: var(--radius-pill);
+    border: var(--hairline) solid var(--line-detail);
+    color: var(--accent);
+  }
+
+  .hero__badgeTresc {
+    display: grid;
+    gap: 0.15em;
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
   .hero__figure {
     margin: 0;
+    display: grid;
   }
 
   .hero__image {
@@ -144,6 +235,21 @@ const t = home.hero;
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
     color: var(--text-muted);
+  }
+
+  @media (min-width: 40rem) {
+    /* Oba studia obok siebie, rozdzielone pionową kreską — układ z makiety.
+       Kreska na drugim elemencie, nie na pierwszym, żeby nie wisiała przy
+       lewej krawędzi kolumny. */
+    .hero__studios {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .hero__studio + .hero__studio {
+      padding-inline-start: var(--space-lg);
+      border-inline-start: var(--hairline) solid var(--line);
+    }
   }
 
   @media (min-width: 64rem) {
