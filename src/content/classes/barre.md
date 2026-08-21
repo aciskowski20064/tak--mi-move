@@ -15,7 +15,7 @@ equipment:
   - 'Legginsy i top, w których swobodnie unosisz nogi'
   - 'Skarpetki antypoślizgowe'
 contraindicationsNote: 'Duża liczba powtórzeń obciąża stawy kolanowe i skokowe. Przy problemach z kolanami, świeżym urazie i w ciąży skonsultuj udział z lekarzem lub fizjoterapeutą i uprzedź prowadzącą.'
-locationSlugs: ['pruszcz-gdanski']
+locationSlugs: ['pruszcz-gdanski', 'gdansk']
 draft: false
 ---
 

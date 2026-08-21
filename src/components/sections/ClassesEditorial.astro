@@ -20,6 +20,17 @@ const classes = entries.sort((a, b) => a.data.order - b.data.order);
 
 const cityName = (slug: string) => locations.find((l) => l.slug === slug)?.city ?? slug;
 
+/**
+ * Kolejność miast bierzemy z `locations`, nie z kolejności zapisanej w pliku
+ * zajęć. Bez tego barre wypisywało „Pruszcz Gdański · Gdańsk", a pozostałe
+ * cztery „Gdańsk · Pruszcz Gdański" — różnica wynikała wyłącznie z tego,
+ * w jakiej kolejności ktoś wpisał slugi do frontmattera.
+ */
+const wgKolejnosci = (slugi: readonly string[]) =>
+  [...slugi].sort(
+    (a, b) => locations.findIndex((l) => l.slug === a) - locations.findIndex((l) => l.slug === b),
+  );
+
 const t = home.classes;
 ---
 
@@ -45,7 +56,7 @@ const t = home.classes;
                   <span class="class-row__name">{entry.data.name}</span>
                   {description && <span class="class-row__desc">{description}</span>}
                   <span class="class-row__where">
-                    {entry.data.locationSlugs.map((slug) => cityName(slug)).join(' · ')}
+                    {wgKolejnosci(entry.data.locationSlugs).map(cityName).join(' · ')}
                   </span>
                 </span>
 

@@ -110,7 +110,7 @@ export const locations: StudioLocation[] = [
     /** FAKT: odpowiedź 34. */
     parkingInfo: 'Płatna strefa w okolicy',
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
-    classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga'],
+    classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga', 'barre'],
     social: [
       {
         platform: 'instagram',
