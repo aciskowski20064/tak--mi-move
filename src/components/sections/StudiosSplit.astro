@@ -2,183 +2,189 @@
 import { Image } from 'astro:assets';
 import Section from '~/components/ui/Section.astro';
 import Mark from '~/components/ui/Mark.astro';
-import Todo from '~/components/ui/Todo.astro';
-import { locations, formatAddress } from '~/data/site';
+import { locations, formatAddress, site } from '~/data/site';
 import { home } from '~/data/copy/home';
-import { copyOrNull } from '~/lib/copy';
-import type { Studio } from '~/types';
 
-import pruszczPhoto from '~/assets/photos/studio-pruszcz-zespol.jpg';
-import gdanskPhoto from '~/assets/photos/zespol-grupa.jpg';
+import zdjecieP from '~/assets/photos/studio-pruszcz-sala.jpg';
+import zdjecieG from '~/assets/photos/studio-gdansk-sala.jpg';
 
 /**
  * Brief §12.4: podkreślić, że to jedna marka z dwiema przestrzeniami,
- * i ułatwić wybór. §16.4 zabrania identycznych opisów obu lokalizacji.
+ * i ułatwić wybór.
  *
- * ZDJĘCIA — stan tymczasowy. Mamy trzy kadry na całą stronę, więc oba
- * pracują tu po raz drugi (hero i sekcja Atmosfera). Po dosłaniu materiału
- * z sesji podmiana to dwie linijki poniżej.
+ * Układ przeniesiony 1:1 z /studia (decyzja z 21.08.2026). Wcześniej strona
+ * główna miała własny wariant tej samej sekcji, więc te same dwie lokalizacje
+ * wyglądały na dwóch podstronach inaczej. Jeden kafel, jeden zestaw danych.
  *
- * DO POTWIERDZENIA: przypisanie drugiego kadru do Gdańska wynika z kolejności,
- * w jakiej zdjęcia zostały przekazane — nie z opisu materiału.
+ * Kadr zamiast opisu: różnicę między jasną salą z jodełką w Pruszczu
+ * a betonem i złoconymi lustrami w Gdańsku widać szybciej, niż da się ją
+ * przeczytać. Opisy sal zostały na podstronach studiów.
  */
-const studioPhotos: Partial<Record<Studio, ImageMetadata>> = {
-  'pruszcz-gdanski': pruszczPhoto,
-  gdansk: gdanskPhoto,
+const zdjecia: Record<string, ImageMetadata> = {
+  'pruszcz-gdanski': zdjecieP,
+  gdansk: zdjecieG,
 };
 
 const t = home.studios;
 ---
 
-<Section size="lg" id="studia">
-  <header class="studios__head">
-    <p class="eyebrow">{t.eyebrow}</p>
-    <h2>{t.title}</h2>
-    <p class="lead">{t.lead}</p>
-  </header>
+<Section size="lg" tone="alt">
+  <p class="eyebrow">{t.eyebrow}</p>
+  <h2 class="studios__title">{t.title}</h2>
+  <p class="lead studios__lead">{t.lead}</p>
 
-  <div class="studios__grid">
+  <ul class="studios">
     {
-      locations.map((location, index) => {
-        const photo = studioPhotos[location.slug];
-        const description = copyOrNull(t.descriptions[location.slug]);
+      locations.map((location) => (
+        <li class="studio-card">
+          <div class="studio-card__head">
+            <Mark size="0.9rem" class="studio-card__mark" />
+            <h3 class="studio-card__name">{location.city}</h3>
+          </div>
 
-        return (
-          <article class:list={['studio', index % 2 === 1 && 'studio--alt']}>
-            <div class="studio__media">
-              {photo ? (
-                <Image
-                  src={photo}
-                  alt={`Wnętrze studia TAK MI MOVE — ${location.city}`}
-                  widths={[400, 800, 1200]}
-                  sizes="(min-width: 48rem) 46vw, 100vw"
-                  class="studio__image"
-                />
-              ) : (
-                <div class="studio__blank">
-                  <Mark variant="solid" size="clamp(3.5rem, 12vw, 6rem)" class="studio__watermark" />
-                  <Todo label={t.missingPhoto} />
-                </div>
-              )}
-            </div>
+          <p class="studio-card__address">{formatAddress(location)}</p>
 
-            <div class="studio__body">
-              <h3 class="studio__city">{location.city}</h3>
-              <p class="studio__address">{formatAddress(location)}</p>
+          <figure class="studio-card__figure">
+            <Image
+              src={zdjecia[location.slug]}
+              alt={`Sala studia TAK MI MOVE w ${location.cityLocative}`}
+              widths={[480, 720, 1000]}
+              sizes="(min-width: 48rem) 42vw, 100vw"
+              loading="lazy"
+              class="studio-card__photo"
+            />
+          </figure>
 
-              {description ? (
-                <p class="studio__desc">{description}</p>
-              ) : (
-                <Todo label={t.descriptions[location.slug]} block />
-              )}
+          <dl class="studio-card__contact">
+            <dt>Telefon</dt>
+            <dd>
+              <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+            </dd>
+            <dt>E-mail</dt>
+            <dd>
+              <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
+            </dd>
+          </dl>
 
-              <p class="studio__links">
-                <a href={`/studia/${location.slug}`} data-event="studio_location_select">
-                  {t.linkLabel}
-                </a>
-                <a href={`/grafik?studio=${location.slug}`} data-event="schedule_page_view">
-                  {t.scheduleLabel}
-                </a>
-              </p>
-            </div>
-          </article>
-        );
-      })
+          <p class="studio-card__links">
+            <a href={`/studia/${location.slug}`} data-event="studio_location_select">
+              {t.linkLabel}
+            </a>
+            <a href={`/grafik?studio=${location.slug}`} data-event="schedule_page_view">
+              {t.scheduleLabel}
+            </a>
+          </p>
+        </li>
+      ))
     }
-  </div>
+  </ul>
 </Section>
 
 <style>
-  .studios__head {
-    max-width: var(--container-text);
-    margin-block-end: var(--space-lg);
-  }
-
-  .studios__head h2 {
+  .studios__title {
     margin-block: var(--space-2xs) var(--space-sm);
   }
 
-  .studios__grid {
+  .studios__lead {
+    max-width: var(--measure);
+    margin-block-end: var(--space-xl);
+  }
+
+  .studios {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: grid;
     gap: var(--space-lg);
   }
 
-  .studio {
+  /* Kafel z cienką linią w środku, nad nazwą — ten sam co na /studia. */
+  .studio-card {
     display: grid;
-    gap: var(--space-md);
-  }
-
-  .studio__media {
-    order: -1;
-  }
-
-  /* Stały kadr dla obu studiów, żeby karty zaczynały się na tej samej linii
-     niezależnie od proporcji dostarczonego zdjęcia. */
-  .studio__image {
-    inline-size: 100%;
-    block-size: auto;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: var(--radius-md);
-  }
-
-  /* Stan bez zdjęcia ma wyglądać na celowy, a nie na zepsuty. */
-  .studio__blank {
-    display: grid;
-    place-items: center;
-    gap: var(--space-sm);
-    aspect-ratio: 4 / 3;
-    padding: var(--space-md);
-    background: var(--surface-alt);
+    align-content: start;
+    gap: var(--space-2xs);
+    background: var(--surface);
     border: var(--hairline) solid var(--line);
-    border-radius: var(--radius-md);
-    text-align: center;
+    border-radius: var(--radius-card);
+    padding: var(--space-lg);
   }
 
-  .studio__blank :global(.studio__watermark) {
-    color: color-mix(in srgb, var(--oak) 45%, transparent);
+  .studio-card::before {
+    content: '';
+    block-size: 1px;
+    background: var(--line-detail);
+    margin-block-end: var(--space-sm);
   }
 
-  .studio--alt .studio__blank {
-    background: var(--surface-soft);
+  .studio-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
   }
 
-  .studio__city {
+  .studio-card__head :global(.studio-card__mark) {
+    color: var(--accent);
+  }
+
+  .studio-card__name {
     font-size: var(--fs-h2);
   }
 
-  .studio__address {
-    margin-block-start: var(--space-3xs);
+  .studio-card__address {
     color: var(--text-muted);
     font-size: var(--fs-small);
   }
 
-  .studio__desc {
-    margin-block-start: var(--space-sm);
-    max-width: var(--measure-narrow);
+  .studio-card__figure {
+    margin: 0;
+    margin-block-start: var(--space-md);
+    border-radius: var(--radius-md);
+    overflow: hidden;
   }
 
-  .studio__links {
+  .studio-card__photo {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  .studio-card__contact {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3xs) var(--space-sm);
+    margin-block-start: var(--space-sm);
+    font-size: var(--fs-small);
+  }
+
+  .studio-card__contact dt {
+    color: var(--text-muted);
+  }
+
+  .studio-card__contact dd {
+    margin: 0;
+  }
+
+  .studio-card__contact a {
+    color: var(--text-accent);
+  }
+
+  .studio-card__links {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs) var(--space-lg);
     margin-block-start: var(--space-md);
-    padding-block-start: var(--space-sm);
-    border-block-start: var(--hairline) solid var(--line);
     font-size: var(--fs-small);
   }
 
-  .studio__links a {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: 44px;
+  .studio-card__links a {
     color: var(--text-accent);
-    text-decoration-color: var(--line-strong);
-    padding-block: 0.15rem;
+    padding-block: 0.25rem;
   }
 
   @media (min-width: 48rem) {
-    .studios__grid {
+    .studios {
       grid-template-columns: 1fr 1fr;
       gap: var(--space-xl);
     }

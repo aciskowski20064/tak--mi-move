@@ -34,7 +34,11 @@ import { home } from '~/data/copy/home';
     justify-content: center;
     gap: var(--space-2xs) var(--space-lg);
     padding-block: var(--space-sm);
-    margin: 0;
+    /* `margin: 0` kasowało `margin-inline: auto` z klasy `container` — reguła
+       scoped Astro ma wyższą specyficzność niż globalna. Pasek stał przez to
+       przy lewej krawędzi okna zamiast na środku, co widać dopiero powyżej
+       80 rem, czyli szerokości kontenera. */
+    margin-block: 0;
     font-size: var(--fs-small);
     color: var(--text-muted);
   }
