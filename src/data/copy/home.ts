@@ -183,18 +183,33 @@ export const home = {
     eyebrow: 'Atmosfera',
     title: 'Ludzie, przestrzeń, oddech',
     lead: 'Kameralne grupy i miejsce, w którym nikt nikogo nie ocenia.',
+    /**
+     * Cztery kadry z sesji. Kolejność nie jest przypadkowa — idzie za
+     * tytułem sekcji: najpierw ludzie, potem przestrzeń, na końcu praktyka.
+     *
+     * Podpisów nie ma. Wcześniej każdy kadr miał etykietę w rodzaju „Zespół
+     * TAK MI MOVE", ale to nazywanie oczywistości: widać, że to zespół.
+     * Opis alternatywny zostaje, bo czytnik ekranu zdjęcia nie widzi.
+     */
     photos: [
       {
-        key: 'zespol-grupa',
-        alt: 'Zespół instruktorek TAK MI MOVE w jasnym wnętrzu studia z podłogą w jodełkę',
-        caption: 'Zespół TAK MI MOVE',
+        key: 'atmo-spotkanie',
+        alt: 'Cztery kobiety rozmawiają przy herbacie w części wypoczynkowej studia',
       },
       {
-        key: 'instruktorka-aerial-yoga',
-        alt: 'Instruktorka TAK MI MOVE w hamaku do aerial yogi',
-        caption: 'Aerial yoga',
+        key: 'atmo-szatnia',
+        alt: 'Kobiety przebierają się i rozmawiają w szatni z czarnymi szafkami',
+      },
+      {
+        key: 'atmo-herbata',
+        alt: 'Rozmowa przy herbacie w fotelach, przy oknie i dużym lustrze w złoconej ramie',
+      },
+      {
+        key: 'atmo-recepcja',
+        alt: 'Drewniana lada recepcji w studiu w Gdańsku, za nią ściana z łukowym wzorem',
       },
     ],
+
   },
 
 

@@ -2,8 +2,10 @@
 import { Image } from 'astro:assets';
 import Section from '~/components/ui/Section.astro';
 import { home } from '~/data/copy/home';
-import zespolGrupa from '~/assets/photos/zespol-grupa.jpg';
-import aerial from '~/assets/photos/instruktorka-aerial-yoga.jpg';
+import spotkanie from '~/assets/photos/atmo-spotkanie.jpg';
+import szatnia from '~/assets/photos/atmo-szatnia.jpg';
+import herbata from '~/assets/photos/atmo-herbata.jpg';
+import recepcja from '~/assets/photos/atmo-recepcja.jpg';
 
 /**
  * Brief §12.8: duże zdjęcia z krótkimi podpisami zamiast galerii miniatur.
@@ -16,8 +18,10 @@ import aerial from '~/assets/photos/instruktorka-aerial-yoga.jpg';
  * Potwierdzony jest wyłącznie kadr z hero (Pruszcz Gdański).
  */
 const photoMap: Record<string, ImageMetadata> = {
-  'zespol-grupa': zespolGrupa,
-  'instruktorka-aerial-yoga': aerial,
+  'atmo-spotkanie': spotkanie,
+  'atmo-szatnia': szatnia,
+  'atmo-herbata': herbata,
+  'atmo-recepcja': recepcja,
 };
 
 const t = home.atmosphere;
@@ -42,7 +46,6 @@ const t = home.atmosphere;
             loading="lazy"
             class="atmo__image"
           />
-          <figcaption class="atmo__caption">{photo.caption}</figcaption>
         </figure>
       ))
     }
@@ -71,7 +74,10 @@ const t = home.atmosphere;
   .atmo__image {
     inline-size: 100%;
     block-size: auto;
-    aspect-ratio: 4 / 5;
+    /* 3:2 to natywna proporcja wszystkich czterech kadrów — zero przycięcia.
+       Makieta ma kafle jeszcze szersze, ale przy 2:1 trzeba by zabrać 30%
+       wysokości, a na trzech zdjęciach stoją ludzie i ucięłoby im głowy. */
+    aspect-ratio: 3 / 2;
     object-fit: cover;
     border-radius: var(--radius-md);
   }
