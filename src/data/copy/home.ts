@@ -203,6 +203,7 @@ export const home = {
   finalCta: {
     title: 'Znajdź zajęcia dla siebie.',
     lead: 'Sprawdź aktualny grafik w Gdańsku i Pruszczu Gdańskim.',
+    firstVisitLabel: 'Zobacz, jak wygląda pierwsza wizyta',
     secondaryLead: 'Masz pytanie?',
     secondaryLabel: 'Napisz do nas',
   },

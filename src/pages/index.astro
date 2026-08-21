@@ -4,8 +4,6 @@ import Hero from '~/components/sections/Hero.astro';
 import ValueStrip from '~/components/sections/ValueStrip.astro';
 import StudiosSplit from '~/components/sections/StudiosSplit.astro';
 import ClassesEditorial from '~/components/sections/ClassesEditorial.astro';
-import ChooseHelp from '~/components/sections/ChooseHelp.astro';
-import FirstVisitSteps from '~/components/sections/FirstVisitSteps.astro';
 import Atmosphere from '~/components/sections/Atmosphere.astro';
 import Reviews from '~/components/sections/Reviews.astro';
 import Faq from '~/components/sections/Faq.astro';
@@ -27,8 +25,10 @@ import { home } from '~/data/copy/home';
   <ValueStrip />
   <StudiosSplit />
   <ClassesEditorial />
-  <ChooseHelp />
-  <FirstVisitSteps />
+  {/* Sekcje „Nie wiesz, co wybrać?" i „Jak wygląda pierwsza wizyta" zdjęte
+      21.08.2026. Pierwsza stała tu i na /zajecia z tej samej zmiennej, czyli
+      dwa razy ten sam tekst. Druga była nagłówkiem i przyciskiem bez treści —
+      jej odnośnik przeszedł do CTA na dole strony. */}
   <Atmosphere />
   <Reviews />
   <Faq />

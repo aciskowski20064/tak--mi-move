@@ -28,6 +28,14 @@ const t = home.finalCta;
       >
         {booking.label}
       </Button>
+
+      {/* Odnośnik przejęty po sekcji „Jak wygląda pierwsza wizyta", zdjętej ze
+          strony głównej 21.08.2026. Sama sekcja była nagłówkiem i przyciskiem
+          bez treści między nimi, ale wyjście do /pierwsza-wizyta musi zostać:
+          to podstrona dla osób, które nigdy wcześniej nie ćwiczyły. */}
+      <Button href="/pierwsza-wizyta" variant="secondary" size="lg" source="final">
+        {t.firstVisitLabel}
+      </Button>
     </div>
 
     <p class="final__secondary">
@@ -59,8 +67,14 @@ const t = home.finalCta;
     color: var(--text-muted);
   }
 
+  /* Dwa przyciski zamiast jednego — bez tego drugi rozciągał się na całą
+     szerokość kontenera, a pierwszy zostawał wąski. */
   .final__actions {
     margin-block-start: var(--space-md);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-xs);
   }
 
   .final__secondary {
