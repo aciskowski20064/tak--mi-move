@@ -110,8 +110,17 @@ const t = home.hero;
     color: var(--text-accent);
   }
 
+  /* 14ch przy foncie 60 px łamało tytuł na cztery wiersze — makieta ma dwa.
+     Miara musi zmieścić najdłuższy człon („Ruch, do którego"), inaczej
+     nagłówek rozjeżdża się w pionie i zjada całą kolumnę. */
   .hero__title {
-    max-width: 14ch;
+    /* 18ch to 540 px, a najdłuższy człon potrzebuje 556 px razem
+       z rozstrzeleniem. Brakowało 16 px i tytuł łamał się na trzy wiersze. */
+    max-width: 21ch;
+    /* base.css daje nagłówkom `text-wrap: balance`, który rozkładał ten
+       tytuł na trzy wyrównane wiersze. Makieta ma dwa, a miejsca jest dość:
+       najdłuższy człon potrzebuje 498 px przy 531 px kolumny. */
+    text-wrap: pretty;
   }
 
   /* Ta sama kreska co w nagłówkach podstron — zamyka tytuł przed leadem. */
@@ -223,10 +232,16 @@ const t = home.hero;
     display: grid;
   }
 
+  /* Kadr przycięty do 4:5 zamiast naturalnych 3:4. Plik jest pionem, a na
+     makiecie zdjęcie jest znacznie bardziej krępe — przycięcie zabiera 6%
+     wysokości, więc nikomu nie ucina głowy ani stóp. */
   .hero__image {
+    display: block;
     inline-size: 100%;
     block-size: auto;
-    border-radius: var(--radius-md);
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius-card);
   }
 
   .hero__caption {
@@ -253,9 +268,16 @@ const t = home.hero;
   }
 
   @media (min-width: 64rem) {
+    /* Kadr szerszy od kolumny tekstu, tak jak na makiecie. Poprzedni sufit
+       30 rem robił odwrotnie: tekst 586 px, zdjęcie 480 px. */
     .hero__grid {
-      grid-template-columns: 1fr minmax(20rem, 30rem);
-      gap: var(--space-2xl);
+      /* Kolumna tekstu musi zmieścić najdłuższy człon tytułu w jednym
+         wierszu. Potrzebuje 556 px: 498 px samych liter plus 58 px, które
+         dokłada rozstrzelenie z --ls-display. Stąd te proporcje i węższy
+         odstęp — przy 2xl i 1fr/1.1fr wychodziło 531 px i tytuł łamał się
+         na trzy wiersze zamiast dwóch. */
+      grid-template-columns: 1.05fr 1fr;
+      gap: var(--space-lg);
     }
   }
 </style>
