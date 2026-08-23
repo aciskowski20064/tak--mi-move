@@ -40,6 +40,11 @@ export const pages = {
         body: 'Zapisz się na listę rezerwową — o zwolnionym miejscu poinformujemy Cię e-mailem.',
       },
       {
+        ikona: 'users' as const,
+        title: 'Zajęcia odbywają się od trzech osób',
+        body: 'Grupa rusza przy minimum trzech zapisanych uczestniczkach.',
+      },
+      {
         ikona: 'card' as const,
         title: 'Nie akceptujemy kart sportowych',
       },
@@ -52,6 +57,11 @@ export const pages = {
         ikona: 'heart' as const,
         title: 'Jesteś w Trójmieście przejazdem?',
         body: 'W systemie rezerwacji wybierz wejście jednorazowe i przyjdź do wybranego studia.',
+      },
+      {
+        ikona: 'check' as const,
+        title: 'Zajęcia prowadzą certyfikowane osoby',
+        body: 'Kto prowadzi dany termin, widać w grafiku przy każdych zajęciach.',
       },
     ],
     /** FAKT: odpowiedź 30 — ta sama zasada, wyjęta z listy jako wyróżnik. */

@@ -22,7 +22,9 @@ interface Props {
     | 'card'
     | 'heart'
     | 'chat'
-    | 'calendar';
+    | 'calendar'
+    | 'users'
+    | 'check';
   size?: string;
 }
 
@@ -78,6 +80,21 @@ const wspolne = {
   <svg {...wspolne}>
     <rect x="3" y="5" width="18" height="14" rx="2.5" />
     <path d="m4 7.5 7.1 5a1.5 1.5 0 0 0 1.8 0l7.1-5" />
+  </svg>
+)}
+
+{name === 'users' && (
+  <svg {...wspolne}>
+    <circle cx="9" cy="8.5" r="3.2" />
+    <path d="M3.5 20c0-3 2.5-5.2 5.5-5.2s5.5 2.2 5.5 5.2" />
+    <path d="M16 5.6a3.2 3.2 0 0 1 0 5.8M17.5 14.9c1.9.6 3.3 2.4 3.3 5.1" />
+  </svg>
+)}
+
+{name === 'check' && (
+  <svg {...wspolne}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m8.2 12.3 2.6 2.6 5-5.4" />
   </svg>
 )}
 
