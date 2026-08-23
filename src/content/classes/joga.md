@@ -10,6 +10,10 @@ goals:
   - 'Większa swoboda ruchu i lepsza postawa'
   - 'Świadomy oddech i mniejsze napięcie'
   - 'Siła utrzymywana pozycjami własnego ciała'
+# FAKT: poziom i czas trwania odczytane z grafiku Fitssey 21.08.2026.
+# W grafiku jest też jeden wariant oznaczony jako średni („Joga poziom open").
+level: 'Wszystkie poziomy'
+duration: '55 minut'
 intensity: varied
 equipment:
   - 'Wygodny strój, który nie krępuje ruchu'

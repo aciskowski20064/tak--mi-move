@@ -10,6 +10,9 @@ goals:
   - 'Dekompresja kręgosłupa w zwisie'
   - 'Otwarcie klatki piersiowej i barków'
   - 'Siła i stabilizacja wymuszona pracą z niestabilnym podparciem'
+# FAKT: poziom i czas trwania odczytane z grafiku Fitssey 21.08.2026.
+level: 'Wszystkie poziomy'
+duration: '55 minut'
 intensity: medium
 equipment:
   - 'Strój zakrywający pachy i kolana — tkanina hamaka ociera skórę'

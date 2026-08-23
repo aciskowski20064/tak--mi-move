@@ -10,6 +10,9 @@ goals:
   - 'Większy zakres ruchu w biodrach, barkach i kręgosłupie'
   - 'Rozluźnienie miejsc, które trzymają napięcie'
   - 'Mniejsze ryzyko przeciążeń w innych aktywnościach'
+# FAKT: poziom i czas trwania odczytane z grafiku Fitssey 21.08.2026.
+level: 'Początkujący'
+duration: '55 minut'
 intensity: low
 equipment:
   - 'Wygodny, rozciągliwy strój'

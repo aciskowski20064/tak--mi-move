@@ -10,6 +10,9 @@ goals:
   - 'Wytrzymałość siłowa nóg, pośladków i brzucha'
   - 'Postawa i lekkość ruchu wyniesione z baletu'
   - 'Praca nad mięśniami posturalnymi bez obciążania stawów'
+# FAKT: poziom i czas trwania odczytane z grafiku Fitssey 21.08.2026.
+level: 'Początkujący'
+duration: '55 minut'
 intensity: high
 equipment:
   - 'Legginsy i top, w których swobodnie unosisz nogi'

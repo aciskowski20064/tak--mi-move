@@ -10,6 +10,9 @@ goals:
   - 'Silny gorset mięśniowy stabilizujący kręgosłup'
   - 'Lepsza kontrola ciała i świadomość ustawienia miednicy'
   - 'Wyprostowana sylwetka utrzymywana bez wysiłku'
+# FAKT: poziom i czas trwania odczytane z grafiku Fitssey 21.08.2026.
+level: 'Wszystkie poziomy'
+duration: '55 minut'
 intensity: medium
 equipment:
   - 'Strój przylegający do ciała, żeby prowadząca widziała ustawienie'
