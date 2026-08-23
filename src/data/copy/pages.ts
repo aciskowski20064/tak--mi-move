@@ -98,8 +98,6 @@ export const pages = {
     eyebrow: 'Zajęcia',
     title: 'Znajdź formę ruchu dla siebie',
     lead: 'Każde zajęcia prowadzą do tego samego: sprawniejszego ciała i mniejszego napięcia. Różnią się tempem, sprzętem i tym, komu służą najbardziej.',
-    firstTimeTitle: 'Pierwszy raz?',
-    firstTimeLead: 'Nie musisz nic umieć ani być rozciągnięta. Zobacz, jak wygląda pierwsza wizyta.',
   },
 
   firstVisit: {

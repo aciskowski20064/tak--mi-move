@@ -3,10 +3,8 @@ import { getCollection } from 'astro:content';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
-import Button from '~/components/ui/Button.astro';
 import ClassCard from '~/components/ui/ClassCard.astro';
 import Todo from '~/components/ui/Todo.astro';
-import { booking } from '~/data/site';
 import { pages } from '~/data/copy/pages';
 import { home } from '~/data/copy/home';
 import { copyOrNull } from '~/lib/copy';
@@ -83,25 +81,10 @@ const choose = home.choose;
     </div>
   </Section>
 
-  <Section size="md" tone="invert">
-    <div class="first">
-      <div>
-        <p class="eyebrow">{t.firstTimeTitle}</p>
-        <h2>{t.firstTimeLead}</h2>
-      </div>
-      <div class="first__actions">
-        <Button
-          href={booking.frontOfficeUrl}
-          newTab={booking.newTab}
-          source="class"
-          event="booking_cta_click"
-        >
-          {booking.label}
-        </Button>
-        <a class="first__more" href="/pierwsza-wizyta">Jak wygląda pierwsza wizyta</a>
-      </div>
-    </div>
-  </Section>
+  {/* Sekcja „Pierwszy raz?" zdjęta 22.08.2026. Powtarzała wyjście, które
+      i tak stoi w domykającym pasie strony głównej, a tutaj była trzecim
+      z rzędu wezwaniem do rezerwacji — po przycisku w nagłówku i po
+      kaflach zajęć, z których każdy prowadzi dalej. */}
 </Base>
 
 <style>
@@ -122,14 +105,12 @@ const choose = home.choose;
     gap: var(--space-md);
   }
 
-  .choose,
-  .first {
+  .choose {
     display: grid;
     gap: var(--space-lg);
   }
 
-  .choose h2,
-  .first h2 {
+  .choose h2 {
     margin-block-start: var(--space-2xs);
     max-width: 20ch;
   }
@@ -158,18 +139,7 @@ const choose = home.choose;
     color: var(--text-muted);
   }
 
-  .first__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-md);
-  }
 
-  .first__more {
-    font-size: var(--fs-small);
-    color: var(--accent);
-    padding-block: 0.25rem;
-  }
 
   @media (min-width: 48rem) {
     .classes {
@@ -187,8 +157,7 @@ const choose = home.choose;
   }
 
   @media (min-width: 60rem) {
-    .choose,
-    .first {
+    .choose {
       grid-template-columns: minmax(16rem, 22rem) 1fr;
       gap: var(--space-2xl);
       align-items: start;
