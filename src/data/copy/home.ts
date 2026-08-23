@@ -115,25 +115,42 @@ export const home = {
   choose: {
     eyebrow: 'Nie wiesz, co wybrać?',
     title: 'Zacznij od tego, czego teraz potrzebujesz',
+    /**
+     * Każdy scenariusz wskazuje DWA rodzaje zajęć, bo tak brzmi podpowiedź
+     * („Joga albo stretching"). Wcześniej dane niosły jeden `href`, więc
+     * drugi wymieniony rodzaj nie miał dokąd prowadzić — tekst obiecywał
+     * wybór, a strona dawała jedno wyjście.
+     *
+     * ROBOCZE — rekomendacje wynikają z charakteru samych dyscyplin, nie
+     * z ustaleń o poziomach grup. Te wymagają potwierdzenia zespołu (§12.5).
+     */
     scenarios: [
       {
         label: 'Chcę zacząć spokojnie.',
-        // ROBOCZE — rekomendacje wynikają z charakteru samych dyscyplin,
-        // nie z ustaleń o poziomach grup. Te wymagają potwierdzenia zespołu.
-        hint: 'Joga albo stretching. Wolne tempo, brak sekwencji, za którymi trzeba nadążać, i każda pozycja w wersji łatwiejszej.',
-        href: '/zajecia/joga',
+        hint: 'Wolne tempo, brak sekwencji, za którymi trzeba nadążać, i każda pozycja w wersji łatwiejszej.',
+        zajecia: [
+          { nazwa: 'Joga', slug: 'joga' },
+          { nazwa: 'Stretching', slug: 'stretching' },
+        ],
       },
       {
         label: 'Chcę się wzmocnić.',
-        hint: 'Pilates albo barre. Pierwszy buduje stabilny gorset wokół kręgosłupa, drugi — wytrzymałość nóg i pośladków.',
-        href: '/zajecia/pilates',
+        hint: 'Pilates buduje stabilny gorset wokół kręgosłupa, barre — wytrzymałość nóg i pośladków.',
+        zajecia: [
+          { nazwa: 'Pilates', slug: 'pilates' },
+          { nazwa: 'Barre', slug: 'barre' },
+        ],
       },
       {
         label: 'Chcę poprawić mobilność i rozciągnięcie.',
-        hint: 'Stretching albo aerial yoga. Godzina na zakres ruchu zamiast pięciu minut na koniec treningu — a w hamaku dochodzi odciążenie kręgosłupa.',
-        href: '/zajecia/stretching',
+        hint: 'Godzina na zakres ruchu zamiast pięciu minut na koniec treningu — a w hamaku dochodzi odciążenie kręgosłupa.',
+        zajecia: [
+          { nazwa: 'Stretching', slug: 'stretching' },
+          { nazwa: 'Aerial yoga', slug: 'aerial-yoga' },
+        ],
       },
     ],
+
     contactLead: 'Wolisz zapytać?',
     contactLabel: 'Napisz do nas',
   },

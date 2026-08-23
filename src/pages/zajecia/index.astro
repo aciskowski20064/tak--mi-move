@@ -60,25 +60,45 @@ const choose = home.choose;
   </Section>
 
   <Section size="md" tone="alt">
-    <div class="choose">
-      <div>
-        <p class="eyebrow">{choose.eyebrow}</p>
-        <h2>{choose.title}</h2>
-      </div>
-      <ul class="choose__list">
-        {
-          choose.scenarios.map((scenario) => {
-            const hint = copyOrNull(scenario.hint);
-            return (
-              <li>
-                <p class="choose__label">{scenario.label}</p>
-                {hint ? <p class="choose__hint">{hint}</p> : <Todo label={scenario.hint} block />}
-              </li>
-            );
-          })
-        }
-      </ul>
-    </div>
+    <header class="choose__head">
+      <p class="eyebrow">{choose.eyebrow}</p>
+      <h2>{choose.title}</h2>
+    </header>
+
+    <ul class="choose__list">
+      {
+        choose.scenarios.map((scenario) => {
+          const hint = copyOrNull(scenario.hint);
+          return (
+            <li class="scenariusz">
+              <div class="scenariusz__tresc">
+                <h3 class="scenariusz__label">{scenario.label}</h3>
+                {hint ? (
+                  <p class="scenariusz__hint">{hint}</p>
+                ) : (
+                  <Todo label={scenario.hint} block />
+                )}
+              </div>
+
+              <ul class="scenariusz__zajecia">
+                {scenario.zajecia.map((z) => (
+                  <li>
+                    <a href={`/zajecia/${z.slug}`} data-event="class_detail_view">
+                      {z.nazwa}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          );
+        })
+      }
+    </ul>
+
+    <p class="choose__contact">
+      {choose.contactLead}{' '}
+      <a href="/kontakt" data-event="email_click">{choose.contactLabel}</a>
+    </p>
   </Section>
 
   {/* Sekcja „Pierwszy raz?" zdjęta 22.08.2026. Powtarzała wyjście, które
@@ -105,14 +125,13 @@ const choose = home.choose;
     gap: var(--space-md);
   }
 
-  .choose {
-    display: grid;
-    gap: var(--space-lg);
+  .choose__head {
+    max-width: var(--container-text);
+    margin-block-end: var(--space-lg);
   }
 
-  .choose h2 {
+  .choose__head h2 {
     margin-block-start: var(--space-2xs);
-    max-width: 20ch;
   }
 
   .choose__list {
@@ -120,23 +139,77 @@ const choose = home.choose;
     padding: 0;
     margin: 0;
     display: grid;
-    gap: var(--space-md);
   }
 
-  .choose__list li {
-    padding-block-start: var(--space-sm);
-    border-block-start: var(--hairline) solid var(--line-strong);
+  /* Wiersz na pełną szerokość zamiast trzech wąskich kolumn. Poprzedni układ
+     dawał 28 znaków w wierszu, więc „Chcę poprawić mobilność i rozciągnięcie"
+     łamało się na trzy linie. */
+  .scenariusz {
+    display: grid;
+    gap: var(--space-sm);
+    padding-block: var(--space-lg);
   }
 
-  .choose__label {
+  .scenariusz + .scenariusz {
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  .scenariusz__label {
     font-family: var(--font-display);
-    font-size: var(--fs-h4);
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
   }
 
-  .choose__hint {
+  .scenariusz__hint {
     margin-block-start: var(--space-2xs);
     font-size: var(--fs-small);
     color: var(--text-muted);
+    max-width: var(--measure);
+  }
+
+  /* Nazwy zajęć jako pigułki — ten sam element, co przy specjalizacjach
+     na /o-nas. Wcześniej nazwy tkwiły w środku szarego zdania i tylko
+     jedna z dwóch wymienionych miała dokąd prowadzić. */
+  .scenariusz__zajecia {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+    align-content: start;
+  }
+
+  .scenariusz__zajecia a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    padding-inline: var(--space-md);
+    border: var(--hairline) solid var(--line-detail);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    color: var(--text-accent);
+    font-size: var(--fs-small);
+    text-decoration: none;
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+
+  .scenariusz__zajecia a:hover {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: transparent;
+  }
+
+  .choose__contact {
+    margin-block-start: var(--space-lg);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .choose__contact a {
+    color: var(--text-accent);
   }
 
 
@@ -156,16 +229,11 @@ const choose = home.choose;
     }
   }
 
-  @media (min-width: 60rem) {
-    .choose {
-      grid-template-columns: minmax(16rem, 22rem) 1fr;
-      gap: var(--space-2xl);
-      align-items: start;
-    }
-
-    .choose__list {
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-lg);
+  @media (min-width: 52rem) {
+    .scenariusz {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-xl);
+      align-items: center;
     }
   }
 </style>
