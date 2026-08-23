@@ -6,6 +6,7 @@ import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
 import Todo from '~/components/ui/Todo.astro';
+import FactIcon from '~/components/ui/FactIcon.astro';
 import { locations, booking } from '~/data/site';
 import { copyOrNull } from '~/lib/copy';
 
@@ -35,13 +36,7 @@ const intensityLabel: Record<string, string> = {
   varied: 'zmienne',
 };
 
-/** Parametry zajęć — brief §12.5 wymaga, by były zatwierdzone przez zespół. */
-const params = [
-  { label: 'Poziom', value: d.level, todo: 'TODO(klientka): poziom zaawansowania' },
-  { label: 'Intensywność', value: d.intensity ? intensityLabel[d.intensity] : undefined, todo: 'TODO(klientka): charakter zajęć' },
-  { label: 'Czas trwania', value: d.duration, todo: 'TODO(klientka): długość zajęć' },
-  { label: 'Lokalizacje', value: d.locationSlugs.map(cityName).join(' · '), todo: '' },
-];
+
 
 /**
  * Miasta w tytule biorą się z `locationSlugs` konkretnych zajęć, nie ze
@@ -50,6 +45,30 @@ const params = [
  */
 const cities = d.locationSlugs.map(cityName);
 const citiesLabel = cities.length > 1 ? `${cities.slice(0, -1).join(', ')} i ${cities.at(-1)}` : cities[0];
+
+/**
+ * Cztery karty faktów — układ z makiety z 22.08.2026. Każda karta bierze
+ * dane, które już siedzą w kolekcji, więc nic nie trzeba dopisywać:
+ * `audience`, `goals`, `intensity`/`duration`/`level` i `locationSlugs`.
+ *
+ * Makieta miała tu jeszcze kadr obok nagłówka i zdjęcie przy cytacie.
+ * Zdjęć poszczególnych zajęć nie mamy, więc nagłówek jest wyśrodkowany,
+ * a karty niosą całą sekcję same.
+ */
+const karty = [
+  { ikona: 'users' as const, label: 'Dla kogo', punkty: d.audience },
+  { ikona: 'heart' as const, label: 'Co daje', punkty: d.goals },
+  {
+    ikona: 'clock' as const,
+    label: 'Tempo',
+    punkty: [
+      d.duration,
+      d.intensity ? `Tempo ${intensityLabel[d.intensity]}` : undefined,
+      d.level,
+    ].filter(Boolean) as string[],
+  },
+  { ikona: 'pin' as const, label: 'Lokalizacje', punkty: cities },
+].filter((k) => k.punkty && k.punkty.length > 0);
 
 const title = d.seoTitle ?? `${d.name} — ${citiesLabel}`;
 const description =
@@ -67,204 +86,247 @@ const description =
       { label: 'Zajęcia', href: '/zajecia' },
       { label: d.name, href: `/zajecia/${entry.id}` },
     ]}
+    size="md"
+    rule
   />
 
-  {!shortDescription && <Section as="div" size="sm"><Todo label={d.shortDescription} block /></Section>}
+  {!shortDescription && (
+    <Section as="div" size="sm">
+      <Todo label={d.shortDescription} block />
+    </Section>
+  )}
 
-  {
-    d.heroImage && (
-      <Section as="div" size="sm" bleed>
-        <div class="container">
-          <Image
-            src={d.heroImage}
-            alt={d.heroImageAlt ?? `Zajęcia ${d.name} w studiu TAK MI MOVE`}
-            widths={[640, 1000, 1400]}
-            sizes="100vw"
-            class="class__hero"
-          />
-        </div>
-      </Section>
-    )
-  }
+  <Section as="div" size="sm">
+    <div class="klasa__akcje">
+      <Button
+        href={booking.frontOfficeUrl}
+        newTab={booking.newTab}
+        source="class"
+        event="booking_cta_click"
+      >
+        {booking.label}
+      </Button>
+      <Button href="/grafik" variant="secondary" source="class">Zobacz grafik</Button>
+    </div>
+  </Section>
 
-  <Section size="md">
-    <div class="class__grid">
-      <div class="class__main">
-        <div class="prose">
-          <Content />
-        </div>
+  <Section size="md" tone="alt">
+    <ul class="fakty">
+      {
+        karty.map((k) => (
+          <li class="fakt">
+            <span class="fakt__znak" aria-hidden="true">
+              <FactIcon name={k.ikona} size="1.2rem" />
+            </span>
+            <h2 class="fakt__label">{k.label}</h2>
+            <ul class="fakt__punkty">
+              {k.punkty.map((p) => (
+                <li>{p}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+  </Section>
 
-        <section class="class__block">
-          <h2>Dla kogo</h2>
-          {
-            d.audience && d.audience.length > 0 ? (
-              <ul class="class__list">
-                {d.audience.map((item) => <li>{item}</li>)}
-              </ul>
-            ) : (
-              <Todo label="TODO(klientka): dla kogo są te zajęcia — konkretnie, nie „dla każdego”" block />
-            )
-          }
-        </section>
-
-        <section class="class__block">
-          <h2>Czego się spodziewać</h2>
-          {
-            d.goals && d.goals.length > 0 ? (
-              <ul class="class__list">
-                {d.goals.map((item) => <li>{item}</li>)}
-              </ul>
-            ) : (
-              <Todo label="TODO(klientka): jak wyglądają zajęcia — przebieg, tempo, atmosfera" block />
-            )
-          }
-        </section>
-
-        <section class="class__block">
-          <h2>Co zabrać</h2>
-          {
-            d.equipment && d.equipment.length > 0 ? (
-              <ul class="class__list">
-                {d.equipment.map((item) => <li>{item}</li>)}
-              </ul>
-            ) : (
-              <Todo label="TODO(klientka): strój i sprzęt — co zapewnia studio, a co trzeba mieć swoje" block />
-            )
-          }
-        </section>
-
-        <section class="class__block">
-          <h2>Zdrowie i przeciwwskazania</h2>
-          {
-            d.contraindicationsNote ? (
-              <p>{d.contraindicationsNote}</p>
-            ) : (
-              <p class="class__health">
-                Jeśli wracasz po urazie, jesteś w ciąży albo pracujesz nad konkretną dolegliwością,
-                powiedz o tym prowadzącej przed zajęciami — dobierze warianty ćwiczeń.
-                O tym, czy dana aktywność jest dla Ciebie bezpieczna, decyduje jednak lekarz
-                lub fizjoterapeuta. Nie zastępujemy konsultacji medycznej.
-              </p>
-            )
-          }
-        </section>
+  <Section size="lg">
+    <div class="klasa__tresc">
+      <div class="prose">
+        <Content />
       </div>
 
-      <aside class="class__aside">
-        <dl class="class__params">
-          {
-            params.map((param) => (
-              <div class="class__param">
-                <dt>{param.label}</dt>
-                <dd>{param.value ? param.value : param.todo ? <Todo label={param.todo} block /> : '—'}</dd>
-              </div>
-            ))
-          }
-        </dl>
+      <aside class="klasa__bok">
+        {
+          d.equipment && d.equipment.length > 0 && (
+            <section class="blok">
+              <h2 class="blok__tytul">Co zabrać</h2>
+              <ul class="blok__lista">
+                {d.equipment.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
 
-        <div class="class__cta">
-          <Button
-            href={booking.frontOfficeUrl}
-            newTab={booking.newTab}
-            source="class"
-            event="booking_cta_click"
-          >
-            {booking.label}
-          </Button>
-          <a class="class__schedule" href="/grafik">Zobacz grafik</a>
-        </div>
+        {
+          d.contraindicationsNote && (
+            <section class="blok blok--uwaga">
+              <h2 class="blok__tytul">Zanim zaczniesz</h2>
+              <p class="blok__tekst">{d.contraindicationsNote}</p>
+            </section>
+          )
+        }
       </aside>
+    </div>
+  </Section>
+
+  <Section size="md" tone="soft">
+    <div class="domkniecie">
+      <div>
+        <h2 class="domkniecie__tytul">Sprawdź, kiedy odbywają się zajęcia</h2>
+        <p class="domkniecie__lead">Wybierz termin w grafiku i dołącz do kameralnej grupy.</p>
+      </div>
+      <div class="domkniecie__akcje">
+        <Button
+          href={booking.frontOfficeUrl}
+          newTab={booking.newTab}
+          source="class"
+          event="booking_cta_click"
+        >
+          {booking.label}
+        </Button>
+        <Button href="/grafik" variant="secondary" source="class">Zobacz grafik</Button>
+      </div>
     </div>
   </Section>
 </Base>
 
 <style>
-  .class__hero {
-    inline-size: 100%;
-    block-size: auto;
-    max-block-size: 60svh;
-    object-fit: cover;
-    border-radius: var(--radius-md);
+  .klasa__akcje {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
   }
 
-  .class__grid {
+  /* ————————————————— cztery karty faktów ————————————————— */
+
+  .fakty {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .fakt {
+    background: var(--surface);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-card);
+    padding: var(--space-md);
+  }
+
+  .fakt__znak {
+    display: grid;
+    place-items: center;
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: var(--radius-pill);
+    border: var(--hairline) solid var(--line-detail);
+    color: var(--accent);
+    margin-block-end: var(--space-sm);
+  }
+
+  .fakt__label {
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-accent);
+    margin-block-end: var(--space-2xs);
+  }
+
+  /* Punkty bez kropek — to nie jest wyliczanka do przeczytania po kolei,
+     tylko trzy fakty, z których każdy stoi sam. */
+  .fakt__punkty {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-2xs);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ————————————————— treść i bok ————————————————— */
+
+  .klasa__tresc {
     display: grid;
     gap: var(--space-xl);
     align-items: start;
   }
 
-  .class__block {
+  .blok + .blok {
     margin-block-start: var(--space-lg);
-    padding-block-start: var(--space-md);
-    border-block-start: var(--hairline) solid var(--line);
   }
 
-  .class__block h2 {
-    font-size: var(--fs-h3);
+  .blok__tytul {
+    font-size: var(--fs-h4);
     margin-block-end: var(--space-sm);
   }
 
-  .class__list {
+  .blok__lista {
     display: grid;
     gap: var(--space-2xs);
     padding-inline-start: 1.1em;
-    max-width: var(--measure);
-  }
-
-  .class__health {
-    max-width: var(--measure);
-    color: var(--text-muted);
     font-size: var(--fs-small);
-  }
-
-  .class__params {
-    display: grid;
-    margin: 0;
-    border-block-start: var(--hairline) solid var(--line-strong);
-  }
-
-  .class__param {
-    display: grid;
-    gap: var(--space-3xs);
-    padding-block: var(--space-sm);
-    border-block-end: var(--hairline) solid var(--line);
-  }
-
-  .class__params dt {
-    font-size: var(--fs-caption);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
     color: var(--text-muted);
   }
 
-  .class__params dd {
-    margin: 0;
+  /* Nota o przeciwwskazaniach dostaje własne tło i pasek — to jedyny tekst
+     na tej stronie, którego przeoczenie ma realne konsekwencje. */
+  .blok--uwaga {
+    background: var(--surface-alt);
+    border-inline-start: 3px solid var(--accent);
+    border-start-end-radius: var(--radius-md);
+    border-end-end-radius: var(--radius-md);
+    padding: var(--space-md);
   }
 
-  .class__cta {
-    display: grid;
-    justify-items: start;
-    gap: var(--space-sm);
-    margin-block-start: var(--space-lg);
-  }
-
-  .class__schedule {
+  .blok__tekst {
     font-size: var(--fs-small);
-    color: var(--text-accent);
-    padding-block: 0.25rem;
+    color: var(--text-muted);
+    line-height: 1.6;
   }
 
-  .prose :global(p) {
-    max-width: var(--measure);
+  /* ————————————————— domknięcie ————————————————— */
+
+  .domkniecie {
+    display: grid;
+    gap: var(--space-md);
   }
 
-  .prose :global(p + p) {
-    margin-block-start: var(--space-sm);
+  .domkniecie__tytul {
+    font-size: var(--fs-h3);
   }
 
-  @media (min-width: 60rem) {
-    .class__grid {
-      grid-template-columns: 1fr minmax(16rem, 22rem);
+  .domkniecie__lead {
+    margin-block-start: var(--space-2xs);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  .domkniecie__akcje {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  @media (min-width: 40rem) {
+    .fakty {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 52rem) {
+    .domkniecie {
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: var(--space-xl);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .fakty {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-sm);
+    }
+
+    /* Bok trzyma stałą kolumnę: to krótkie listy, a treść główna jest
+       tekstem ciągłym i potrzebuje pełnej miary czytelności. */
+    .klasa__tresc {
+      grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
       gap: var(--space-2xl);
     }
   }
