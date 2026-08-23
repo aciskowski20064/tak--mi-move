@@ -35,7 +35,7 @@ const choose = home.choose;
     crumbs={[{ label: 'Zajęcia', href: '/zajecia' }]}
   />
 
-  <Section size="md">
+  <Section size="md" class="siatkaZajec">
     {
       classes.length === 0 && (
         <p class="classes__empty">
@@ -108,6 +108,18 @@ const choose = home.choose;
 </Base>
 
 <style>
+  /* Nagłówek ma własny padding od dołu, sekcja swój od góry — razem robiły
+     154 px pustki, przez którą kafle wypadały poniżej pierwszego ekranu
+     i nie było widać, że strona ma ciąg dalszy.
+
+     :global, bo klasa trafia na korzeń komponentu Section, a ten nosi swój
+     własny scope Astro, nie tej strony. */
+  /* Dwie klasy w selektorze, bo pojedyncza przegrywała kolejnością
+     z regułą .section--md z komponentu Section. */
+  :global(.section.siatkaZajec) {
+    padding-block-start: 0;
+  }
+
   .classes__empty {
     max-width: var(--measure);
     color: var(--text-muted);
