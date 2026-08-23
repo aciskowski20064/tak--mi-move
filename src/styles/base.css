@@ -209,3 +209,64 @@ a:hover {
     scroll-behavior: auto !important;
   }
 }
+
+/* ————————————————————————— treść z markdown —————————————————————————
+
+   Klasa `.prose` opakowuje wszystko, co przychodzi z plików treści. Reset
+   na górze tego pliku zeruje marginesy wszystkim elementom, a markdown nie
+   ma własnych klas — bez tych reguł akapity i nagłówki sklejały się w jeden
+   blok tekstu. Dotyczyło to opisów wszystkich pięciu rodzajów zajęć.
+
+   Odstępy są asymetryczne: nad nagłówkiem dużo, pod nim mało. Nagłówek ma
+   należeć wzrokowo do tekstu POD sobą, nie nad. */
+
+.prose {
+  max-width: var(--measure);
+}
+
+.prose > * + * {
+  margin-block-start: var(--space-sm);
+}
+
+.prose h2,
+.prose h3 {
+  /* Miara węższa niż akapitu — nagłówek ma się łamać wcześniej niż tekst. */
+  max-width: 24ch;
+}
+
+.prose h2 {
+  font-size: var(--fs-h3);
+}
+
+.prose h3 {
+  font-size: var(--fs-h4);
+}
+
+.prose > h2 + *,
+.prose > h3 + * {
+  margin-block-start: var(--space-2xs);
+}
+
+.prose > * + h2 {
+  margin-block-start: var(--space-xl);
+}
+
+.prose > * + h3 {
+  margin-block-start: var(--space-lg);
+}
+
+.prose ul,
+.prose ol {
+  padding-inline-start: 1.2em;
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.prose a {
+  color: var(--text-accent);
+  text-underline-offset: 0.2em;
+}
+
+.prose strong {
+  font-weight: 500;
+}

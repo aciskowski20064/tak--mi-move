@@ -51,7 +51,7 @@ const isDev = showPlaceholders;
             {items.map(({ entry, Content }) => (
               <details class="faq__item" name="faq">
                 <summary class="faq__question">{entry.data.question}</summary>
-                <div class="faq__answer">
+                <div class="faq__answer prose">
                   <Content />
                 </div>
               </details>

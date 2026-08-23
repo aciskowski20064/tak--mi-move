@@ -43,7 +43,7 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
           {reviews.map(({ entry, Content }) => (
             <li class="review">
               <Mark size="1rem" class="review__mark" />
-              <blockquote class="review__quote">
+              <blockquote class="review__quote prose">
                 <Content />
               </blockquote>
               <figcaption class="review__meta">
