@@ -1,0 +1,130 @@
+---
+import { locations } from '~/data/site';
+
+/**
+ * Kafel zajęć — jeden układ dla strony głównej i dla podstrony /zajecia.
+ *
+ * Wcześniej te dwa miejsca miały osobny kod pod nazwami `class-row` i
+ * `class-item`, robiący prawie to samo. Przy pierwszej zmianie wyglądu
+ * rozjechałyby się, bo nic ich ze sobą nie wiązało.
+ *
+ * Kolejność miast bierzemy z `locations`, a nie z kolejności slugów zapisanej
+ * w pliku zajęć — inaczej jedne zajęcia pokazują „Pruszcz Gdański · Gdańsk",
+ * a inne odwrotnie, zależnie od tego, jak ktoś je wpisał.
+ */
+interface Props {
+  href: string;
+  name: string;
+  description?: string | null;
+  locationSlugs: readonly string[];
+  /** Numer porządkowy. Bez niego kafel po prostu go nie pokazuje. */
+  index?: number;
+}
+
+const { href, name, description, locationSlugs, index } = Astro.props;
+
+const miasta = [...locationSlugs]
+  .sort(
+    (a, b) => locations.findIndex((l) => l.slug === a) - locations.findIndex((l) => l.slug === b),
+  )
+  .map((slug) => locations.find((l) => l.slug === slug)?.city ?? slug)
+  .join(' · ');
+---
+
+<a class="karta" href={href} data-event="class_detail_view">
+  {index !== undefined && <span class="karta__numer">{String(index).padStart(2, '0')}</span>}
+
+  <span class="karta__nazwa">{name}</span>
+
+  {description && <span class="karta__opis">{description}</span>}
+
+  <span class="karta__gdzie">{miasta}</span>
+
+  <span class="karta__strzalka" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M4 12h15m0 0-6-6m6 6-6 6"></path>
+    </svg>
+  </span>
+</a>
+
+<style>
+  /* `1fr` na wierszu opisu dosuwa lokalizacje i strzałkę do dołu, więc kafle
+     w rzędzie kończą się równo mimo różnej długości opisów. */
+  .karta {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: var(--space-2xs);
+    block-size: 100%;
+    padding: var(--space-md);
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
+  }
+
+  .karta:hover {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+
+  .karta__numer {
+    font-size: var(--fs-small);
+    color: var(--text-accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .karta__nazwa {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+  }
+
+  .karta__opis {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .karta__gdzie {
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-block-start: var(--space-sm);
+  }
+
+  .karta__strzalka {
+    display: grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border-radius: var(--radius-pill);
+    border: var(--hairline) solid var(--line-detail);
+    color: var(--accent-strong);
+    margin-block-start: var(--space-sm);
+    transition:
+      background-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+
+  .karta__strzalka svg {
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+  }
+
+  .karta:hover .karta__strzalka {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: transparent;
+  }
+</style>

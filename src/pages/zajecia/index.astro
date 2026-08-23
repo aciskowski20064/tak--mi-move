@@ -4,9 +4,9 @@ import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
-import Mark from '~/components/ui/Mark.astro';
+import ClassCard from '~/components/ui/ClassCard.astro';
 import Todo from '~/components/ui/Todo.astro';
-import { locations, booking } from '~/data/site';
+import { booking } from '~/data/site';
 import { pages } from '~/data/copy/pages';
 import { home } from '~/data/copy/home';
 import { copyOrNull } from '~/lib/copy';
@@ -24,7 +24,6 @@ import { copyOrNull } from '~/lib/copy';
 const entries = await getCollection('classes', ({ data }) => import.meta.env.DEV || !data.draft);
 const classes = entries.sort((a, b) => a.data.order - b.data.order);
 
-const cityName = (slug: string) => locations.find((l) => l.slug === slug)?.city ?? slug;
 
 const t = pages.classes;
 const choose = home.choose;
@@ -48,26 +47,17 @@ const choose = home.choose;
       )
     }
     <ul class="classes">
-      {
-        classes.map((entry) => {
-          const description = copyOrNull(entry.data.shortDescription);
-          return (
-            <li class="class-item">
-              <a class="class-item__link" href={`/zajecia/${entry.id}`} data-event="class_detail_view">
-                <span class="class-item__name">{entry.data.name}</span>
-                <Mark size="0.85rem" class="class-item__mark" />
-              </a>
-
-              {description && <p class="class-item__desc">{description}</p>}
-              {!description && <Todo label={entry.data.shortDescription} block />}
-
-              <p class="class-item__where">
-                {entry.data.locationSlugs.map((slug) => cityName(slug)).join(' · ')}
-              </p>
-            </li>
-          );
-        })
-      }
+      {classes.map((entry, index) => (
+        <li>
+          <ClassCard
+            href={`/zajecia/${entry.id}`}
+            name={entry.data.name}
+            description={copyOrNull(entry.data.shortDescription)}
+            locationSlugs={entry.data.locationSlugs}
+            index={index + 1}
+          />
+        </li>
+      ))}
     </ul>
   </Section>
 
@@ -129,56 +119,7 @@ const choose = home.choose;
     padding: 0;
     margin: 0;
     display: grid;
-    gap: var(--space-lg);
-  }
-
-  .class-item {
-    display: grid;
-    align-content: start;
-    gap: var(--space-2xs);
-    padding-block-start: var(--space-sm);
-    border-block-start: var(--hairline) solid var(--line-strong);
-  }
-
-  .class-item__link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-sm);
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .class-item__name {
-    font-family: var(--font-display);
-    font-size: var(--fs-h3);
-  }
-
-  .class-item__link :global(.class-item__mark) {
-    color: var(--accent);
-    transition: transform var(--dur) var(--ease);
-  }
-
-  .class-item__link:hover :global(.class-item__mark) {
-    transform: translateX(0.25rem);
-  }
-
-  .class-item__link:hover .class-item__name {
-    text-decoration: underline;
-    text-underline-offset: 0.25em;
-  }
-
-  .class-item__desc {
-    max-width: var(--measure);
-    color: var(--text-muted);
-    font-size: var(--fs-small);
-  }
-
-  .class-item__where {
-    font-size: var(--fs-caption);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
+    gap: var(--space-md);
   }
 
   .choose,
@@ -233,7 +174,15 @@ const choose = home.choose;
   @media (min-width: 48rem) {
     .classes {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-xl);
+    }
+  }
+
+  /* Pięć kolumn dopiero tam, gdzie kafel ma sensowną szerokość — ten sam
+     próg co na stronie głównej. */
+  @media (min-width: 64rem) {
+    .classes {
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-sm);
     }
   }
 

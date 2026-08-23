@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Section from '~/components/ui/Section.astro';
-import Mark from '~/components/ui/Mark.astro';
+import ClassCard from '~/components/ui/ClassCard.astro';
 import Todo from '~/components/ui/Todo.astro';
 import { home } from '~/data/copy/home';
 import { copyOrNull } from '~/lib/copy';
@@ -18,18 +18,6 @@ import { locations } from '~/data/site';
 const entries = await getCollection('classes', ({ data }) => import.meta.env.DEV || !data.draft);
 const classes = entries.sort((a, b) => a.data.order - b.data.order);
 
-const cityName = (slug: string) => locations.find((l) => l.slug === slug)?.city ?? slug;
-
-/**
- * Kolejność miast bierzemy z `locations`, nie z kolejności zapisanej w pliku
- * zajęć. Bez tego barre wypisywało „Pruszcz Gdański · Gdańsk", a pozostałe
- * cztery „Gdańsk · Pruszcz Gdański" — różnica wynikała wyłącznie z tego,
- * w jakiej kolejności ktoś wpisał slugi do frontmattera.
- */
-const wgKolejnosci = (slugi: readonly string[]) =>
-  [...slugi].sort(
-    (a, b) => locations.findIndex((l) => l.slug === a) - locations.findIndex((l) => l.slug === b),
-  );
 
 const t = home.classes;
 ---
@@ -44,33 +32,17 @@ const t = home.classes;
       </header>
 
       <ol class="classes__list">
-        {classes.map((entry, index) => {
-          const description = copyOrNull(entry.data.shortDescription);
-
-          return (
-            <li class="class-row">
-              <a class="class-row__link" href={`/zajecia/${entry.id}`} data-event="class_detail_view">
-                <span class="class-row__index">{String(index + 1).padStart(2, '0')}</span>
-
-                <span class="class-row__body">
-                  <span class="class-row__name">{entry.data.name}</span>
-                  {description && <span class="class-row__desc">{description}</span>}
-                  <span class="class-row__where">
-                    {wgKolejnosci(entry.data.locationSlugs).map(cityName).join(' · ')}
-                  </span>
-                </span>
-
-                <span class="class-row__go" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 12h15m0 0-6-6m6 6-6 6" />
-                  </svg>
-                </span>
-              </a>
-
-              {!description && <Todo label={entry.data.shortDescription} block />}
-            </li>
-          );
-        })}
+        {classes.map((entry, index) => (
+          <li>
+            <ClassCard
+              href={`/zajecia/${entry.id}`}
+              name={entry.data.name}
+              description={copyOrNull(entry.data.shortDescription)}
+              locationSlugs={entry.data.locationSlugs}
+              index={index + 1}
+            />
+          </li>
+        ))}
       </ol>
 
       <p class="classes__all">
@@ -100,85 +72,6 @@ const t = home.classes;
     border-block-start: var(--hairline) solid var(--line);
     display: grid;
     gap: var(--space-md);
-  }
-
-  .class-row {
-    display: grid;
-  }
-
-  /* Cały kafel jest odsyłaczem, nie sama nazwa — większy cel dotyku
-     i mniej miejsc, w które trzeba trafić palcem. */
-  .class-row__link {
-    display: grid;
-    grid-template-rows: auto auto 1fr auto auto;
-    gap: var(--space-2xs);
-    block-size: 100%;
-    padding: var(--space-md);
-    border: var(--hairline) solid var(--line);
-    border-radius: var(--radius-card);
-    text-decoration: none;
-    color: inherit;
-    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
-  }
-
-  .class-row__link:hover {
-    border-color: var(--accent);
-    background: var(--surface);
-  }
-
-  .class-row__index {
-    font-size: var(--fs-small);
-    color: var(--text-accent);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .class-row__name {
-    font-family: var(--font-display);
-    font-size: var(--fs-h3);
-    line-height: var(--lh-heading);
-  }
-
-  .class-row__body {
-    display: contents;
-  }
-
-  .class-row__desc {
-    font-size: var(--fs-small);
-    color: var(--text-muted);
-    line-height: 1.55;
-  }
-
-  .class-row__where {
-    font-size: var(--fs-caption);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-block-start: var(--space-sm);
-  }
-
-  /* Kółko ze strzałką zamiast kropli: to jest przycisk „wejdź”, a kropla
-     jest w tym projekcie znacznikiem, nie wskazaniem kierunku. */
-  .class-row__go {
-    display: grid;
-    place-items: center;
-    inline-size: 2.5rem;
-    block-size: 2.5rem;
-    border-radius: var(--radius-pill);
-    border: var(--hairline) solid var(--line-detail);
-    color: var(--accent-strong);
-    margin-block-start: var(--space-sm);
-    transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease);
-  }
-
-  .class-row__go svg {
-    inline-size: 1.1rem;
-    block-size: 1.1rem;
-  }
-
-  .class-row__link:hover .class-row__go {
-    background: var(--accent);
-    color: var(--on-accent);
-    border-color: transparent;
   }
 
   .classes__all {
