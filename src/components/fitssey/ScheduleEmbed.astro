@@ -1,5 +1,5 @@
 ---
-import { booking, site } from '~/data/site';
+import { booking, site, locations } from '~/data/site';
 import type { Studio } from '~/types';
 
 /**
@@ -28,9 +28,27 @@ interface Props {
 
 const { studio, title = 'Grafik zajęć i zapisy — system rezerwacji Fitssey' } = Astro.props;
 
-const embedUrl = booking.frontOfficeUrl;
-/** Czy da się przefiltrować grafik do jednej lokalizacji. */
-const canFilter = false; // ustawić na true po otrzymaniu fitsseyLocationId
+/**
+ * Od 21.08.2026 grafik stoi na natywnym widżecie Fitssey, nie na ramce
+ * FrontOffice. Ramka była wariantem awaryjnym z briefu §6.2 na czas
+ * oczekiwania na kody.
+ *
+ * Biblioteka Fitssey nie rejestruje `lb-schedule-widget` jako prawdziwego
+ * custom elementu — skanuje dokument raz i podmienia znaleziony znacznik na
+ * własną ramkę. Wynikają z tego dwie rzeczy:
+ *
+ * 1. Widżet renderujemy JEDEN, a lokalizację dopisujemy atrybutem zanim
+ *    biblioteka zdąży go zobaczyć. Trzy znaczniki (oba studia + dwa
+ *    filtrowane) dawały trzy ramki, z czego dwie ukryte i nieprzetworzone.
+ * 2. Skanowanie jest jednorazowe, więc podmiana lokalizacji bez przeładowania
+ *    strony i tak by nie zadziałała — przełącznik zostaje odsyłaczem.
+ */
+const idLokalizacji = Object.fromEntries(
+  locations.filter((l) => l.fitsseyLocationId).map((l) => [l.slug, l.fitsseyLocationId]),
+);
+
+/** Filtrowanie działa, dopóki obie lokalizacje mają identyfikator. */
+const canFilter = locations.every((l) => Boolean(l.fitsseyLocationId));
 ---
 
 <div class="embed" data-embed data-studio={studio}>
@@ -39,13 +57,9 @@ const canFilter = false; // ustawić na true po otrzymaniu fitsseyLocationId
     <span>Wczytuję grafik…</span>
   </div>
 
-  <iframe
-    class="embed__frame"
-    src={embedUrl}
-    title={title}
-    loading="lazy"
-    referrerpolicy="no-referrer-when-downgrade"
-    data-embed-frame></iframe>
+  <div class="embed__widget" data-embed-widget>
+    <lb-schedule-widget data-schedule-widget></lb-schedule-widget>
+  </div>
 
   <noscript>
     <p class="embed__fallback-text">
@@ -83,12 +97,67 @@ const canFilter = false; // ustawić na true po otrzymaniu fitsseyLocationId
   !canFilter && (
     <p class="embed__note">
       Grafik pokazuje zajęcia w obu studiach — lokalizację widać przy każdym terminie.
-      Filtrowanie po studiu włączymy razem z natywnym widżetem Fitssey.
     </p>
   )
 }
 
+<script is:inline define:vars={{ mapa: idLokalizacji }}>
+  /* Lokalizacja z adresu trafia na znacznik ZANIM wystartuje biblioteka —
+     ona czyta atrybut w momencie skanowania i drugiej szansy nie daje. */
+  (function () {
+    var wybor = new URLSearchParams(location.search).get('studio');
+    var id = wybor && mapa[wybor];
+    var el = document.querySelector('[data-schedule-widget]');
+    if (id && el) el.setAttribute('location', id);
+  })();
+</script>
+
+<script is:inline define:vars={{ src: booking.widgetSrc, konto: booking.widgetAccount }}>
+  /* Kod bazowy Fitssey. Stoi tutaj, a nie w Base.astro, żeby skrypt zewnętrzny
+     wchodził tylko na tę podstronę — patrz komentarz przy widgetSrc w site.ts. */
+  (function (w, d) {
+    w.FitsseyWidget = 'lb';
+    w.lb =
+      w.lb ||
+      function () {
+        (w.lb.q = w.lb.q || []).push(arguments);
+      };
+    w.lb.l = 1 * new Date();
+    var a = d.createElement('script');
+    var m = d.getElementsByTagName('script')[0];
+    a.async = 1;
+    a.src = src;
+    m.parentNode.insertBefore(a, m);
+  })(window, document);
+  lb('init', konto);
+</script>
+
+<script>
+  /* Widżet ładuje się asynchronicznie — komunikat „wczytuję" znika, gdy
+     biblioteka podmieni znacznik na własną ramkę. Limit czasu na wypadek,
+     gdyby Fitssey nie odpowiedział; wtedy zostaje komunikat awaryjny. */
+  const status = document.querySelector('[data-embed-status]');
+  const kontener = document.querySelector('[data-embed-widget]');
+  if (status && kontener) {
+    const obs = new MutationObserver(() => {
+      if (kontener.querySelector('iframe')) {
+        status.hidden = true;
+        obs.disconnect();
+      }
+    });
+    obs.observe(kontener, { childList: true, subtree: true });
+    setTimeout(() => {
+      status.hidden = true;
+      obs.disconnect();
+    }, 8000);
+  }
+</script>
+
 <style>
+  .embed__widget[hidden] {
+    display: none;
+  }
+
   .embed {
     position: relative;
     /* Minimalna wysokość liczona z viewportu, ale nie mniejsza niż użyteczna —

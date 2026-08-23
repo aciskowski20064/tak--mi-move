@@ -54,10 +54,20 @@ export const booking = {
   /** Fitssey to osobna aplikacja z logowaniem — otwieramy w nowej karcie. */
   newTab: true,
   /**
-   * TODO(klientka): kod widżetu z panelu Studio → Integracje → Widżety.
-   * Dopóki jest `null`, /grafik działa na fallbacku iframe (brief §15.4).
+   * FAKT: kody z panelu Fitssey, otrzymane 21.08.2026.
+   *
+   * Fitssey daje dwa osobne kody. Bazowy ładuje bibliotekę i inicjuje konto —
+   * wystarczy raz na stronie. Widżet to własny element HTML `lb-schedule-widget`,
+   * który ta biblioteka rejestruje; sam z siebie nic nie robi.
+   *
+   * Skryptu NIE wpinamy globalnie. Wchodzi tylko tam, gdzie faktycznie stoi
+   * widżet, czyli na /grafik. Powód jest podwójny: to skrypt zewnętrzny, który
+   * ustawia własne ciasteczka, a strona nie ma jeszcze zgody na cookies —
+   * więc im mniej podstron go dotyka, tym mniejszy problem do zamknięcia.
+   * Drugi powód jest prozaiczny: reszta serwisu nie ma z niego pożytku.
    */
-  widgetScript: null as string | null,
+  widgetSrc: 'https://app.fitssey.com/assets/js/lb.widget.prod.js',
+  widgetAccount: 'Takmimove',
 } as const;
 
 /*
@@ -87,6 +97,8 @@ export const locations: StudioLocation[] = [
     // nie rozstrzyga — dla Gdańska tak, dla Pruszcza zostało nieokreślone).
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga', 'barre'],
+    /** FAKT: identyfikator z generatora widżetu Fitssey (21.08.2026). */
+    fitsseyLocationId: '7E7E757E-E55D-54BC-3262-E448A467174F',
     social: [
       { platform: 'instagram', label: '@tak_mi_move', url: 'https://www.instagram.com/tak_mi_move/' },
       { platform: 'facebook', label: 'TAK MI MOVE', url: 'https://www.facebook.com/takmimove' },
@@ -111,6 +123,8 @@ export const locations: StudioLocation[] = [
     parkingInfo: 'Płatna strefa w okolicy',
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga', 'barre'],
+    /** FAKT: identyfikator z generatora widżetu Fitssey (21.08.2026). */
+    fitsseyLocationId: '190D8811-0D88-4976-8A63-F042C284B507',
     social: [
       {
         platform: 'instagram',
