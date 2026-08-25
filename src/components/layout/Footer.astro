@@ -1,8 +1,10 @@
 ---
 import Logo from '~/components/ui/Logo.astro';
 import Mark from '~/components/ui/Mark.astro';
-import { site, booking, locations, formatAddress } from '~/data/site';
+import SocialIcon from '~/components/ui/SocialIcon.astro';
+import { site, booking, locations } from '~/data/site';
 import { mainNav, footerLegalNav } from '~/data/nav';
+import { typo } from '~/lib/typografia';
 
 const year = new Date().getFullYear();
 ---
@@ -11,7 +13,7 @@ const year = new Date().getFullYear();
   <div class="container footer__inner">
     <div class="footer__brand">
       <Logo tone="light" width={96} />
-      <p class="footer__claim">{site.tagline} w Gdańsku i Pruszczu Gdańskim.</p>
+      <p class="footer__claim">{typo(`${site.tagline} w Gdańsku i Pruszczu Gdańskim.`)}</p>
       <a class="footer__booking" href={booking.frontOfficeUrl} target="_blank" rel="noopener" data-cta-source="footer" data-event="booking_cta_click">
         <Mark size="0.85em" />
         {booking.label}
@@ -23,17 +25,36 @@ const year = new Date().getFullYear();
         locations.map((location) => (
           <div class="footer__col">
             <h2 class="footer__heading">{location.city}</h2>
+            {/* Adres składany z części, nie z gotowego napisu: przy jednym
+                ciągu przeglądarka łamała wiersz wewnątrz kodu pocztowego,
+                po dywizie — „80-" zostawało w pierwszej linijce, „756 Gdańsk"
+                schodziło do drugiej. Kod i miasto trzymają się teraz razem. */}
             <address class="footer__address">
-              {formatAddress(location)}
+              {location.street},{' '}
+              <span class="footer__miejscowosc">
+                {location.postalCode} {location.city}
+              </span>
               <br />
               <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
               <br />
               <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
             </address>
+            {/* Klientka zgłosiła (25.08.2026), że przy nazwach kont nie widać,
+                która platforma jest która. Znak stoi PRZED nazwą i jest
+                dekoracyjny — nazwa profilu zostaje tekstem, więc czytnik
+                ekranu nadal czyta konkretne konto, a nie samą platformę.
+                `SocialIcon` istniał już i działał na /kontakt; tutaj brakowało
+                wyłącznie jego użycia. */}
             <ul class="footer__social">
               {location.social.map((s) => (
                 <li>
-                  <a href={s.url} target="_blank" rel="noopener me">{s.label}</a>
+                  <a href={s.url} target="_blank" rel="noopener me" class="footer__socialLink">
+                    {/* Większy niż poprzedni znak bez okręgu: glif siedzi
+                        teraz w kółku, więc przy 17 px sama litera schodziła
+                        poniżej progu czytelności. */}
+                    <SocialIcon platform={s.platform} size="1.35rem" />
+                    <span>{s.label}</span>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -45,7 +66,7 @@ const year = new Date().getFullYear();
         <h2 class="footer__heading">Serwis</h2>
         <ul class="footer__list">
           {mainNav.map((item) => (
-            <li><a href={item.href}>{item.label}</a></li>
+            <li><a href={item.href}>{typo(item.label)}</a></li>
           ))}
         </ul>
       </div>
@@ -141,6 +162,13 @@ const year = new Date().getFullYear();
     line-height: var(--lh-loose);
   }
 
+  /* Dywiz w kodzie pocztowym jest dla przeglądarki miejscem złamania wiersza
+     jak każdy inny. Twarda spacja tego nie naprawi, bo złamanie wypada
+     wewnątrz „80-756", a nie przy odstępie — stąd zakaz łamania na całości. */
+  .footer__miejscowosc {
+    white-space: nowrap;
+  }
+
   .footer__social,
   .footer__list {
     list-style: none;
@@ -153,6 +181,12 @@ const year = new Date().getFullYear();
   /* Cel dotykowy. WCAG 2.2 AA wymaga 24 px, ale stopka to gęsta lista
      odnośników obsługiwana kciukiem — dobijamy do 44 px paddingiem,
      zamiast powiększać sam tekst. */
+  /* Znak platformy i nazwa konta w jednym wierszu. Odstęp mały — znak ma
+     rozpoznawać, nie konkurować z tekstem. */
+  .footer__socialLink {
+    gap: var(--space-2xs);
+  }
+
   .footer__social a,
   .footer__list a,
   .footer__address a,

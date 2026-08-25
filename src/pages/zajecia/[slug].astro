@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { typo } from '~/lib/typografia';
 import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
@@ -143,7 +144,7 @@ const description =
             <h2 class="fakt__label">{k.label}</h2>
             <ul class="fakt__punkty">
               {k.punkty.map((p) => (
-                <li>{p}</li>
+                <li>{typo(p)}</li>
               ))}
             </ul>
           </li>
@@ -173,7 +174,7 @@ const description =
         {przygotowanie ? (
           <section class="blok">
             <h2 class="blok__tytul">Jak się przygotować</h2>
-            <p class="blok__tekst">{przygotowanie}</p>
+            <p class="blok__tekst">{typo(przygotowanie)}</p>
           </section>
         ) : showPlaceholders && d.preparation ? (
           <section class="blok">
@@ -186,7 +187,7 @@ const description =
           d.contraindicationsNote && (
             <section class="blok blok--uwaga">
               <h2 class="blok__tytul">Zanim zaczniesz</h2>
-              <p class="blok__tekst">{d.contraindicationsNote}</p>
+              <p class="blok__tekst">{typo(d.contraindicationsNote)}</p>
             </section>
           )
         }

@@ -1,7 +1,7 @@
 ---
 name: Barre
 order: 5
-shortDescription: 'Balet, pilates i wzmacnianie w jednym — małe ruchy, dużo powtórzeń i mięśnie, o których nie wiedziałaś, że je masz.'
+shortDescription: 'Balet, pilates i wzmacnianie w jednym: małe ruchy, dużo powtórzeń i mięśnie, o których nie wiedziałaś, że je masz.'
 audience:
   - 'Osoby, które chcą wyraźnie popracować nad siłą nóg i pośladków'
   - 'Osoby lubiące ruch w rytm muzyki'

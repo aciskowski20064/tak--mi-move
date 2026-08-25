@@ -10,6 +10,7 @@ import { booking, site } from '~/data/site';
 import { pages } from '~/data/copy/pages';
 import { home } from '~/data/copy/home';
 import { copyOrNull, isPlaceholder, showPlaceholders } from '~/lib/copy';
+import { typo } from '~/lib/typografia';
 
 import photoSprzet from '~/assets/photos/studio-sprzet.jpg';
 import photoSzatnia from '~/assets/photos/studio-szatnia.jpg';
@@ -74,8 +75,8 @@ const blocks = [
                 <span class="step__num">{String(index + 1).padStart(2, '0')}</span>
               </span>
               <div class="step__body">
-                <h3 class="step__title">{step.title}</h3>
-                <p class="step__text">{step.text}</p>
+                <h3 class="step__title">{typo(step.title)}</h3>
+                <p class="step__text">{typo(step.text)}</p>
               </div>
             </li>
           ))
@@ -112,8 +113,8 @@ const blocks = [
                 />
               )}
               <div class="card__body">
-                <h3 class="card__title">{block.title}</h3>
-                {body ? <p class="card__text">{body}</p> : <Todo label={block.body} block />}
+                <h3 class="card__title">{typo(block.title)}</h3>
+                {body ? <p class="card__text">{typo(body)}</p> : <Todo label={block.body} block />}
                 {block.amenities && (
                   <ul class="amenities">
                     {t.amenities.map((item) => (

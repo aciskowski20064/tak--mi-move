@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { typo } from '~/lib/typografia';
 import Section from '~/components/ui/Section.astro';
 import ClassCard from '~/components/ui/ClassCard.astro';
 import Todo from '~/components/ui/Todo.astro';
@@ -27,8 +28,8 @@ const t = home.classes;
     <Section size="lg" tone="alt" id="zajecia">
       <header class="classes__head">
         <p class="eyebrow">{t.eyebrow}</p>
-        <h2>{t.title}</h2>
-        <p class="lead">{t.lead}</p>
+        <h2>{typo(t.title)}</h2>
+        <p class="lead">{typo(t.lead)}</p>
       </header>
 
       <ol class="classes__list">

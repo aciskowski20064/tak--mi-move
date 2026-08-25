@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { typo } from '~/lib/typografia';
 import Base from '~/layouts/Base.astro';
 import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
 import Section from '~/components/ui/Section.astro';
@@ -45,7 +46,7 @@ const cards = [t.community];
         <p class="eyebrow">{t.eyebrow}</p>
         <h1 class="page-header__title">{t.title}</h1>
         <span class="page-header__rule" aria-hidden="true"></span>
-        {lead ? <p class="lead page-header__lead">{lead}</p> : <Todo label={t.lead} block />}
+        {lead ? <p class="lead page-header__lead">{typo(lead)}</p> : <Todo label={t.lead} block />}
       </div>
 
       <figure class="intro__figure">
@@ -79,19 +80,19 @@ const cards = [t.community];
 
       <div class="founder__text">
         <p class="founder__eyebrow eyebrow">{t.founder.eyebrow}</p>
-        <h2 class="founder__title">{t.founder.title}</h2>
+        <h2 class="founder__title">{typo(t.founder.title)}</h2>
 
         {t.founder.intro.map((akapit) => (
-          <p class="founder__body">{akapit}</p>
+          <p class="founder__body">{typo(akapit)}</p>
         ))}
 
         {/* Cudzysłów jest tu uprawniony: to zdania napisane przez klientkę
             w pierwszej osobie, nie streszczenie cudzego opracowania. */}
         <blockquote class="founder__quote">
-          <p>{t.founder.quote}</p>
+          <p>{typo(t.founder.quote)}</p>
         </blockquote>
 
-        <p class="founder__body">{t.founder.afterQuote}</p>
+        <p class="founder__body">{typo(t.founder.afterQuote)}</p>
 
         <ul class="founder__tags">
           {t.founder.tags.map((tag) => (
@@ -105,7 +106,7 @@ const cards = [t.community];
   <Section size="lg">
     <div class="values">
       <p class="values__motto">{t.values.motto}</p>
-      <h2 class="values__title">{t.values.title}</h2>
+      <h2 class="values__title">{typo(t.values.title)}</h2>
       <ul class="values__list">
         {
           values.map((value) => (
@@ -114,8 +115,8 @@ const cards = [t.community];
                 <Mark size="1.35rem" />
               </span>
               <div>
-                <h3 class="value__title">{value.title}</h3>
-                <p class="value__body">{value.body}</p>
+                <h3 class="value__title">{typo(value.title)}</h3>
+                <p class="value__body">{typo(value.body)}</p>
               </div>
             </li>
           ))
@@ -136,8 +137,8 @@ const cards = [t.community];
                 <Mark size="1.35rem" />
               </span>
               <div>
-                <h2 class="card__title">{card.title}</h2>
-                {body ? <p class="card__body">{body}</p> : <Todo label={card.body} block />}
+                <h2 class="card__title">{typo(card.title)}</h2>
+                {body ? <p class="card__body">{typo(body)}</p> : <Todo label={card.body} block />}
               </div>
             </article>
           );

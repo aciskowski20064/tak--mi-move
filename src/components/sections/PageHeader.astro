@@ -1,6 +1,7 @@
 ---
 import Section from '~/components/ui/Section.astro';
 import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
+import { typo } from '~/lib/typografia';
 import type { NavItem } from '~/data/nav';
 
 /**
@@ -22,11 +23,13 @@ const { eyebrow, title, lead, crumbs, tone = 'default', size = 'md' } = Astro.pr
 <Section as="div" size={size} tone={tone} class="page-header">
   {crumbs && <Breadcrumbs items={crumbs} />}
   {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-  <h1 class="page-header__title">{title}</h1>
+  {/* Wiązanie sierot stoi tu, a nie na czternastu podstronach z osobna —
+      to jedyne wejście w treść, przez które przechodzą wszystkie. */}
+  <h1 class="page-header__title">{typo(title)}</h1>
   {/* Kreska stoi też pod tytułem bez leadu (np. podstrony studiów, polityki) —
       domyka nagłówek, zamiast zostawiać go zawieszonym nad treścią. */}
   <span class="page-header__rule" aria-hidden="true"></span>
-  {lead && <p class="lead page-header__lead">{lead}</p>}
+  {lead && <p class="lead page-header__lead">{typo(lead)}</p>}
 </Section>
 
 <style>

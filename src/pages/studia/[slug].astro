@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { typo } from '~/lib/typografia';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
@@ -150,7 +151,7 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
               </span>
               <h2 class="fakt__label">{f.label}</h2>
               <p class="fakt__tekst">
-                {f.value}
+                {typo(f.value!)}
                 {'drugaLinia' in f && f.drugaLinia && (
                   <>
                     <br />
@@ -210,8 +211,8 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
               <FactIcon name="sun" size="1.6rem" />
             </span>
             <div>
-              <h2 class="karta__tytul">{descriptionTitle}</h2>
-              <p class="karta__tekst">{description}</p>
+              <h2 class="karta__tytul">{typo(descriptionTitle)}</h2>
+              <p class="karta__tekst">{typo(description)}</p>
             </div>
           </article>
         )

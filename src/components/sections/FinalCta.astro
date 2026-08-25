@@ -1,5 +1,6 @@
 ---
 import Section from '~/components/ui/Section.astro';
+import { typo } from '~/lib/typografia';
 import Button from '~/components/ui/Button.astro';
 import Mark from '~/components/ui/Mark.astro';
 import { booking } from '~/data/site';
@@ -20,9 +21,9 @@ const t = home.finalCta;
     <div class="final__text">
       <h2 class="final__title">
         <Mark size="0.85rem" class="final__mark" />
-        {t.title}
+        {typo(t.title)}
       </h2>
-      <p class="final__lead">{t.lead}</p>
+      <p class="final__lead">{typo(t.lead)}</p>
     </div>
 
     <div class="final__actions">

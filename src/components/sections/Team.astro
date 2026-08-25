@@ -1,5 +1,6 @@
 ---
 import Section from '~/components/ui/Section.astro';
+import { typo } from '~/lib/typografia';
 import Mark from '~/components/ui/Mark.astro';
 import { pages } from '~/data/copy/pages';
 
@@ -23,7 +24,7 @@ const t = pages.about.crew;
 <Section size="lg" tone="alt">
   <div class="crew">
     <p class="crew__eyebrow eyebrow">{t.eyebrow}</p>
-    <h2 class="crew__title">{t.title}</h2>
+    <h2 class="crew__title">{typo(t.title)}</h2>
 
     <div class="crew__ornament" aria-hidden="true">
       <span class="crew__rule"></span>
@@ -31,9 +32,9 @@ const t = pages.about.crew;
       <span class="crew__rule"></span>
     </div>
 
-    <p class="lead crew__lead">{t.body}</p>
+    <p class="lead crew__lead">{typo(t.body)}</p>
 
-    <h3 class="crew__valuesTitle">{t.valuesTitle}</h3>
+    <h3 class="crew__valuesTitle">{typo(t.valuesTitle)}</h3>
 
     <ul class="crew__values">
       {

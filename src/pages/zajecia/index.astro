@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { typo } from '~/lib/typografia';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
@@ -71,9 +72,9 @@ const choose = home.choose;
           return (
             <li class="scenariusz">
               <div class="scenariusz__tresc">
-                <h3 class="scenariusz__label">{scenario.label}</h3>
+                <h3 class="scenariusz__label">{typo(scenario.label)}</h3>
                 {hint ? (
-                  <p class="scenariusz__hint">{hint}</p>
+                  <p class="scenariusz__hint">{typo(hint)}</p>
                 ) : (
                   <Todo label={scenario.hint} block />
                 )}

@@ -1,7 +1,7 @@
 ---
 name: Aerial yoga
 order: 4
-shortDescription: 'Joga w hamaku podwieszonym pod sufitem — tkanina przejmuje ciężar ciała i odciąża kręgosłup.'
+shortDescription: 'Joga w hamaku podwieszonym pod sufitem. Tkanina przejmuje ciężar ciała i odciąża kręgosłup.'
 audience:
   - 'Osoby, które chcą odciążyć kręgosłup po całym dniu na siedząco'
   - 'Osoby szukające czegoś innego niż ćwiczenia na macie'

@@ -1,7 +1,7 @@
 ---
 name: Stretching
 order: 3
-shortDescription: 'Systematyczna praca nad zakresem ruchu — dla ciała, które zesztywniało od siedzenia albo od jednostronnego treningu.'
+shortDescription: 'Systematyczna praca nad zakresem ruchu dla ciała, które zesztywniało od siedzenia albo od jednostronnego treningu.'
 audience:
   - 'Osoby, które czują się sztywne i chcą to zmienić'
   - 'Osoby biegające, jeżdżące na rowerze i trenujące siłowo'

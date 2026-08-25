@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { typo } from '~/lib/typografia';
 import Section from '~/components/ui/Section.astro';
 import Todo from '~/components/ui/Todo.astro';
 import { home } from '~/data/copy/home';
@@ -40,7 +41,7 @@ const isDev = showPlaceholders;
       <div class="faq">
         <header class="faq__head">
           <p class="eyebrow">{t.eyebrow}</p>
-          <h2>{t.title}</h2>
+          <h2>{typo(t.title)}</h2>
           <p class="faq__more">
             <a href="/kontakt">{t.moreLabel}</a>
           </p>

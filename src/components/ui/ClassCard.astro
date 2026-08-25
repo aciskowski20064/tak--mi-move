@@ -1,4 +1,6 @@
 ---
+import { typo } from '~/lib/typografia';
+
 /**
  * Kafel zajęć — jeden układ dla strony głównej i dla podstrony /zajecia.
  *
@@ -26,7 +28,7 @@ const { href, name, description, index } = Astro.props;
 
   <span class="karta__nazwa">{name}</span>
 
-  {description && <span class="karta__opis">{description}</span>}
+  {description && <span class="karta__opis">{typo(description)}</span>}
 
   <span class="karta__strzalka" aria-hidden="true">
     <svg

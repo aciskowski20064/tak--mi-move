@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { typo } from '~/lib/typografia';
 import Section from '~/components/ui/Section.astro';
 import Mark from '~/components/ui/Mark.astro';
 import Button from '~/components/ui/Button.astro';
@@ -31,7 +32,7 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
     <Section size="lg">
       <header class="reviews__head">
         <p class="eyebrow">{t.eyebrow}</p>
-        <h2>{t.title}</h2>
+        <h2>{typo(t.title)}</h2>
         <p class="reviews__rating">
           <Mark size="0.7rem" />
           {t.ratingLabel}

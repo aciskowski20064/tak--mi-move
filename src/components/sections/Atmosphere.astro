@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { typo } from '~/lib/typografia';
 import Section from '~/components/ui/Section.astro';
 import { home } from '~/data/copy/home';
 import spotkanie from '~/assets/photos/atmo-spotkanie.jpg';
@@ -33,7 +34,7 @@ const t = home.atmosphere;
         i podała jedno zdanie w miejsce opisu — stoi ono jako nagłówek,
         więc sekcja nie zostaje bez własnego tytułu. */}
     <p class="eyebrow">{t.eyebrow}</p>
-    <h2>{t.title}</h2>
+    <h2>{typo(t.title)}</h2>
   </header>
 
   <div class="atmo__grid">

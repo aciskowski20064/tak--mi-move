@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { typo } from '~/lib/typografia';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
@@ -56,7 +57,7 @@ const t = pages.schedule;
           <FactIcon name="calendar" size="1.5rem" />
         </span>
         <p class="eyebrow">{t.rulesEyebrow}</p>
-        <h2 class="karta__tytul">{t.rulesTitle}</h2>
+        <h2 class="karta__tytul">{typo(t.rulesTitle)}</h2>
         <span class="karta__kreska" aria-hidden="true"></span>
 
         <ul class="zasady">
@@ -67,8 +68,8 @@ const t = pages.schedule;
                   <FactIcon name={rule.ikona} size="1.15rem" />
                 </span>
                 <div>
-                  <h3 class="zasada__tytul">{rule.title}</h3>
-                  {'body' in rule && rule.body && <p class="zasada__tekst">{rule.body}</p>}
+                  <h3 class="zasada__tytul">{typo(rule.title)}</h3>
+                  {'body' in rule && rule.body && <p class="zasada__tekst">{typo(rule.body)}</p>}
                 </div>
               </li>
             ))
@@ -84,9 +85,9 @@ const t = pages.schedule;
             </span>
             {/* Nadtytuł „Coś nie działa?" zdjęty (25.08.2026) — nowy lead
                 sam zadaje to pytanie. */}
-            <h2 class="karta__tytul">{t.helpTitle}</h2>
+            <h2 class="karta__tytul">{typo(t.helpTitle)}</h2>
             <span class="karta__kreska" aria-hidden="true"></span>
-            <p class="pomoc__lead">{t.helpLead}</p>
+            <p class="pomoc__lead">{typo(t.helpLead)}</p>
 
             <ul class="pomoc__kontakt">
               <li>
@@ -121,8 +122,8 @@ const t = pages.schedule;
             <FactIcon name="pin" size="1.15rem" />
           </span>
           <div>
-            <h2 class="karnet__tytul">{t.passHighlight.title}</h2>
-            <p class="karnet__tekst">{t.passHighlight.body}</p>
+            <h2 class="karnet__tytul">{typo(t.passHighlight.title)}</h2>
+            <p class="karnet__tekst">{typo(t.passHighlight.body)}</p>
           </div>
         </article>
       </div>

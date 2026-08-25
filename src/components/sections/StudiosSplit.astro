@@ -1,5 +1,6 @@
 ---
 import { Image } from 'astro:assets';
+import { typo } from '~/lib/typografia';
 import Section from '~/components/ui/Section.astro';
 import Mark from '~/components/ui/Mark.astro';
 import { locations, formatAddress, site } from '~/data/site';
@@ -32,7 +33,7 @@ const t = home.studios;
   <p class="eyebrow">{t.eyebrow}</p>
   {/* Lead o wspólnym zespole zdjęty na prośbę klientki (25.08.2026) —
       po nagłówku idą od razu dwa kadry. */}
-  <h2 class="studios__title">{t.title}</h2>
+  <h2 class="studios__title">{typo(t.title)}</h2>
 
   <ul class="studios">
     {

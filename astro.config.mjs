@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { rehypeSieroty } from './src/lib/typografia';
 
 /**
  * Adres bazowy serwisu. Steruje sitemap.xml, canonicalami i — co najważniejsze
@@ -30,6 +31,20 @@ export default defineConfig({
       filter: (page) => !/\/polityka-(prywatnosci|cookies)\/?$/.test(page),
     }),
   ],
+  /*
+   * Reguły typograficzne dla treści z plików markdown: opisy zajęć,
+   * odpowiedzi FAQ i opinie. Teksty z `src/data/copy/` przechodzą przez
+   * `typo()` w miejscu renderowania — to ta sama funkcja reguł, żeby obie
+   * połowy serwisu łamały wiersze tak samo.
+   *
+   * Wymaga pakietu `@astrojs/markdown-remark`: Astro 7 renderuje markdown
+   * domyślnie przez Sätteri, a `rehypePlugins` działa na starym potoku
+   * unified. Zainstalowany świadomie 25.08.2026, po tym jak klientka
+   * wskazała sieroty w opiniach i w FAQ — czyli dokładnie w treściach,
+   * do których `typo()` nie sięga. Zgodność renderowania sprawdzona
+   * porównaniem wygenerowanego HTML-u przed podmianą i po niej.
+   */
+  markdown: { rehypePlugins: [rehypeSieroty] },
   build: { inlineStylesheets: 'auto' },
   image: { responsiveStyles: true },
 });

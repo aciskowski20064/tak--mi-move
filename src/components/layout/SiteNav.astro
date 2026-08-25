@@ -2,6 +2,10 @@
 import { getCollection } from 'astro:content';
 import { mainNav, type NavItem } from '~/data/nav';
 import { locations } from '~/data/site';
+// „Grafik i zapisy" to jedyna etykieta nawigacji z jednoliterowym spójnikiem.
+// Stopka wiąże go od 25.08.2026, więc nagłówek musi robić to samo — inaczej
+// ta sama pozycja łamałaby się w dwóch miejscach inaczej.
+import { typo } from '~/lib/typografia';
 
 interface Props {
   variant: 'desktop' | 'mobile';
@@ -44,7 +48,7 @@ const isActive = (href: string) =>
           class="nav__link"
           aria-current={isActive(item.href) ? 'page' : undefined}
         >
-          {item.label}
+          {typo(item.label)}
         </a>
         {item.children && variant === 'mobile' && (
           <ul class="nav__sub">

@@ -1,7 +1,7 @@
 ---
 name: Pilates
 order: 2
-shortDescription: 'Precyzyjna praca nad mięśniami głębokimi — wzmacnia brzuch i plecy od środka, bez skakania i bez obciążeń.'
+shortDescription: 'Precyzyjna praca nad mięśniami głębokimi. Wzmacnia brzuch i plecy od środka, bez skakania i bez obciążeń.'
 audience:
   - 'Osoby, które chcą wzmocnić brzuch i plecy'
   - 'Osoby z bólem krzyża wynikającym z siedzącego trybu życia'
