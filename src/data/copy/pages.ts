@@ -61,8 +61,26 @@ export const pages = {
         body: 'W systemie rezerwacji wybierz wejście jednorazowe i przyjdź do wybranego studia.',
       },
       // Pozycja „Zajęcia prowadzą certyfikowane osoby" usunięta na prośbę
-      // klientki (25.08.2026). Informacja o prowadzących wraca na /o-nas,
-      // w jej własnym brzmieniu — patrz Etap 1B.
+      // klientki (25.08.2026). Informacja o prowadzących wróciła na /o-nas,
+      // w jej własnym brzmieniu, jako blok „Co nas łączy".
+      {
+        ikona: 'calendar' as const,
+        /* FAKT: tytuł i treść wprost od klientki (25.08.2026), bez skracania.
+           To najdłuższy tekst na tej liście — pozostałe zasady mieszczą się
+           w jednym zdaniu, ten ma trzy razy tyle i dostaje własne
+           traktowanie typograficzne w arkuszu strony. */
+        title: 'Ważność karnetów',
+        body: 'Ważność karnetów jest z góry określona i może ulec wydłużeniu jedynie w przypadku, w którym klient nie zdoła wykorzystać karnetu na skutek odwołania zajęć przez studio (np. kiedy nie zbierze się grupa lub przez nieobecność nauczyciela).',
+      },
+      {
+        ikona: 'check' as const,
+        /* FAKT: treść wprost od klientki (25.08.2026).
+           Świadomie bez odsyłacza: klientka wskazuje profil w Fitssey jako
+           miejsce, gdzie regulamin stoi, ale bezpośredniego adresu do samego
+           dokumentu nie mamy i nie zgadujemy go. */
+        title: 'Regulamin',
+        body: 'Na profilu Tak Mi Move w Fitssey znajdziesz pełen regulamin studia. Akceptacja regulaminu jest wymagana przy założeniu konta. Prosimy o zapoznanie się z nim.',
+      },
     ],
     /** FAKT: odpowiedź 30 — ta sama zasada, wyjęta z listy jako wyróżnik. */
     passHighlight: {
@@ -218,9 +236,18 @@ export const pages = {
     crew: {
       eyebrow: 'Zespół',
       title: 'Prowadzące',
-      // ROBOCZE: rama dla czterech cech. Bez liczby osób i bez opisów —
-      // tego nie wiemy, a brief zabrania wymyślania.
-      body: 'Kto prowadzi dany termin, widać w grafiku. Niezależnie od tego, na kogo trafisz, sposób pracy jest wspólny.',
+      /**
+       * FAKT: treść wprost od klientki (25.08.2026). Zastąpiła moje zdanie
+       * ROBOCZE („Kto prowadzi dany termin, widać w grafiku…") — nie stoi
+       * obok niego, tylko na jego miejscu.
+       *
+       * To jest też miejsce, w które wróciła informacja o przeszkolonych
+       * prowadzących, zdjęta z zasad zapisów na /grafik.
+       */
+      body: 'Wszystkie zajęcia prowadzą osoby do tego przeszkolone i uprawnione. Szczegółowy opis i portfolio nauczycielek znajdziesz w aplikacji Fitssey.',
+      // Nagłówek nad czterema cechami — klientka prosiła, żeby stanął
+      // „przed tymi ramkami" (25.08.2026).
+      valuesTitle: 'Co nas łączy',
       values: [
         'Profesjonalizm',
         'Fachowe przygotowanie',

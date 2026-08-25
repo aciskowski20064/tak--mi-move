@@ -96,6 +96,9 @@ export const locations: StudioLocation[] = [
     // TODO(klientka): czy parking przy studiu jest płatny (odpowiedź 34 tego
     // nie rozstrzyga — dla Gdańska tak, dla Pruszcza zostało nieokreślone).
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
+    /** FAKT: treść wprost od klientki (25.08.2026). Pruszcz bez „z dziećmi". */
+    classesSummary:
+      'zróżnicowane formy ruchu i intensywność, zajęcia w ciąży, sesje grupowe i indywidualne',
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga', 'barre'],
     /** FAKT: identyfikator z generatora widżetu Fitssey (21.08.2026). */
     fitsseyLocationId: '7E7E757E-E55D-54BC-3262-E448A467174F',
@@ -122,6 +125,13 @@ export const locations: StudioLocation[] = [
     /** FAKT: odpowiedź 34. */
     parkingInfo: 'Płatna strefa w okolicy',
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
+    /**
+     * FAKT: treść wprost od klientki (25.08.2026). Gdańsk ma dopisane
+     * „i z dziećmi" — potwierdza to grafik Fitssey, gdzie „Joga dla mam
+     * z dziećmi" i pilates dla mam z dziećmi stoją właśnie w Gdańsku.
+     */
+    classesSummary:
+      'zróżnicowane formy ruchu i intensywność, zajęcia w ciąży i z dziećmi, sesje grupowe i indywidualne',
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga', 'barre'],
     /** FAKT: identyfikator z generatora widżetu Fitssey (21.08.2026). */
     fitsseyLocationId: '190D8811-0D88-4976-8A63-F042C284B507',

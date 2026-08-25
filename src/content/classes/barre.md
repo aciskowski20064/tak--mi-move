@@ -17,6 +17,9 @@ intensity: high
 equipment:
   - 'Legginsy i top, w których swobodnie unosisz nogi'
   - 'Skarpetki antypoślizgowe'
+# FAKT: tekst wprost od klientki (25.08.2026), ten sam dla wszystkich form
+# ruchu poza aerial yogą, która ma dostać własny opis.
+preparation: 'Zjedz lekki posiłek na min. 2 godziny przed zajęciami. Wybierz strój, który zapewni Ci swobodę ruchu. Cały sprzęt potrzebny do ćwiczeń jest na wyposażeniu studia.'
 contraindicationsNote: 'Duża liczba powtórzeń obciąża stawy kolanowe i skokowe. Przy problemach z kolanami, świeżym urazie i w ciąży skonsultuj udział z lekarzem lub fizjoterapeutą i uprzedź prowadzącą.'
 locationSlugs: ['pruszcz-gdanski', 'gdansk']
 draft: false

@@ -33,6 +33,8 @@ const t = pages.about.crew;
 
     <p class="lead crew__lead">{t.body}</p>
 
+    <h3 class="crew__valuesTitle">{t.valuesTitle}</h3>
+
     <ul class="crew__values">
       {
         t.values.map((value) => (
@@ -101,6 +103,14 @@ const t = pages.about.crew;
   .crew__lead {
     max-width: 46ch;
     margin-block-start: var(--space-2xs);
+  }
+
+  /* Nagłówek nad pigułkami. Wchodzi w rytm wyśrodkowanej kompozycji sekcji,
+     więc bez własnego marginesu górnego — odstęp niesie `gap` kontenera.
+     Dolny zeruje odstęp pod nim, bo lista ma już swój margines. */
+  .crew__valuesTitle {
+    font-size: var(--fs-h4);
+    margin-block-end: calc(-1 * var(--space-2xs));
   }
 
   .crew__values {

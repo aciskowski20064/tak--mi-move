@@ -1,5 +1,4 @@
 ---
-import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
@@ -72,24 +71,16 @@ export function getStaticPaths() {
 
 const { location } = Astro.props;
 
-const classes = await getCollection('classes', ({ data }) => import.meta.env.DEV || !data.draft);
-const available = classes
-  .filter((entry) => entry.data.locationSlugs.includes(location.slug))
-  .sort((a, b) => a.data.order - b.data.order);
-
 /**
- * Polszczyzna odmienia rzeczownik za liczebnikiem: dwa, trzy i cztery
- * „rodzaje", ale pięć i więcej „rodzajów". Pruszcz ma pięć zajęć, Gdańsk
- * cztery, więc obie formy realnie występują — sklejenie liczby z jednym
- * napisem dałoby błąd na jednej z podstron.
+ * Funkcja `rodzajeRuchu()`, która składała napis w rodzaju „Pięć rodzajów
+ * ruchu" z liczby wpisów w kolekcji, została usunięta (25.08.2026).
+ * Klientka nie chce nigdzie zamykać oferty w konkretnej liczbie form ruchu,
+ * a to był ostatni komunikat, który tę liczbę wyliczał. W jej miejsce
+ * wchodzi zdanie z `location.classesSummary` — inne dla każdego studia.
+ *
+ * Razem z funkcją odpadło pobieranie kolekcji zajęć: służyło wyłącznie
+ * do policzenia tych wpisów.
  */
-function rodzajeRuchu(ile: number): string | undefined {
-  if (ile === 0) return undefined;
-  const slowa = ['', 'Jeden', 'Dwa', 'Trzy', 'Cztery', 'Pięć', 'Sześć'];
-  const liczba = slowa[ile] ?? String(ile);
-  if (ile === 1) return 'Jeden rodzaj ruchu';
-  return `${liczba} ${ile < 5 ? 'rodzaje' : 'rodzajów'} ruchu`;
-}
 
 const description = copyOrNull(home.studios.descriptions[location.slug]);
 const descriptionTitle = home.studios.descriptionTitles[location.slug];
@@ -124,9 +115,8 @@ const fakty = [
   {
     ikona: 'move' as const,
     label: 'Zajęcia',
-    /* Liczba, nie wyliczanka: nazwy pięciu zajęć łamałyby tor faktu na
-       cztery wiersze. Pełna lista z opisami stoi na /zajecia. */
-    value: rodzajeRuchu(available.length),
+    // FAKT: zdanie klientki, osobne dla każdej lokalizacji (25.08.2026).
+    value: location.classesSummary,
   },
 ]
   /* Fakt bez wartości znika w całości, razem z etykietą i piktogramem.

@@ -17,6 +17,9 @@ intensity: low
 equipment:
   - 'Wygodny, rozciągliwy strój'
   - 'Skarpetki albo bose stopy'
+# FAKT: tekst wprost od klientki (25.08.2026), ten sam dla wszystkich form
+# ruchu poza aerial yogą, która ma dostać własny opis.
+preparation: 'Zjedz lekki posiłek na min. 2 godziny przed zajęciami. Wybierz strój, który zapewni Ci swobodę ruchu. Cały sprzęt potrzebny do ćwiczeń jest na wyposażeniu studia.'
 contraindicationsNote: 'Świeży uraz, stan zapalny i nadmierna ruchomość stawów wymagają ostrożności — skonsultuj je z fizjoterapeutą i powiedz prowadzącej przed zajęciami.'
 locationSlugs: ['gdansk', 'pruszcz-gdanski']
 draft: false

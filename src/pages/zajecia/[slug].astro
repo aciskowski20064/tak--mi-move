@@ -8,7 +8,7 @@ import Button from '~/components/ui/Button.astro';
 import Todo from '~/components/ui/Todo.astro';
 import FactIcon from '~/components/ui/FactIcon.astro';
 import { locations, booking } from '~/data/site';
-import { copyOrNull } from '~/lib/copy';
+import { copyOrNull, showPlaceholders } from '~/lib/copy';
 
 /**
  * Szablon podstrony zajęć — dwanaście elementów z briefu §14.
@@ -28,6 +28,10 @@ const d = entry.data;
 
 const cityName = (slug: string) => locations.find((l) => l.slug === slug)?.city ?? slug;
 const shortDescription = copyOrNull(d.shortDescription);
+/* Tekst „Jak się przygotować". Dla aerial yogi stoi w kolekcji jako `TODO(`,
+   więc `copyOrNull` zwraca null: w wersji poglądowej klientka zobaczy w tym
+   miejscu znacznik brakującej treści, a w produkcji blok zniknie. */
+const przygotowanie = copyOrNull(d.preparation);
 
 const intensityLabel: Record<string, string> = {
   low: 'spokojne',
@@ -155,10 +159,29 @@ const description =
       </div>
 
       <aside class="klasa__bok">
-        {/* Blok „Co zabrać" zdjęty na prośbę klientki (25.08.2026). Pole
-            `equipment` zostaje w kolekcji — jego treść wchodzi do nowego
-            bloku „Jak się przygotować" w Etapie 1B, więc kasowanie go teraz
-            oznaczałoby utratę danych, których zaraz potrzebujemy. */}
+        {/* Blok „Co zabrać" zdjęty na prośbę klientki (25.08.2026), a na jego
+            miejsce weszło „Jak się przygotować" z jej własnym tekstem.
+            Pole `equipment` zostaje w kolekcji do rozstrzygnięcia w Etapie 6 —
+            nie renderuje się nigdzie, ale kasowanie danych przed decyzją
+            byłoby nieodwracalne. */}
+        {/* Warunek obejmuje CAŁĄ sekcję razem z nagłówkiem, nie samą treść.
+            Pierwsza wersja renderowała `<h2>` zawsze, gdy pole istniało,
+            a w środku stawiała <Todo>. W wersji poglądowej wyglądało to
+            dobrze, ale w produkcji <Todo> znika i na stronie aerial yogi
+            zostawał nagłówek „Jak się przygotować" bez ani jednego zdania
+            pod spodem. Wykryte próbnym buildem z DEMO_MODE = false. */}
+        {przygotowanie ? (
+          <section class="blok">
+            <h2 class="blok__tytul">Jak się przygotować</h2>
+            <p class="blok__tekst">{przygotowanie}</p>
+          </section>
+        ) : showPlaceholders && d.preparation ? (
+          <section class="blok">
+            <h2 class="blok__tytul">Jak się przygotować</h2>
+            <Todo label={d.preparation} block />
+          </section>
+        ) : null}
+
         {
           d.contraindicationsNote && (
             <section class="blok blok--uwaga">

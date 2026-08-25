@@ -31,7 +31,21 @@ const classes = defineCollection({
       level: z.string().optional(),
       duration: z.string().optional(),
       equipment: z.array(z.string()).optional(),
-      preparation: z.array(z.string()).optional(),
+      /**
+       * „Jak się przygotować" — jeden akapit, treść wprost od klientki
+       * (25.08.2026).
+       *
+       * Pole istniało wcześniej jako tablica, ale nigdy nie dostało danych
+       * ani nie było renderowane. Zmienione na pojedynczy tekst, bo klientka
+       * podała akapit, a nie wyliczankę — rozbijanie go na punkty byłoby
+       * moją redakcją jej treści.
+       *
+       * Cztery formy ruchu dostają ten sam tekst. Aerial yoga ma mieć własny,
+       * którego w projekcie nie ma, więc jej pole zostaje puste i blok się
+       * nie renderuje. Opcjonalność jest tu celowa: brak treści ma oznaczać
+       * brak sekcji, nigdy wypełniacz.
+       */
+      preparation: z.string().optional(),
       contraindicationsNote: z.string().optional(),
       locationSlugs: z.array(studioEnum),
       instructorSlugs: z.array(z.string()).optional(),

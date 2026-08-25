@@ -17,6 +17,11 @@ intensity: medium
 equipment:
   - 'Strój zakrywający pachy i kolana — tkanina hamaka ociera skórę'
   - 'Bez biżuterii, zamków i ozdób, które mogłyby zahaczyć o hamak'
+# Klientka zapowiedziała osobny opis przygotowania dla aerial yogi i wprost
+# zabroniła używania tu tekstu wspólnego. W przesłanych materiałach go nie ma —
+# jedyna aerialowa uwaga, jaką mamy, to „bez biżuterii" (odpowiedź 24), a to
+# nie jest odpowiedź na to pytanie. Do czasu nadesłania blok się nie renderuje.
+preparation: 'TODO(klientka): opis „Jak się przygotować” dla aerial yogi — tekst wspólny dla pozostałych zajęć świadomie tu nie wchodzi'
 contraindicationsNote: 'Pozycje odwrócone nie są dla każdego. Jaskra i inne choroby oczu, nadciśnienie, problemy kardiologiczne, świeże operacje, ciąża i zaburzenia błędnika wymagają wcześniejszej konsultacji z lekarzem. Uprzedź prowadzącą przed zajęciami.'
 locationSlugs: ['gdansk', 'pruszcz-gdanski']
 draft: false

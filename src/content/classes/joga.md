@@ -18,6 +18,9 @@ intensity: varied
 equipment:
   - 'Wygodny strój, który nie krępuje ruchu'
   - 'Mata — sprawdź w studiu, czy jest na miejscu'
+# FAKT: tekst wprost od klientki (25.08.2026), ten sam dla wszystkich form
+# ruchu poza aerial yogą, która ma dostać własny opis.
+preparation: 'Zjedz lekki posiłek na min. 2 godziny przed zajęciami. Wybierz strój, który zapewni Ci swobodę ruchu. Cały sprzęt potrzebny do ćwiczeń jest na wyposażeniu studia.'
 contraindicationsNote: 'Jeśli jesteś w ciąży, wracasz po urazie albo operacji, skonsultuj udział z lekarzem lub fizjoterapeutą i uprzedź prowadzącą przed zajęciami. Dobierze warianty pozycji.'
 locationSlugs: ['gdansk', 'pruszcz-gdanski']
 draft: false

@@ -36,6 +36,12 @@ export type StudioLocation = {
   openingHours?: string[];
   /** Krótka charakterystyka miejsca — musi być inna dla każdej lokalizacji (brief §16.4). */
   description?: string;
+  /**
+   * Co się w tym studiu odbywa — jedno zdanie od klientki, inne dla każdej
+   * lokalizacji. Zastąpiło liczbę rodzajów zajęć wyliczaną z kolekcji:
+   * klientka nie chce nigdzie zamykać oferty w konkretnej liczbie form ruchu.
+   */
+  classesSummary?: string;
   classSlugs: string[];
   /** ID lokalizacji w Fitssey — pozwala filtrować widżet grafiku. */
   fitsseyLocationId?: string;

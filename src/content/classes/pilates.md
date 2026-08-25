@@ -17,6 +17,9 @@ intensity: medium
 equipment:
   - 'Strój przylegający do ciała, żeby prowadząca widziała ustawienie'
   - 'Skarpetki antypoślizgowe albo bose stopy'
+# FAKT: tekst wprost od klientki (25.08.2026), ten sam dla wszystkich form
+# ruchu poza aerial yogą, która ma dostać własny opis.
+preparation: 'Zjedz lekki posiłek na min. 2 godziny przed zajęciami. Wybierz strój, który zapewni Ci swobodę ruchu. Cały sprzęt potrzebny do ćwiczeń jest na wyposażeniu studia.'
 contraindicationsNote: 'Przy przepuklinie krążka, świeżym urazie kręgosłupa, rozejściu mięśnia prostego brzucha i w ciąży decyzję podejmij razem z lekarzem lub fizjoterapeutą. Prowadzącą uprzedź przed zajęciami.'
 locationSlugs: ['gdansk', 'pruszcz-gdanski']
 draft: false
