@@ -30,8 +30,9 @@ const t = home.studios;
 
 <Section size="lg" tone="alt">
   <p class="eyebrow">{t.eyebrow}</p>
+  {/* Lead o wspólnym zespole zdjęty na prośbę klientki (25.08.2026) —
+      po nagłówku idą od razu dwa kadry. */}
   <h2 class="studios__title">{t.title}</h2>
-  <p class="lead studios__lead">{t.lead}</p>
 
   <ul class="studios">
     {
@@ -81,13 +82,10 @@ const t = home.studios;
 </Section>
 
 <style>
+  /* Odstęp do kafli niesie teraz sam nagłówek — lead, który go dawał,
+     został zdjęty (25.08.2026). */
   .studios__title {
-    margin-block: var(--space-2xs) var(--space-sm);
-  }
-
-  .studios__lead {
-    max-width: var(--measure);
-    margin-block-end: var(--space-xl);
+    margin-block: var(--space-2xs) var(--space-xl);
   }
 
   .studios {

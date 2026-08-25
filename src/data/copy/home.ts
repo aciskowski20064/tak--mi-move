@@ -20,20 +20,19 @@ export const home = {
   },
 
   hero: {
-    /* FAKT — charakter działalności i dwie lokalizacje. Rozbite na dwa
-       wiersze, bo w makiecie stoją jeden pod drugim: najpierw czym jesteśmy,
-       potem gdzie. */
+    /* FAKT — charakter działalności. Nazwy miast zdjęte na prośbę klientki
+       (poprawki 25.08.2026): stały pod nadtytułem i powtarzały to, co i tak
+       mówi sekcja lokalizacji niżej oraz stopka. */
     eyebrow: 'Butikowe studia zdrowego ruchu',
-    eyebrowPlaces: 'Gdańsk i Pruszcz Gdański',
     /**
      * FAKT — hasło marki z mediów społecznościowych, to samo, które stoi nad
-     * wartościami na /o-nas. Makieta miała w tym miejscu „Kameralnie /
-     * Autentycznie / Z oddechem" — trzy słowa, których klientka nigdy nie
-     * użyła. Prawdziwe hasło mówi to samo i jest jej.
+     * wartościami na /o-nas. Klientka wskazała je jako główny komunikat hero
+     * w miejsce dawnego „Ruch, do którego chce się wracać."
+     *
+     * Trzy słowa NIE powtarzają się już jako plakietka przy zdjęciu —
+     * klientka prosiła wprost, żeby nie dublować ich obok kadru.
      */
-    badge: ['Siła', 'Spokój', 'Równowaga'],
-    // ROBOCZE — brief §12.2 zabrania wyboru hasła bez rozmowy z właścicielką.
-    title: 'Ruch, do którego chce się wracać.',
+    title: 'SIŁA ~ SPOKÓJ ~ RÓWNOWAGA',
     // FAKT — wymienione formy zajęć i wspólny system zapisów.
     lead: 'Joga, pilates, stretching, aerial yoga i barre w kameralnych grupach — w dwóch studiach, z jednym systemem zapisów.',
     secondaryCta: 'Zobacz grafik',
@@ -49,16 +48,18 @@ export const home = {
   values: [
     'Dwa studia',
     'Kameralne grupy',
-    'Pięć form ruchu',
+    // „Pięć form ruchu" usunięte na prośbę klientki (25.08.2026): oferta się
+    // rozwija i nie chcemy nigdzie zamykać jej w konkretnej liczbie.
     'Zapisy online',
     'Zajęcia dla różnych poziomów',
   ],
 
   studios: {
-    eyebrow: 'Dwa miejsca',
+    eyebrow: 'Dwie lokalizacje',
     // ROBOCZE
     title: 'Wybierz studio blisko siebie',
-    lead: 'Obie przestrzenie prowadzi ten sam zespół. Różnią się charakterem wnętrza i grafikiem — wybierz to, do którego łatwiej Ci dotrzeć.',
+    // Lead o wspólnym zespole zdjęty na prośbę klientki (25.08.2026).
+    // Po jego usunięciu sekcja zaczyna się od razu od dwóch kadrów.
     /**
      * Brief §16.4 zabrania identycznych opisów obu lokalizacji — i faktycznie
      * te dwie sale różnią się na zdjęciach na tyle, że opisy same się rozeszły.
@@ -93,7 +94,9 @@ export const home = {
       'pruszcz-gdanski': 'Światło i przestrzeń',
       gdansk: 'Kameralnie i przytulnie',
     },
-    linkLabel: 'Poznaj studio',
+    // Etykieta ujednolicona z /studia — klientka prosiła o „Poznaj przestrzeń"
+    // w miejsce „Poznaj studio" i „Dojazd i szczegóły" (25.08.2026).
+    linkLabel: 'Poznaj przestrzeń',
     scheduleLabel: 'Grafik tej lokalizacji',
     // Zdjęcie mamy tylko dla Pruszcza (potwierdzone przez klienta).
     missingPhoto: 'TODO(klientka): zdjęcie wnętrza tego studia',
@@ -103,7 +106,9 @@ export const home = {
     eyebrow: 'Zajęcia',
     // ROBOCZE — nawiązuje do §4.2 briefu: różne drogi, wspólny cel.
     title: 'Różne formy ruchu, jeden kierunek',
-    lead: 'Każde zajęcia prowadzą do tego samego: sprawniejszego ciała i mniejszego napięcia. Różnią się tempem, sprzętem i tym, komu służą najbardziej.',
+    // Klientka wskazała ten komunikat dla sekcji zajęć (25.08.2026).
+    // Ten sam tekst stoi na /zajecia — decyzja o spójności obu miejsc.
+    lead: 'Wybierz, czego dziś potrzebujesz',
     allLabel: 'Zobacz wszystkie zajęcia',
   },
 
@@ -168,19 +173,22 @@ export const home = {
     steps: [
       {
         title: 'Wybierz studio i zajęcia',
-        text: 'Wybierasz studio i zajęcia w aplikacji Fitssey — grafik obu lokalizacji jest w jednym miejscu.',
+        text: 'Wybierz studio i zajęcia w aplikacji Fitssey — grafik obu lokalizacji jest w jednym miejscu.',
       },
       {
         title: 'Załóż konto',
-        text: 'Zakładasz konto, podając adres e-mail; rejestracja odbywa się w tym samym systemie.',
+        text: 'Załóż konto, podając adres e-mail; rejestracja odbywa się w tym samym systemie.',
       },
       {
+        /* Nazwa pakietu poprawiona na prośbę klientki (25.08.2026): w cenniku
+           Fitssey wejście dla nowych osób nazywa się „Pierwsza wizyta", a nie
+           „Poczuj nas". Sprawdzone w jej cenniku, nie przyjęte na słowo. */
         title: 'Wybierz karnet lub wejście',
-        text: 'Wybierasz pierwsze wejście „Poczuj nas”, wejście pojedyncze albo karnet — x4, x8 lub Open. Ważność karnetu liczy się od dnia pierwszej wizyty, nie od zakupu.',
+        text: 'Wybierz „Pierwszą wizytę”, wejście pojedyncze albo karnet — x4, x8 lub Open. Ważność karnetu liczy się od dnia pierwszej wizyty, nie od zakupu.',
       },
       {
         title: 'Przyjdź trochę wcześniej',
-        text: 'Przyjdź jakieś 10 minut wcześniej, żeby w ciszy wypić herbatę i spokojnie wejść na salę. W obu studiach są szatnie.',
+        text: 'Przyjdź około 10 min przed zajęciami, żeby w ciszy wypić herbatę i spokojnie wejść na salę. W obu studiach są szatnie.',
       },
       {
         title: 'Ubierz się wygodnie',
@@ -198,8 +206,12 @@ export const home = {
   /** Brief §12.8: duże zdjęcia z krótkimi podpisami, nie galeria miniatur. */
   atmosphere: {
     eyebrow: 'Atmosfera',
-    title: 'Ludzie, przestrzeń, oddech',
-    lead: 'Kameralne grupy i miejsce, w którym nikt nikogo nie ocenia.',
+    /* Poprawki klientki (25.08.2026): podtytuł „Ludzie, przestrzeń, oddech"
+       usunięty, a zdanie o kameralnych grupach zastąpione tym poniżej.
+       Jej tekst wchodzi na miejsce nagłówka, nie leadu — po usunięciu
+       podtytułu został jedynym komunikatem sekcji, a sekcja bez nagłówka
+       wypada ze struktury dokumentu. */
+    title: 'Kameralne studia, w których czujesz się bezpiecznie i swobodnie',
     /**
      * Cztery kadry z sesji. Kolejność nie jest przypadkowa — idzie za
      * tytułem sekcji: najpierw ludzie, potem przestrzeń, na końcu praktyka.

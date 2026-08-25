@@ -29,9 +29,11 @@ const t = home.atmosphere;
 
 <Section size="lg">
   <header class="atmo__head">
+    {/* Klientka (25.08.2026) zdjęła podtytuł „Ludzie, przestrzeń, oddech"
+        i podała jedno zdanie w miejsce opisu — stoi ono jako nagłówek,
+        więc sekcja nie zostaje bez własnego tytułu. */}
     <p class="eyebrow">{t.eyebrow}</p>
     <h2>{t.title}</h2>
-    <p class="lead">{t.lead}</p>
   </header>
 
   <div class="atmo__grid">
@@ -59,7 +61,7 @@ const t = home.atmosphere;
   }
 
   .atmo__head h2 {
-    margin-block: var(--space-2xs) var(--space-sm);
+    margin-block-start: var(--space-2xs);
   }
 
   .atmo__grid {

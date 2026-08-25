@@ -47,19 +47,31 @@ const cities = d.locationSlugs.map(cityName);
 const citiesLabel = cities.length > 1 ? `${cities.slice(0, -1).join(', ')} i ${cities.at(-1)}` : cities[0];
 
 /**
- * Cztery karty faktów — układ z makiety z 22.08.2026. Każda karta bierze
- * dane, które już siedzą w kolekcji, więc nic nie trzeba dopisywać:
- * `audience`, `goals`, `intensity`/`duration`/`level` i `locationSlugs`.
+ * Karty faktów — układ z makiety z 22.08.2026. Każda karta bierze dane,
+ * które już siedzą w kolekcji, więc nic nie trzeba dopisywać:
+ * `audience`, `goals` oraz `intensity`/`duration`/`level`.
  *
  * Makieta miała tu jeszcze kadr obok nagłówka i zdjęcie przy cytacie.
  * Zdjęć poszczególnych zajęć nie mamy, więc nagłówek jest wyśrodkowany,
  * a karty niosą całą sekcję same.
+ *
+ * Typ jest wypisany jawnie, a filtr jest strażnikiem typu. Wcześniej brał
+ * się z wnioskowania, bo w tablicy stała karta lokalizacji, której `punkty`
+ * na pewno istniały. Po jej usunięciu każda pozycja może być pusta i sam
+ * `filter` tego TypeScriptowi nie zawęża.
  */
-const karty = [
-  { ikona: 'users' as const, label: 'Dla kogo', punkty: d.audience },
-  { ikona: 'heart' as const, label: 'Co daje', punkty: d.goals },
+type KartaFaktu = {
+  ikona: 'users' | 'heart' | 'clock';
+  label: string;
+  punkty?: readonly string[];
+};
+
+const kartyWszystkie: KartaFaktu[] = [
+  { ikona: 'users', label: 'Dla kogo', punkty: d.audience },
+  // Etykieta „Efekty" w miejsce „Co daje" — wskazana przez klientkę (25.08.2026).
+  { ikona: 'heart', label: 'Efekty', punkty: d.goals },
   {
-    ikona: 'clock' as const,
+    ikona: 'clock',
     label: 'Tempo',
     punkty: [
       d.duration,
@@ -67,8 +79,14 @@ const karty = [
       d.level,
     ].filter(Boolean) as string[],
   },
-  { ikona: 'pin' as const, label: 'Lokalizacje', punkty: cities },
-].filter((k) => k.punkty && k.punkty.length > 0);
+  // Karta „Lokalizacje" usunięta: klientka nie chce podawać lokalizacji przy
+  // zajęciach ani tutaj, ani na stronie zbiorczej. `cities` zostaje, bo niesie
+  // je jeszcze tytuł i opis dla wyszukiwarek.
+];
+
+const karty = kartyWszystkie.filter(
+  (k): k is KartaFaktu & { punkty: readonly string[] } => Boolean(k.punkty?.length),
+);
 
 const title = d.seoTitle ?? `${d.name} — ${citiesLabel}`;
 const description =
@@ -137,19 +155,10 @@ const description =
       </div>
 
       <aside class="klasa__bok">
-        {
-          d.equipment && d.equipment.length > 0 && (
-            <section class="blok">
-              <h2 class="blok__tytul">Co zabrać</h2>
-              <ul class="blok__lista">
-                {d.equipment.map((item) => (
-                  <li>{item}</li>
-                ))}
-              </ul>
-            </section>
-          )
-        }
-
+        {/* Blok „Co zabrać" zdjęty na prośbę klientki (25.08.2026). Pole
+            `equipment` zostaje w kolekcji — jego treść wchodzi do nowego
+            bloku „Jak się przygotować" w Etapie 1B, więc kasowanie go teraz
+            oznaczałoby utratę danych, których zaraz potrzebujemy. */}
         {
           d.contraindicationsNote && (
             <section class="blok blok--uwaga">
@@ -256,14 +265,6 @@ const description =
     margin-block-end: var(--space-sm);
   }
 
-  .blok__lista {
-    display: grid;
-    gap: var(--space-2xs);
-    padding-inline-start: 1.1em;
-    font-size: var(--fs-small);
-    color: var(--text-muted);
-  }
-
   /* Nota o przeciwwskazaniach dostaje własne tło i pasek — to jedyny tekst
      na tej stronie, którego przeoczenie ma realne konsekwencje. */
   .blok--uwaga {
@@ -318,8 +319,10 @@ const description =
   }
 
   @media (min-width: 64rem) {
+    /* Trzy kolumny, nie cztery — karta „Lokalizacje" odpadła (25.08.2026)
+       i przy czterech torach zostawał pusty tor po prawej. */
     .fakty {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: var(--space-sm);
     }
 

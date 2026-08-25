@@ -31,7 +31,10 @@ import zalozycielka from '~/assets/photos/zalozycielka-portret.jpg';
 const t = pages.about;
 const lead = copyOrNull(t.lead);
 const values = realOnly(t.values.items, (item) => item.body);
-const cards = [t.spaces, t.community];
+// Kafel „Dwie przestrzenie" zdjęty na prośbę klientki (25.08.2026) — zostaje
+// sam blok o społeczności i wydarzeniach. Mocniejsze wyeksponowanie wydarzeń
+// przychodzi w Etapie 8, nie tutaj.
+const cards = [t.community];
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
@@ -417,11 +420,9 @@ const cards = [t.spaces, t.community];
       margin-inline: 0;
     }
 
-    .cards {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-
+    /* Dwie kolumny odpadły razem z kaflem „Dwie przestrzenie" (25.08.2026):
+       przy jednym kaflu zostawała pusta połowa rzędu. Tekst i tak ma sufit
+       na --measure, więc kafel na pełnej szerokości nie rozjeżdża wiersza. */
   }
 
   @media (min-width: 60rem) {

@@ -1,6 +1,4 @@
 ---
-import { locations } from '~/data/site';
-
 /**
  * Kafel zajęć — jeden układ dla strony głównej i dla podstrony /zajecia.
  *
@@ -8,27 +6,19 @@ import { locations } from '~/data/site';
  * `class-item`, robiący prawie to samo. Przy pierwszej zmianie wyglądu
  * rozjechałyby się, bo nic ich ze sobą nie wiązało.
  *
- * Kolejność miast bierzemy z `locations`, a nie z kolejności slugów zapisanej
- * w pliku zajęć — inaczej jedne zajęcia pokazują „Pruszcz Gdański · Gdańsk",
- * a inne odwrotnie, zależnie od tego, jak ktoś je wpisał.
+ * Wiersz z miastami zdjęty na prośbę klientki (25.08.2026): lokalizacji nie
+ * podajemy przy zajęciach ani na stronie zbiorczej, ani w ich opisach.
+ * Wraz z nim odpadł prop `locationSlugs` — kafel nie ma już po co go dostawać.
  */
 interface Props {
   href: string;
   name: string;
   description?: string | null;
-  locationSlugs: readonly string[];
   /** Numer porządkowy. Bez niego kafel po prostu go nie pokazuje. */
   index?: number;
 }
 
-const { href, name, description, locationSlugs, index } = Astro.props;
-
-const miasta = [...locationSlugs]
-  .sort(
-    (a, b) => locations.findIndex((l) => l.slug === a) - locations.findIndex((l) => l.slug === b),
-  )
-  .map((slug) => locations.find((l) => l.slug === slug)?.city ?? slug)
-  .join(' · ');
+const { href, name, description, index } = Astro.props;
 ---
 
 <a class="karta" href={href} data-event="class_detail_view">
@@ -37,8 +27,6 @@ const miasta = [...locationSlugs]
   <span class="karta__nazwa">{name}</span>
 
   {description && <span class="karta__opis">{description}</span>}
-
-  <span class="karta__gdzie">{miasta}</span>
 
   <span class="karta__strzalka" aria-hidden="true">
     <svg
@@ -55,11 +43,12 @@ const miasta = [...locationSlugs]
 </a>
 
 <style>
-  /* `1fr` na wierszu opisu dosuwa lokalizacje i strzałkę do dołu, więc kafle
-     w rzędzie kończą się równo mimo różnej długości opisów. */
+  /* `1fr` na wierszu opisu dosuwa strzałkę do dołu, więc kafle w rzędzie
+     kończą się równo mimo różnej długości opisów. Wierszy jest cztery,
+     nie pięć — wiersz z miastami odpadł razem z lokalizacjami. */
   .karta {
     display: grid;
-    grid-template-rows: auto auto 1fr auto auto;
+    grid-template-rows: auto auto 1fr auto;
     gap: var(--space-2xs);
     block-size: 100%;
     padding: var(--space-md);
@@ -93,14 +82,6 @@ const miasta = [...locationSlugs]
     font-size: var(--fs-small);
     color: var(--text-muted);
     line-height: 1.55;
-  }
-
-  .karta__gdzie {
-    font-size: var(--fs-caption);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-block-start: var(--space-sm);
   }
 
   .karta__strzalka {

@@ -32,7 +32,8 @@ export const pages = {
       {
         ikona: 'clock' as const,
         title: 'Rezerwację odwołasz bez utraty wejścia',
-        body: 'Najpóźniej 14 godzin przed rozpoczęciem zajęć. Później wejście przepada.',
+        // Sformułowanie klientki (25.08.2026) w miejsce „wejście przepada".
+        body: 'Najpóźniej 14 godzin przed rozpoczęciem zajęć. Wejście, które nie zostało anulowane przed tym czasem, uznaje się za wykorzystane.',
       },
       {
         ikona: 'mail' as const,
@@ -41,8 +42,9 @@ export const pages = {
       },
       {
         ikona: 'users' as const,
-        title: 'Zajęcia odbywają się od trzech osób',
-        body: 'Grupa rusza przy minimum trzech zapisanych uczestniczkach.',
+        // Tytuł i treść wprost od klientki (25.08.2026).
+        title: 'Minimalna wielkość grupy',
+        body: 'Zajęcia odbywają się od 3 zapisanych uczestników.',
       },
       {
         ikona: 'card' as const,
@@ -58,20 +60,20 @@ export const pages = {
         title: 'Jesteś w Trójmieście przejazdem?',
         body: 'W systemie rezerwacji wybierz wejście jednorazowe i przyjdź do wybranego studia.',
       },
-      {
-        ikona: 'check' as const,
-        title: 'Zajęcia prowadzą certyfikowane osoby',
-        body: 'Kto prowadzi dany termin, widać w grafiku przy każdych zajęciach.',
-      },
+      // Pozycja „Zajęcia prowadzą certyfikowane osoby" usunięta na prośbę
+      // klientki (25.08.2026). Informacja o prowadzących wraca na /o-nas,
+      // w jej własnym brzmieniu — patrz Etap 1B.
     ],
     /** FAKT: odpowiedź 30 — ta sama zasada, wyjęta z listy jako wyróżnik. */
     passHighlight: {
       title: 'Dwa studia, jeden karnet',
-      body: 'Możesz ćwiczyć raz w Pruszczu, raz w Gdańsku.',
+      // Podpis skrócony do sformułowania klientki (25.08.2026).
+      body: 'Wybieraj dowolnie',
     },
-    helpEyebrow: 'Coś nie działa?',
     helpTitle: 'Jesteśmy tu, żeby pomóc',
-    helpLead: 'Jeśli grafik się nie wczytuje albo nie możesz dokończyć rezerwacji, napisz lub zadzwoń — pomożemy zapisać się ręcznie.',
+    // Treść klientki (25.08.2026). Nadtytuł „Coś nie działa?" zdjęty —
+    // to zdanie samo zadaje pytanie, więc oba naraz były powtórzeniem.
+    helpLead: 'Masz problem z rejestracją albo zakupem karnetu? Napisz do nas!',
     helpPhoto: 'Prowadząca poprawia ustawienie ćwiczącej na macie',
   },
 
@@ -82,7 +84,10 @@ export const pages = {
         'Dwa studia TAK MI MOVE — Pruszcz Gdański, ul. Grunwaldzka 55/7 i Gdańsk, ul. Angielska Grobla 35/47.',
     },
     eyebrow: 'Studia',
-    title: 'Dwa miejsca, jeden zespół',
+    // Ujednolicone ze stroną główną (25.08.2026): klientka prosiła
+    // o „Dwie lokalizacje" w miejsce „Dwóch miejsc". Komunikat o wspólnym
+    // zespole nie wraca — zniknął też z sekcji na stronie głównej.
+    title: 'Dwie lokalizacje',
     // Lead obiecywał wcześniej „dojazd", a sekcja dojazdu zniknęła z podstron
     // studiów — klientka odpowiedziała na to pytanie „nie opisujemy"
     // (odpowiedź 35). Zapowiedź musi zgadzać się z tym, co stoi niżej.
@@ -96,8 +101,11 @@ export const pages = {
         'Joga, pilates, stretching, aerial yoga i barre w kameralnych grupach — Gdańsk i Pruszcz Gdański.',
     },
     eyebrow: 'Zajęcia',
-    title: 'Znajdź formę ruchu dla siebie',
-    lead: 'Każde zajęcia prowadzą do tego samego: sprawniejszego ciała i mniejszego napięcia. Różnią się tempem, sprzętem i tym, komu służą najbardziej.',
+    // Oba komunikaty wskazane przez klientkę (25.08.2026): hasło marki
+    // w miejsce „Znajdź formę ruchu dla siebie", a pod nim jedno zdanie
+    // zamiast akapitu o tym, dokąd prowadzą zajęcia.
+    title: 'SIŁA ~ SPOKÓJ ~ RÓWNOWAGA',
+    lead: 'Wybierz, czego dziś potrzebujesz',
   },
 
   firstVisit: {
@@ -106,13 +114,13 @@ export const pages = {
       description:
         'Jak zapisać się na pierwsze zajęcia w TAK MI MOVE, co zabrać i czego się spodziewać. Gdańsk i Pruszcz Gdański.',
     },
-    eyebrow: 'Pierwszy raz?',
-    title: 'Pierwsza wizyta krok po kroku',
-    /** Nagłówki i etykiety układu — nie są faktami o marce, tylko nawigacją. */
-    stepsEyebrow: 'Krok po kroku',
-    stepsTitle: 'Tak wygląda Twoja pierwsza wizyta',
-    blocksEyebrow: 'Ważne informacje',
-    blocksTitle: 'Wszystko, co warto wiedzieć wcześniej',
+    /**
+     * Poprawki klientki (25.08.2026): na całej tej podstronie, poza samymi
+     * podpunktami, ma zostać JEDEN tytuł. Zdjęte zostały więc nadtytuł
+     * „Pierwszy raz?", nadtytuł „Krok po kroku", nagłówek „Tak wygląda
+     * Twoja pierwsza wizyta" oraz para nagłówków nad blokami informacyjnymi.
+     */
+    title: 'Twoja pierwsza wizyta w Tak Mi Move',
     /** FAKT: odpowiedzi 10 i 50 — co realnie zastaje się na miejscu. */
     amenities: ['Szatnie', 'Prysznic', 'Ręczniki', 'Kosmetyki'],
     photos: {
@@ -145,7 +153,9 @@ export const pages = {
         // pozwoli ćwiczyć" stał nad tabelą, nie przy pytaniu 28 — nie wiadomo,
         // czy dotyczy odwołań, ani czy ma być publiczną regułą. Nie publikujemy
         // go do czasu potwierdzenia: to zobowiązanie wobec każdej klientki.
-        body: 'Rezerwację możesz odwołać bez utraty wejścia najpóźniej 14 godzin przed rozpoczęciem zajęć — później wejście przepada. Jeśli termin jest już zajęty, zapisz się na listę rezerwową: gdy zwolni się miejsce, dostaniesz wiadomość e-mail. Karnet działa w obu studiach.',
+        // Sformułowanie klientki (25.08.2026) w miejsce „wejście przepada" —
+        // to samo, co w zasadach zapisów na /grafik.
+        body: 'Rezerwację możesz odwołać bez utraty wejścia najpóźniej 14 godzin przed rozpoczęciem zajęć. Wejście, które nie zostało anulowane przed tym czasem, uznaje się za wykorzystane. Jeśli termin jest już zajęty, zapisz się na listę rezerwową: gdy zwolni się miejsce, dostaniesz wiadomość e-mail. Karnet działa w obu studiach.',
       },
     },
   },
@@ -221,37 +231,42 @@ export const pages = {
       linkHref: '/grafik',
     },
     values: {
-      title: 'Co jest dla nas ważne',
+      // Tytuł sekcji wprost od klientki (25.08.2026).
+      title: 'Wartości Tak Mi Move',
       // FAKT: hasło marki z mediów społecznościowych i z maila (odpowiedź 55).
       motto: 'Siła ~ Spokój ~ Równowaga',
-      // FAKT: trzy przymiotniki („bezpieczne, inkluzywne, wspierające”) i troska
-      // o ciało i głowę pochodzą wprost z maila. ROBOCZE: rozwinięcia pod nimi —
-      // opisują sposób pracy potwierdzony w odpowiedziach 12, 23, 26, 41 i 51,
-      // ale sformułowane przeze mnie. Do akceptacji klientki.
+      /**
+       * FAKT: cztery tytuły wprost od klientki (25.08.2026) — zastąpiły
+       * przymiotniki „Bezpiecznie / Dla każdego / Ze wsparciem / Ciało i głowa".
+       *
+       * ROBOCZE: rozwinięcia pod nimi zostają BEZ ZMIAN. Opisują sposób pracy
+       * potwierdzony w odpowiedziach 12, 23, 26, 41 i 51, ale sformułowane
+       * przeze mnie i wciąż czekają na jej akceptację. Po zmianie tytułów
+       * z przymiotników na rzeczowniki czytają się mniej gładko — to świadomie
+       * zostawione do jej redakcji, a nie do mojej.
+       */
       items: [
         {
-          title: 'Bezpiecznie',
+          title: 'Bezpieczeństwo',
           body: 'Ruch dobieramy do tego, z czym przychodzisz, nie odwrotnie. O kontuzji, ciąży czy innej szczególnej potrzebie mówisz przed zajęciami — prowadząca podpowie wtedy łagodniejszy wariant ćwiczenia.',
         },
         {
-          title: 'Dla każdego',
+          title: 'Inkluzywność',
           body: 'Nie trzeba mieć doświadczenia ani formy na start. Ćwiczymy w kameralnych grupach, około ośmiu osób, więc nikt nie ginie w tłumie i nikt nie zostaje z tyłu.',
         },
         {
-          title: 'Ze wsparciem',
+          title: 'Wsparcie',
           body: 'Prowadząca jest po to, żeby patrzeć i podpowiadać, a nie żeby oceniać. Pytania w trakcie zajęć są mile widziane.',
         },
         {
-          title: 'Ciało i głowa',
+          title: 'Holistyczne podejście',
           body: 'Trening to u nas nie tylko mięśnie. Tak samo liczy się to, w jakim stanie wychodzisz z sali — dlatego pilnujemy oddechu, tempa i spokoju.',
         },
       ],
     },
-    spaces: {
-      title: 'Dwie przestrzenie',
-      // FAKT — wynika z materiałów: dwie lokalizacje, ten sam zespół.
-      body: 'Prowadzimy dwa studia — w Pruszczu Gdańskim i w Gdańsku. Prowadzi je ten sam zespół, a różnią się charakterem wnętrza i grafikiem.',
-    },
+    // Kafel „Dwie przestrzenie" usunięty na prośbę klientki (25.08.2026).
+    // W jego miejsce ma mocniej wybrzmieć informacja o wydarzeniach —
+    // to Etap 8, nie ten.
     community: {
       title: 'Społeczność i wydarzenia',
       // FAKT: odpowiedź 56 — „Tak, regularnie warsztaty i wyjazdy → info na FB i IG”,
@@ -267,8 +282,13 @@ export const pages = {
       description:
         'Kontakt do studiów TAK MI MOVE w Gdańsku i Pruszczu Gdańskim — telefon, e-mail, adresy i profile społecznościowe.',
     },
-    eyebrow: 'Kontakt',
-    title: 'Napisz albo zadzwoń',
+    /**
+     * Klientka prosiła o zdjęcie „Napisz albo zadzwoń" (25.08.2026).
+     * W jego miejsce wchodzi rzeczowe „Kontakt", bez nowego hasła.
+     * Nadtytuł zniknął, bo brzmiał identycznie jak nowy tytuł — zostałyby
+     * dwa te same słowa jedno pod drugim.
+     */
+    title: 'Kontakt',
     lead: 'W sprawach rezerwacji, karnetów i płatności najszybciej pomoże system Fitssey. Wszystko inne — pytania o zajęcia, wydarzenia, wynajem — kieruj bezpośrednio do nas.',
     whenFitssey: {
       title: 'Kiedy Fitssey',
