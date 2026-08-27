@@ -5,6 +5,22 @@ import type { CtaSource } from '~/types';
  * Jedyny komponent przycisku w serwisie. Brief §31: nie używamy wielu etykiet
  * dla tej samej akcji, więc warianty różnią się wagą wizualną, nie treścią.
  *
+ * SYSTEM WEZWAŃ (Etap 3) — trzy poziomy i nic poza nimi:
+ *
+ *   primary     wypełniona terakota, ciemny tekst (6.18:1). Akcja, po którą
+ *               przyszedł czytelnik: rezerwacja, otwarcie grafiku.
+ *   secondary   kontur, tekst w kolorze treści. Akcja równoległa, która ma
+ *               być widoczna, ale nie ma przechwytywać uwagi.
+ *   quiet       sam tekst z podkreśleniem. Wyjście poboczne — odsyłacz
+ *               do podstrony, doprecyzowanie. Ta sama postać co `.link-cta`
+ *               z base.css, który obsługuje odsyłacze poza tym komponentem.
+ *
+ * Zasady „jeden primary na ekran" świadomie NIE stosujemy. Dwa równorzędne
+ * wyjścia obok siebie (umów wizytę i zobacz grafik) są uczciwe wobec
+ * czytelnika, bo prowadzą do dwóch różnych rzeczy, których obu może chcieć.
+ * Wymagamy natomiast, żeby nie stały obok siebie dwa przyciski WYPEŁNIONE
+ * o różnej wadze — wtedy żaden nie jest pierwszy.
+ *
  * `source` trafia do atrybutu data-cta-source i jest odczytywany przez
  * analitykę (zdarzenie booking_cta_click, brief §47).
  */
@@ -94,9 +110,12 @@ const external = newTab || href.startsWith('http');
     color: var(--text);
   }
 
+  /* Podświetlenie z koloru marki, nie z dębu ze zdjęć podłogi. Terakota
+     na 12% jest ledwie muśnięciem tła i nie konkuruje z wariantem
+     wypełnionym, a należy do palety. */
   .btn--secondary:hover {
     border-color: var(--text);
-    background: color-mix(in srgb, var(--oak) 14%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
   }
 
   .btn--quiet {

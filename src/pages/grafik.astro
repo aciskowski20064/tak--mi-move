@@ -53,7 +53,7 @@ const t = pages.schedule;
   <Section size="lg" tone="alt">
     <div class="schedule__info">
       <article class="karta karta--zasady">
-        <span class="karta__znak" aria-hidden="true">
+        <span class="znak karta__znak" aria-hidden="true">
           <FactIcon name="calendar" size="1.5rem" />
         </span>
         <p class="eyebrow">{t.rulesEyebrow}</p>
@@ -64,7 +64,7 @@ const t = pages.schedule;
           {
             t.rules.map((rule) => (
               <li class="zasada">
-                <span class="zasada__znak" aria-hidden="true">
+                <span class="znak znak--pelny zasada__znak" aria-hidden="true">
                   <FactIcon name={rule.ikona} size="1.15rem" />
                 </span>
                 <div>
@@ -80,7 +80,7 @@ const t = pages.schedule;
       <div class="schedule__prawa">
         <article class="karta karta--pomoc">
           <div class="pomoc__tresc">
-            <span class="karta__znak karta__znak--pelny" aria-hidden="true">
+            <span class="znak znak--pelny karta__znak" aria-hidden="true">
               <FactIcon name="chat" size="1.4rem" />
             </span>
             {/* Nadtytuł „Coś nie działa?" zdjęty (25.08.2026) — nowy lead
@@ -91,13 +91,13 @@ const t = pages.schedule;
 
             <ul class="pomoc__kontakt">
               <li>
-                <span class="pomoc__ikona" aria-hidden="true">
+                <span class="znak znak--pelny pomoc__ikona" aria-hidden="true">
                   <FactIcon name="phone" size="1rem" />
                 </span>
                 <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
               </li>
               <li>
-                <span class="pomoc__ikona" aria-hidden="true">
+                <span class="znak znak--pelny pomoc__ikona" aria-hidden="true">
                   <FactIcon name="mail" size="1rem" />
                 </span>
                 <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
@@ -118,7 +118,7 @@ const t = pages.schedule;
         </article>
 
         <article class="karta karta--karnet">
-          <span class="karnet__znak" aria-hidden="true">
+          <span class="znak karnet__znak" aria-hidden="true">
             <FactIcon name="pin" size="1.15rem" />
           </span>
           <div>
@@ -185,22 +185,14 @@ const t = pages.schedule;
   }
 
   /* Znacznik konturowy przy zasadach, wypełniony przy pomocy — tak jak na
-     makiecie. Wypełniony ciągnie wzrok do karty kontaktowej. */
-  .karta__znak {
-    display: grid;
-    place-items: center;
-    inline-size: 3rem;
-    block-size: 3rem;
-    border-radius: var(--radius-pill);
-    border: var(--hairline) solid var(--line-detail);
-    color: var(--accent);
-    margin-block-end: var(--space-md);
-  }
+     makiecie. Wypełniony ciągnie wzrok do karty kontaktowej.
 
-  .karta__znak--pelny {
-    background: var(--accent);
-    border-color: transparent;
-    color: var(--on-accent);
+     Kształt i kolor niesie wspólna klasa `.znak` z base.css; wariant
+     wypełniony to `.znak--pelny` w znaczniku. Tutaj zostaje sam rozmiar
+     i odstęp pod znakiem. */
+  .karta__znak {
+    --znak-size: 3rem;
+    margin-block-end: var(--space-md);
   }
 
   .karta__tytul {
@@ -238,14 +230,11 @@ const t = pages.schedule;
     border-block-start: var(--hairline) solid var(--line);
   }
 
+  /* Był tu bladoróżowy krążek ze znakiem w przyciemnionej terakocie —
+     ta sama para, którą klientka zgłosiła na /o-nas. Teraz wariant
+     wypełniony ze wspólnego systemu: terakota kanoniczna plus ciemny znak. */
   .zasada__znak {
-    display: grid;
-    place-items: center;
-    inline-size: 2.5rem;
-    block-size: 2.5rem;
-    border-radius: var(--radius-pill);
-    background: var(--surface-soft);
-    color: var(--accent-strong);
+    --znak-size: 2.5rem;
   }
 
   .zasada__tytul {
@@ -302,14 +291,11 @@ const t = pages.schedule;
     padding: var(--space-2xs) var(--space-md) var(--space-2xs) var(--space-2xs);
   }
 
+  /* Ten znak już wcześniej miał terakotę jako tło i ciemny symbol, czyli
+     dokładnie rodzinę wypełnioną. Teraz bierze ją z systemu, zamiast
+     powtarzać te same deklaracje. */
   .pomoc__ikona {
-    display: grid;
-    place-items: center;
-    inline-size: 2.25rem;
-    block-size: 2.25rem;
-    border-radius: var(--radius-pill);
-    background: var(--accent);
-    color: var(--on-accent);
+    --znak-size: 2.25rem;
   }
 
   .pomoc__kontakt a {
@@ -336,14 +322,11 @@ const t = pages.schedule;
 
   /* ————————————————————— karnet ————————————————————— */
 
+  /* Karta karnetu stoi na tle --surface-alt, więc znak konturowy czyta się
+     na niej bez dodatkowego krążka pod spodem. */
   .karnet__znak {
-    display: grid;
-    place-items: center;
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    border-radius: var(--radius-pill);
+    --znak-size: 2.75rem;
     background: var(--surface);
-    color: var(--accent-strong);
   }
 
   .karnet__tytul {

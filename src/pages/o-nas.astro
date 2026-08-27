@@ -111,7 +111,7 @@ const cards = [t.community];
         {
           values.map((value) => (
             <li class="value">
-              <span class="value__badge" aria-hidden="true">
+              <span class="znak znak--pelny" aria-hidden="true">
                 <Mark size="1.35rem" />
               </span>
               <div>
@@ -133,7 +133,7 @@ const cards = [t.community];
           const body = copyOrNull(card.body);
           return (
             <article class="card">
-              <span class="card__badge" aria-hidden="true">
+              <span class="znak znak--pelny" aria-hidden="true">
                 <Mark size="1.35rem" />
               </span>
               <div>
@@ -357,16 +357,12 @@ const cards = [t.community];
     padding: var(--space-md);
   }
 
-  .value__badge,
-  .card__badge {
-    display: grid;
-    place-items: center;
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    border-radius: var(--radius-pill);
-    background: var(--surface-soft);
-    color: var(--accent-strong);
-  }
+  /* Kółka wartości i kafli przeszły na wspólną klasę `.znak--pelny`
+     z base.css. Stało tu bladoróżowe tło --surface-soft ze znakiem
+     w --accent-strong — czyli dokładnie ta para, którą klientka opisała
+     jako „niby terakotowe kółka z brązowawym symbolem". Teraz tłem jest
+     terakota kanoniczna, a znak jest ciemny: 6.18:1, oba kolory prosto
+     z materiałów marki. */
 
   .value__title {
     font-size: var(--fs-h4);

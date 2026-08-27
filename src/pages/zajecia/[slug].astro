@@ -138,7 +138,7 @@ const description =
       {
         karty.map((k) => (
           <li class="fakt">
-            <span class="fakt__znak" aria-hidden="true">
+            <span class="znak fakt__znak" aria-hidden="true">
               <FactIcon name={k.ikona} size="1.2rem" />
             </span>
             <h2 class="fakt__label">{k.label}</h2>
@@ -240,14 +240,9 @@ const description =
     padding: var(--space-md);
   }
 
+  /* Kształt i kolor ze wspólnej klasy `.znak` (base.css). */
   .fakt__znak {
-    display: grid;
-    place-items: center;
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    border-radius: var(--radius-pill);
-    border: var(--hairline) solid var(--line-detail);
-    color: var(--accent);
+    --znak-size: 2.75rem;
     margin-block-end: var(--space-sm);
   }
 

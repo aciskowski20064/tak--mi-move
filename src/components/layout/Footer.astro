@@ -12,7 +12,9 @@ const year = new Date().getFullYear();
 <footer class="footer">
   <div class="container footer__inner">
     <div class="footer__brand">
-      <Logo tone="light" width={96} />
+      {/* Ciemna wersja znaku, bo stopka przestała być ciemna. Jasny wordmark
+          dawał na szałwii 2.24:1 i po prostu by na niej zniknął. */}
+      <Logo tone="dark" width={96} />
       <p class="footer__claim">{typo(`${site.tagline} w Gdańsku i Pruszczu Gdańskim.`)}</p>
       <a class="footer__booking" href={booking.frontOfficeUrl} target="_blank" rel="noopener" data-cta-source="footer" data-event="booking_cta_click">
         <Mark size="0.85em" />
@@ -88,12 +90,22 @@ const year = new Date().getFullYear();
 </footer>
 
 <style>
-  /* Jedyne miejsce z szałwią w całym serwisie — decyzja klientki z 20.08.2026.
-     Sekcje odwrócone na stronie głównej i /zajecia zostają przy neutralnym
-     --surface-invert, więc zieleń nie rozlewa się poza stopkę. */
+  /* Stopka na szałwii marki #90aba2 (Etap 3, 25.08.2026). Wcześniej stała
+     na --sage-darkest — szałwii przyciemnionej do 21% jasności, której
+     klientka nie rozpoznała jako swojej. Tamten kolor nie pochodził
+     z żadnego materiału, więc został usunięty, a nie poprawiony.
+
+     Stopka jest przez to JASNA, nie ciemna, i to jest świadome: nie ma
+     powodu, dla którego musiałaby być ciemna, a jasna szałwia jest kolorem,
+     który klientka faktycznie ma.
+
+     KONSEKWENCJA, o której trzeba pamiętać przy każdej kolejnej zmianie:
+     terakota na szałwii daje 1.03:1, czyli jest niewidoczna. Stopka jako
+     jedyne miejsce w serwisie nie ma akcentu w kolorze marki — hierarchię
+     buduje w niej wielkość pisma i waga, nie kolor. */
   .footer {
     background: var(--surface-footer);
-    color: var(--text-invert);
+    color: var(--text-on-sage);
     padding-block: var(--space-xl) var(--space-md);
     margin-block-start: auto;
   }
@@ -116,7 +128,7 @@ const year = new Date().getFullYear();
   .footer__claim {
     max-width: 24ch;
     margin-block-start: var(--space-sm);
-    color: color-mix(in srgb, var(--bone) 72%, transparent);
+    color: var(--text-on-sage-muted);
     font-size: var(--fs-small);
   }
 
@@ -129,16 +141,15 @@ const year = new Date().getFullYear();
     gap: var(--space-2xs);
     margin-block-start: var(--space-md);
     padding-block-end: 0.35em;
-    border-block-end: var(--hairline) solid var(--accent);
-    color: var(--accent);
+    border-block-end: var(--hairline) solid var(--text-on-sage);
+    color: var(--text-on-sage);
     font-size: var(--fs-small);
     letter-spacing: 0.04em;
   }
 
   .footer__booking:hover {
     text-decoration: none;
-    color: var(--bone);
-    border-block-end-color: var(--bone);
+    border-block-end-width: 2px;
   }
 
   .footer__cols {
@@ -152,7 +163,7 @@ const year = new Date().getFullYear();
     font-weight: 500;
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
-    color: color-mix(in srgb, var(--bone) 60%, transparent);
+    color: var(--text-on-sage-muted);
     margin-block-end: var(--space-xs);
   }
 
@@ -204,9 +215,9 @@ const year = new Date().getFullYear();
     gap: var(--space-xs) var(--space-md);
     margin-block-start: var(--space-xl);
     padding-block-start: var(--space-md);
-    border-block-start: var(--hairline) solid color-mix(in srgb, var(--bone) 18%, transparent);
+    border-block-start: var(--hairline) solid var(--line-on-sage);
     font-size: var(--fs-caption);
-    color: color-mix(in srgb, var(--bone) 62%, transparent);
+    color: var(--text-on-sage-muted);
   }
 
   /* Na wąskim ekranie dane rejestrowe idą w słupek, bez separatorów — kropka

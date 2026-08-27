@@ -40,7 +40,7 @@ const t = pages.about.crew;
       {
         t.values.map((value) => (
           <li class="crew__value">
-            <span class="crew__badge" aria-hidden="true">
+            <span class="znak crew__badge" aria-hidden="true">
               <Mark size="1.1rem" />
             </span>
             <span class="crew__label">{value}</span>
@@ -139,14 +139,7 @@ const t = pages.about.crew;
   }
 
   .crew__badge {
-    flex: none;
-    display: grid;
-    place-items: center;
-    inline-size: 3rem;
-    block-size: 3rem;
-    border-radius: var(--radius-pill);
-    border: var(--hairline) solid var(--line-detail);
-    color: var(--accent);
+    --znak-size: 3rem;
   }
 
   /* Kreska bierze wysokość z kółka, bo to najwyższy element w rzędzie —

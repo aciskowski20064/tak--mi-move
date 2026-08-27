@@ -42,7 +42,7 @@ const t = home.hero;
           locations.map((location) => (
             <li class="hero__studio">
               <a href={`/studia/${location.slug}`} data-event="studio_location_select">
-                <span class="hero__studioZnak" aria-hidden="true">
+                <span class="znak hero__studioZnak" aria-hidden="true">
                   <FactIcon name="pin" size="1.1rem" />
                 </span>
                 <span class="hero__studioTresc">
@@ -137,14 +137,10 @@ const t = home.hero;
     color: inherit;
   }
 
+  /* Kształt i kolor ze wspólnej klasy `.znak` (base.css). Układ hero
+     zostaje nietknięty — to zmiana systemowa, nie projektowa. */
   .hero__studioZnak {
-    display: grid;
-    place-items: center;
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    border-radius: var(--radius-pill);
-    border: var(--hairline) solid var(--line-detail);
-    color: var(--accent);
+    --znak-size: 2.75rem;
   }
 
   .hero__studioTresc {

@@ -113,6 +113,55 @@ a:hover {
   color: var(--on-accent);
 }
 
+/* ————————————————————— znak w kółku ——————————————————————
+
+   Jeden system zamiast dziewięciu wariantów rozsianych po siedmiu plikach.
+   Wartości siedzą w tokenach; tutaj jest tylko kształt.
+
+   Rozmiar ustawia się zmienną, nie osobną klasą:
+       <span class="znak" style="--znak-size: 3rem">
+
+   Rodzina wypełniona jest jedynym miejscem, gdzie terakota jest tłem
+   znaku — i dlatego znak jest na niej ciemny (6.18:1). Odwrotność, czyli
+   terakotowy znak na jasnym tle, daje 2.18 i nadaje się wyłącznie do
+   elementów czysto dekoracyjnych, oznaczonych aria-hidden. */
+
+.znak {
+  display: grid;
+  place-items: center;
+  inline-size: var(--znak-size);
+  block-size: var(--znak-size);
+  flex: none;
+  border-radius: var(--radius-pill);
+  border: var(--hairline) solid var(--znak-obrys);
+  color: var(--znak-kolor);
+}
+
+.znak--pelny {
+  border-color: transparent;
+  background: var(--znak-tlo-pelny);
+  color: var(--znak-kolor-pelny);
+}
+
+/* ————————————————————— ramki: kiedy wolno ——————————————————————
+
+   Zasada ustanowiona w Etapie 3 po uwadze klientki, że strona ma „za dużo
+   ramek" i wygląda jak interfejs produktu. NIE jest to polecenie masowego
+   kasowania obramowań — konkretne redukcje robią Etapy 4–9, każdy w swoim
+   widoku, patrząc na układ.
+
+   Ramka jest uzasadniona, gdy robi jedną z czterech rzeczy:
+     1. grupuje treść, która bez niej rozpadłaby się na luźne akapity,
+     2. buduje hierarchię — wyróżnia blok na tle sąsiadów,
+     3. sygnalizuje interakcję: element jest klikalny albo zmienia stan,
+     4. oddziela treści, których nie da się rozdzielić samym odstępem.
+
+   Ramka NIE jest uzasadniona, gdy otacza informację tylko po to, żeby ta
+   „miała swoje pudełko". Wtedy rozdzielamy tłem sekcji, odstępem, skalą
+   pisma albo pojedynczą włoskowatą linią.
+
+   Liczba obramowań na stronie nie jest miarą jakości i nie jest celem. */
+
 /* ——————————————————————————— narzędzia układu ——————————————————————————— */
 
 .container {
@@ -143,6 +192,39 @@ a:hover {
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
+}
+
+/* ————————————————————— trzeci poziom wezwania ——————————————————————
+
+   System CTA ma trzy poziomy i wszystkie trzy muszą być rozpoznawalne bez
+   czytania etykiety:
+
+     primary     wypełniony przycisk — patrz ui/Button.astro, wariant primary
+     secondary   przycisk konturowy — ui/Button.astro, wariant secondary
+     odsyłacz    tekst z podkreśleniem — ta klasa oraz wariant `quiet`
+
+   Zasady „jeden primary na ekran" świadomie NIE stosujemy: dwa równorzędne
+   wyjścia obok siebie (rezerwacja i grafik) są uczciwe wobec czytelnika.
+   Wymagamy natomiast, żeby na jednym ekranie nie stały dwa przyciski
+   wypełnione, które prowadzą do RÓŻNYCH celów o różnej wadze.
+
+   `.link-cta` to wspólna postać odsyłacza używanego jako wyjście z sekcji
+   — dziś w kilku miejscach zapisana osobno w każdym pliku. Cel dotykowy
+   44 px, bo to odsyłacz stojący samodzielnie, nie w środku zdania. */
+
+.link-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-block-size: 44px;
+  color: var(--text-accent);
+  text-decoration: none;
+  border-block-end: var(--hairline) solid currentColor;
+  padding-block-end: 0.2em;
+}
+
+.link-cta:hover {
+  border-block-end-width: 2px;
 }
 
 .eyebrow {

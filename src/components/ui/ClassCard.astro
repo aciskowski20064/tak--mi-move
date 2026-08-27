@@ -30,7 +30,7 @@ const { href, name, description, index } = Astro.props;
 
   {description && <span class="karta__opis">{typo(description)}</span>}
 
-  <span class="karta__strzalka" aria-hidden="true">
+  <span class="znak znak--pelny karta__strzalka" aria-hidden="true">
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -86,17 +86,18 @@ const { href, name, description, index } = Astro.props;
     line-height: 1.55;
   }
 
+  /* Rodzina wypełniona już w stanie spoczynku, nie konturowa.
+     Strzałka nie jest tu ozdobą — mówi, że cały kafel jest odsyłaczem.
+     W wariancie konturowym znak w kanonicznej terakocie daje na kremie
+     2.18:1 i praktycznie znika; wypełniony daje 6.18:1.
+     Wcześniej stała tu --accent-strong, czyli terakota przyciemniona dla
+     tekstu — to był ten „brązowawy" kolor z uwagi klientki. */
   .karta__strzalka {
-    display: grid;
-    place-items: center;
-    inline-size: 2.5rem;
-    block-size: 2.5rem;
-    border-radius: var(--radius-pill);
-    border: var(--hairline) solid var(--line-detail);
-    color: var(--accent-strong);
+    --znak-size: 2.5rem;
     margin-block-start: var(--space-sm);
     transition:
       background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
       color var(--dur) var(--ease);
   }
 
@@ -105,9 +106,11 @@ const { href, name, description, index } = Astro.props;
     block-size: 1.1rem;
   }
 
+  /* Najechanie pogłębia wypełnienie — dokładnie ten sam gest, co w przycisku
+     głównym (Button.astro, wariant primary). Krem na przyciemnionej terakocie
+     daje 5.85:1, więc strzałka zostaje czytelna także w tym stanie. */
   .karta:hover .karta__strzalka {
-    background: var(--accent);
-    color: var(--on-accent);
-    border-color: transparent;
+    background: var(--accent-strong);
+    color: var(--text-invert);
   }
 </style>

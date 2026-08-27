@@ -146,7 +146,7 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
         {
           fakty.map((f) => (
             <li class="fakt">
-              <span class="fakt__ikona" aria-hidden="true">
+              <span class="znak fakt__ikona" aria-hidden="true">
                 <FactIcon name={f.ikona} />
               </span>
               <h2 class="fakt__label">{f.label}</h2>
@@ -289,13 +289,7 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
   }
 
   .fakt__ikona {
-    display: grid;
-    place-items: center;
-    inline-size: 2.75rem;
-    block-size: 2.75rem;
-    border-radius: var(--radius-pill);
-    border: var(--hairline) solid var(--line-detail);
-    color: var(--accent);
+    --znak-size: 2.75rem;
     margin-block-end: var(--space-sm);
   }
 
