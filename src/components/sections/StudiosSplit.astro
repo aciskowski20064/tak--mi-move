@@ -13,13 +13,24 @@ import zdjecieG from '~/assets/photos/studio-gdansk-sala.jpg';
  * Brief §12.4: podkreślić, że to jedna marka z dwiema przestrzeniami,
  * i ułatwić wybór.
  *
- * Układ przeniesiony 1:1 z /studia (decyzja z 21.08.2026). Wcześniej strona
- * główna miała własny wariant tej samej sekcji, więc te same dwie lokalizacje
- * wyglądały na dwóch podstronach inaczej. Jeden kafel, jeden zestaw danych.
+ * PANELE, NIE KARTY (decyzja z 26.08.2026 — częściowe cofnięcie reguły
+ * ramek z Etapu 3). Tutaj wydzielenie dwóch lokalizacji jest funkcjonalnie
+ * uzasadnione: to jedyne miejsce na stronie, gdzie czytelnik ma wybrać
+ * JEDNĄ z dwóch rzeczy, a każda niesie własny komplet informacji — kadr,
+ * adres, telefon, mail i dwa wyjścia. Bez wydzielenia te dwa komplety
+ * zlewały się w jedną listę i trzeba było się domyślać, gdzie kończy się
+ * Pruszcz, a zaczyna Gdańsk. To dokładnie przypadek 1 i 4 z zasady ramek
+ * w base.css: panel grupuje treść i oddziela to, czego nie rozdzieli
+ * sam odstęp.
  *
- * Kadr zamiast opisu: różnicę między jasną salą z jodełką w Pruszczu
- * a betonem i złoconymi lustrami w Gdańsku widać szybciej, niż da się ją
- * przeczytać. Opisy sal zostały na podstronach studiów.
+ * Odróżnienie jest jednak minimalne i nie polega na obramowaniu. Sekcja
+ * stoi na tonie `alt`, panel dostaje jaśniejszy `--surface` — czyli różnicę
+ * jasności, nie kreskę. Nie ma tu ani obwódki, ani cienia, ani wewnętrznej
+ * linii nad nazwą, którą miał stary wariant.
+ *
+ * Kadr wchodzi na pełną szerokość panelu, bez marginesu — to on ma
+ * prowadzić, zgodnie z prośbą klientki, żeby oba studia prezentowały się
+ * „przede wszystkim przez zdjęcia". Treść dostaje padding, zdjęcie nie.
  */
 const zdjecia: Record<string, ImageMetadata> = {
   'pruszcz-gdanski': zdjecieP,
@@ -39,13 +50,6 @@ const t = home.studios;
     {
       locations.map((location) => (
         <li class="studio-card">
-          <div class="studio-card__head">
-            <Mark size="0.9rem" class="studio-card__mark" />
-            <h3 class="studio-card__name">{location.city}</h3>
-          </div>
-
-          <p class="studio-card__address">{formatAddress(location)}</p>
-
           <figure class="studio-card__figure">
             <Image
               src={zdjecia[location.slug]}
@@ -57,25 +61,36 @@ const t = home.studios;
             />
           </figure>
 
-          <dl class="studio-card__contact">
-            <dt>Telefon</dt>
-            <dd>
-              <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-            </dd>
-            <dt>E-mail</dt>
-            <dd>
-              <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
-            </dd>
-          </dl>
+          <div class="studio-card__tresc">
+            <div class="studio-card__head">
+              <Mark size="0.9rem" class="studio-card__mark" />
+              <h3 class="studio-card__name">{location.city}</h3>
+            </div>
 
-          <p class="studio-card__links">
-            <a href={`/studia/${location.slug}`} data-event="studio_location_select">
-              {t.linkLabel}
-            </a>
-            <a href={`/grafik?studio=${location.slug}`} data-event="schedule_page_view">
-              {t.scheduleLabel}
-            </a>
-          </p>
+            <p class="studio-card__address">{formatAddress(location)}</p>
+
+            <dl class="studio-card__contact">
+              <dt>Telefon</dt>
+              <dd>
+                <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+              </dd>
+              <dt>E-mail</dt>
+              <dd>
+                <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
+              </dd>
+            </dl>
+
+            {/* Dosunięte do dołu panelu, żeby oba wyjścia stały w jednej
+                linii niezależnie od długości adresu obu studiów. */}
+            <p class="studio-card__links">
+              <a href={`/studia/${location.slug}`} data-event="studio_location_select">
+                {t.linkLabel}
+              </a>
+              <a href={`/grafik?studio=${location.slug}`} data-event="schedule_page_view">
+                {t.scheduleLabel}
+              </a>
+            </p>
+          </div>
         </li>
       ))
     }
@@ -83,7 +98,7 @@ const t = home.studios;
 </Section>
 
 <style>
-  /* Odstęp do kafli niesie teraz sam nagłówek — lead, który go dawał,
+  /* Odstęp do paneli niesie sam nagłówek — lead, który go dawał,
      został zdjęty (25.08.2026). */
   .studios__title {
     margin-block: var(--space-2xs) var(--space-xl);
@@ -97,22 +112,42 @@ const t = home.studios;
     gap: var(--space-lg);
   }
 
-  /* Kafel z cienką linią w środku, nad nazwą — ten sam co na /studia. */
+  /* Panel: jaśniejsza powierzchnia na tonie `alt`, zaokrąglenie, zero
+     obramowania i zero cienia. Kolumna, bo kadr i treść idą jedno pod
+     drugim, a odsyłacze mają zejść na sam dół.
+
+     `overflow: hidden` przycina górne rogi kadru do promienia panelu —
+     dzięki temu zdjęcie może wejść na pełną szerokość, bez własnego
+     zaokrąglenia i bez marginesu. */
   .studio-card {
-    display: grid;
-    align-content: start;
-    gap: var(--space-2xs);
+    display: flex;
+    flex-direction: column;
     background: var(--surface);
-    border: var(--hairline) solid var(--line);
     border-radius: var(--radius-card);
-    padding: var(--space-lg);
+    overflow: hidden;
+    /* Panele równej wysokości niezależnie od długości adresu. */
+    block-size: 100%;
   }
 
-  .studio-card::before {
-    content: '';
-    block-size: 1px;
-    background: var(--line-detail);
-    margin-block-end: var(--space-sm);
+  .studio-card__figure {
+    margin: 0;
+  }
+
+  .studio-card__photo {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  /* Padding tylko wokół treści — kadr wyżej idzie od krawędzi do krawędzi. */
+  .studio-card__tresc {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-sm) var(--space-md);
   }
 
   .studio-card__head {
@@ -126,7 +161,7 @@ const t = home.studios;
   }
 
   .studio-card__name {
-    font-size: var(--fs-h2);
+    font-size: var(--fs-h4);
   }
 
   .studio-card__address {
@@ -134,27 +169,13 @@ const t = home.studios;
     font-size: var(--fs-small);
   }
 
-  .studio-card__figure {
-    margin: 0;
-    margin-block-start: var(--space-md);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-
-  .studio-card__photo {
-    display: block;
-    inline-size: 100%;
-    block-size: auto;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-  }
-
   .studio-card__contact {
     display: grid;
     grid-template-columns: auto 1fr;
     gap: var(--space-3xs) var(--space-sm);
-    margin-block-start: var(--space-sm);
+    margin-block-start: var(--space-2xs);
     font-size: var(--fs-small);
+    line-height: 1.45;
   }
 
   .studio-card__contact dt {
@@ -169,17 +190,29 @@ const t = home.studios;
     color: var(--text-accent);
   }
 
+  /* `auto` na górnym marginesie dopycha odsyłacze do dołu panelu — to jest
+     mechanizm wyrównania obu paneli, nie sam `block-size: 100%`. */
   .studio-card__links {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs) var(--space-lg);
-    margin-block-start: var(--space-md);
+    margin-block-start: auto;
+    padding-block-start: var(--space-sm);
     font-size: var(--fs-small);
   }
 
   .studio-card__links a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
     color: var(--text-accent);
-    padding-block: 0.25rem;
+    border-block-end: var(--hairline) solid var(--line-strong);
+    text-decoration: none;
+    padding-block-end: 0.1em;
+  }
+
+  .studio-card__links a:hover {
+    border-block-end-color: currentColor;
   }
 
   @media (min-width: 48rem) {

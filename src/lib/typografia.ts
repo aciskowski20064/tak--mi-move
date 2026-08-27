@@ -68,6 +68,21 @@ const POCZATEK_ZDANIA = /(?<=^|[.!?][ \t])([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłń
  */
 const OZNACZENIE_PAKIETU = /\b(x\d+[,.;]?)[ \t]+/gu;
 
+/**
+ * 6. Tylda w haśle „SIŁA ~ SPOKÓJ ~ RÓWNOWAGA" trzyma się słowa PRZED sobą.
+ *
+ *    Inaczej niż myślnik, który wiążemy z obu stron: tam chodzi o to, żeby
+ *    nigdy nie stał sam na krawędzi wiersza, a tu o coś innego. Hasło musi
+ *    móc się złamać — na telefonie mieści się dopiero w trzech wierszach,
+ *    po jednym słowie. Wiązanie obustronne zrobiłoby z niego jeden
+ *    nierozdzielny ciąg 25 znaków i zbiłoby stopień pisma do nieczytelnego.
+ *
+ *    Wiązanie jednostronne daje dokładnie to, czego chcemy: łamanie wypada
+ *    PO tyldzie, więc wiersz kończy się „SIŁA ~", a nigdy nie zaczyna od
+ *    samego separatora.
+ */
+const TYLDA_SEPARATOR = /([^\s])[ \t]+~[ \t]+/gu;
+
 /** Wspólny przebieg reguł — używany i przez `typo()`, i przez wtyczkę rehype. */
 export const zastosujReguly = (tekst: string): string =>
   tekst
@@ -75,7 +90,8 @@ export const zastosujReguly = (tekst: string): string =>
     .replace(MYSLNIK, `${TWARDA}—${TWARDA}`)
     .replace(SIEROTY, `$1${TWARDA}`)
     .replace(POCZATEK_ZDANIA, `$1${TWARDA}`)
-    .replace(OZNACZENIE_PAKIETU, `$1${TWARDA}`);
+    .replace(OZNACZENIE_PAKIETU, `$1${TWARDA}`)
+    .replace(TYLDA_SEPARATOR, `$1${TWARDA}~ `);
 
 /**
  * Stringi z prefiksem `TODO(` zostawiamy nietknięte: nigdy się nie renderują,

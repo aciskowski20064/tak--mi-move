@@ -4,10 +4,37 @@ import { typo } from '~/lib/typografia';
 import Button from '~/components/ui/Button.astro';
 import FactIcon from '~/components/ui/FactIcon.astro';
 import Section from '~/components/ui/Section.astro';
-import { booking, locations, formatAddress } from '~/data/site';
+import { booking, locations } from '~/data/site';
 import { home } from '~/data/copy/home';
 import heroImage from '~/assets/photos/studio-pruszcz-zespol.jpg';
 
+/**
+ * Hero — iteracja naprawcza.
+ *
+ * Hasło marki w trzech wierszach wyrównanych do lewej, bez tyld
+ * i bez myślników: podział niesie układ, nie znak interpunkcyjny.
+ *
+ * Trzy rzeczy dopracowane względem poprzedniej wersji:
+ *
+ * 1. HASŁO ZOSTAŁO OPTYCZNIE USPOKOJONE. Było za ciężkie — nie przez sam
+ *    stopień pisma, tylko przez trzy rzeczy naraz: zbyt ciasną interlinię,
+ *    pełne rozstrzelenie --ls-display i szerokość bloku dobitą do kolumny.
+ *    Wersaliki ustawione w słupek czyta się inaczej niż wersalik w wierszu:
+ *    rozstrzelenie, które w jednej linii trzyma litery luźno, w słupku
+ *    rozjeżdża wyrazy i każe im walczyć o uwagę.
+ *
+ * 2. BLOK LOKALIZACJI WRÓCIŁ jako dwie pełne informacje — piktogram, nazwa
+ *    miasta, adres — rozdzielone kreską. Poprzednia wersja z samymi nazwami
+ *    miast czytała się jak dopisek pod przyciskami; wersja jeszcze
+ *    wcześniejsza była kartą z kółkami i wyglądała jak panel administracyjny.
+ *    To jest środek: pełna informacja, zero pudełka.
+ *
+ * 3. KADR ODCHUDZONY, ALE BEZ AGRESJI. Proporcja 4:5 wobec natywnych 3:4
+ *    zabiera sześć procent wysokości — tyle, żeby zdjęcie przestało
+ *    dominować nad kolumną tekstu, i za mało, żeby komukolwiek uciąć głowę.
+ *    Nie mylić z sufitem wysokości z pierwszej iteracji: TAMTO robiło
+ *    z pionu prawie kwadrat i wyglądało na przycięcie zrobione przypadkiem.
+ */
 const t = home.hero;
 ---
 
@@ -16,38 +43,51 @@ const t = home.hero;
     <div class="hero__copy">
       <p class="eyebrow hero__eyebrow">{t.eyebrow}</p>
 
-      <h1 class="hero__title">{typo(t.title)}</h1>
+      {/* Trzy wiersze jako osobne elementy blokowe, nie łamanie tekstu.
+          Czytnik ekranu odczyta je jako jeden nagłówek, bo siedzą w jednym
+          h1; wizualnie każdy zaczyna się równo od lewej krawędzi kolumny. */}
+      {/* Spacja MIĘDZY wierszami jest konieczna, choć wizualnie nic nie robi.
+          Wiersze są blokowe, więc odstęp i tak się nie renderuje — ale bez
+          niego treść nagłówka to jeden ciąg „SIŁASPOKÓJRÓWNOWAGA", i tak
+          właśnie przeczytałby go czytnik ekranu. */}
+      <h1 class="hero__title">
+        {t.title.map((czlon, i) => (
+          <>
+            {i > 0 && ' '}
+            <span class="hero__titleWiersz">{czlon}</span>
+          </>
+        ))}
+      </h1>
 
       <span class="hero__rule" aria-hidden="true"></span>
 
-      <p class="lead">{typo(t.lead)}</p>
+      <p class="lead hero__lead">{typo(t.lead)}</p>
 
       <div class="hero__actions">
         <Button
           href={booking.frontOfficeUrl}
           newTab={booking.newTab}
-          size="lg"
           source="hero"
           event="booking_cta_click"
         >
           {booking.label}
         </Button>
-        <Button href="/grafik" variant="secondary" size="lg" source="hero">
+        <Button href="/grafik" variant="secondary" source="hero">
           {t.secondaryCta}
         </Button>
       </div>
 
-      <ul class="hero__studios">
+      <ul class="hero__studia">
         {
           locations.map((location) => (
             <li class="hero__studio">
               <a href={`/studia/${location.slug}`} data-event="studio_location_select">
-                <span class="znak hero__studioZnak" aria-hidden="true">
-                  <FactIcon name="pin" size="1.1rem" />
+                <span class="znak hero__studioIkona" aria-hidden="true">
+                  <FactIcon name="pin" size="1.05rem" />
                 </span>
                 <span class="hero__studioTresc">
                   <strong>{location.city}</strong>
-                  <span>{formatAddress(location)}</span>
+                  <span>{location.street}</span>
                 </span>
               </a>
             </li>
@@ -61,91 +101,143 @@ const t = home.hero;
         src={heroImage}
         alt={t.imageAlt}
         widths={[480, 720, 1040]}
-        sizes="(min-width: 64rem) 46vw, 100vw"
+        sizes="(min-width: 64rem) 42vw, 100vw"
         loading="eager"
         fetchpriority="high"
         class="hero__image"
       />
-      {/* Plakietka z hasłem zdjęta na prośbę klientki (25.08.2026): te same
-          trzy słowa stoją teraz w tytule hero, a powtórzenie ich przy kadrze
-          było dublowaniem jednego komunikatu. Kadr zostaje sam. */}
     </figure>
   </div>
 </Section>
 
 <style>
+  /* Hero ma własny rytm pionowy, węższy niż domyślny dla sekcji `lg`:
+     nad nim stoi header, który już oddziela je od krawędzi okna.
+     :global, bo klasa trafia na korzeń komponentu Section. */
+  :global(.section.hero) {
+    padding-block: var(--space-md) var(--space-lg);
+  }
+
   .hero__grid {
     display: grid;
-    gap: var(--space-xl);
+    gap: var(--space-lg);
     align-items: center;
   }
 
-  /* Nadtytuł w dwóch wierszach: czym jesteśmy, a pod spodem gdzie. */
+  /* Kolumna tekstu wyznacza stopień nagłówka, więc to ona jest kontenerem
+     zapytania. Stopień liczony z okna rozjeżdżałby się powyżej 1280 px,
+     gdzie kontener strony przestaje rosnąć, a okno rośnie dalej. */
+  .hero__copy {
+    container-type: inline-size;
+  }
+
   .hero__eyebrow {
-    display: grid;
-    gap: var(--space-3xs);
-    margin-block-end: var(--space-md);
+    margin-block-end: var(--space-2xs);
   }
 
-  /* 14ch przy foncie 60 px łamało tytuł na cztery wiersze — makieta ma dwa.
-     Miara musi zmieścić najdłuższy człon („Ruch, do którego"), inaczej
-     nagłówek rozjeżdża się w pionie i zjada całą kolumnę. */
+  /* ————————————————————— hasło w trzech wierszach —————————————————————
+
+     Stopień wyznacza najdłuższy człon. „RÓWNOWAGA" to dziewięć wersalików
+     Tenor Sans, które przy tutejszym rozstrzeleniu zajmują ok. 8em.
+     Stopień musi być nie większy niż szerokość kolumny / 8; biorę 9.5cqw,
+     czyli z zapasem — także na wypadek, gdyby Tenor Sans nie zdążył się
+     wczytać i pierwszą klatkę rysował krój zastępczy.
+
+     Kolejne zejścia: 11.5 → 10.5 → 9.5cqw. Za każdym razem o jeden stopień,
+     bo blok wersalików reaguje na zmianę skali mocniej niż tekst bieżący. */
   .hero__title {
-    /* 18ch to 540 px, a najdłuższy człon potrzebuje 556 px razem
-       z rozstrzeleniem. Brakowało 16 px i tytuł łamał się na trzy wiersze. */
-    max-width: 21ch;
-    /* base.css daje nagłówkom `text-wrap: balance`, który rozkładał ten
-       tytuł na trzy wyrównane wiersze. Makieta ma dwa, a miejsca jest dość:
-       najdłuższy człon potrzebuje 498 px przy 531 px kolumny. */
-    text-wrap: pretty;
+    display: grid;
+    justify-items: start;
+    margin: 0;
+    font-size: clamp(2rem, 9.5cqw, 3.375rem);
+    /* 1.04 sklejało wiersze w jedną plamę, 1.12 dawało już wyraźne światło.
+       1.08 to punkt pośredni: wiersze czytają się jako jeden blok, a przy
+       mniejszym stopniu pisma odzyskujemy kilkanaście pikseli wysokości.
+       Wersaliki nie mają wydłużeń dolnych, więc liczbowo wygląda to
+       ciaśniej, niż wygląda optycznie. */
+    line-height: 1.08;
+    /* --ls-display to 0.06em i jest dobrane do wersalików stojących
+       w JEDNYM wierszu — tam rozstrzelenie daje logotypowi oddech.
+       W słupku działa odwrotnie: rozciąga wyrazy w poziomie i blok robi
+       się ciężki. 0.03em zostawia charakter, zdejmuje ciężar. */
+    letter-spacing: 0.03em;
   }
 
-  /* Ta sama kreska co w nagłówkach podstron — zamyka tytuł przed leadem. */
+  .hero__titleWiersz {
+    display: block;
+  }
+
+  /* Ta sama kreska co w nagłówkach podstron — zamyka tytuł przed treścią. */
   .hero__rule {
     display: block;
     inline-size: 3.5rem;
     block-size: 2px;
     background: var(--accent);
-    margin-block: var(--space-md);
+    margin-block: var(--space-md) var(--space-sm);
+  }
+
+  /* Miara węższa niż kolumna. Lead dobity do pełnej szerokości kolumny
+     dawał 62 znaki w wierszu i wyglądał, jakby pływał pod hasłem —
+     przy 46 znakach ma własny kształt i wyraźnie należy do nagłówka. */
+  .hero__lead {
+    max-width: 46ch;
+    margin: 0;
   }
 
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs);
-    margin-block-start: var(--space-lg);
+    margin-block-start: var(--space-md);
   }
 
-  /* Lokalizacje oddzielone od reszty kolumny linią, a między sobą pionową
-     kreską — jak na makiecie. */
-  .hero__studios {
+  /* ————————————————————— dwie lokalizacje —————————————————————
+
+     Kompromis między dwoma odrzuconymi wersjami: pełna informacja
+     (piktogram, miasto, adres) bez pudełka wokół niej. Rozdziela je
+     włoskowata kreska — pionowa, kiedy stoją obok siebie, pozioma,
+     kiedy jedna pod drugą. Nad całością jeszcze jedna, która oddziela
+     blok od przycisków. */
+  .hero__studia {
     list-style: none;
     padding: 0;
+    margin: 0;
     display: grid;
-    gap: var(--space-md);
-    margin-block-start: var(--space-xl);
-    padding-block-start: var(--space-lg);
+    gap: var(--space-sm);
+    margin-block-start: var(--space-md);
+    padding-block-start: var(--space-sm);
     border-block-start: var(--hairline) solid var(--line);
   }
 
   .hero__studio a {
     display: grid;
     grid-template-columns: auto 1fr;
-    align-items: center;
+    align-items: start;
     gap: var(--space-sm);
     text-decoration: none;
     color: inherit;
   }
 
-  /* Kształt i kolor ze wspólnej klasy `.znak` (base.css). Układ hero
-     zostaje nietknięty — to zmiana systemowa, nie projektowa. */
-  .hero__studioZnak {
-    --znak-size: 2.75rem;
+  /* Pinezka w cienkim okręgu — realizacja dostarczonej grafiki referencyjnej
+     przez system, a nie przez wstawienie rastra. Referencja pokazuje ten sam
+     glif, który rysuje już FactIcon, w cienkim terakotowym okręgu; to jest
+     dokładnie rodzina konturowa `.znak` z Etapu 3.
+
+     Zrobione systemem, bo tak znak jest wektorowy, skaluje się i bierze
+     kolor z tokenów marki — raster byłby w tym miejscu krokiem wstecz.
+
+     Rozmiar 2rem, czyli mniej niż domyślne 2.75rem: znak ma być subtelnym
+     elementem marki przy adresie, nie kołem sterowym. Wyrównanie do pierwszej
+     linii tekstu, nie do środka bloku — inaczej przy dwóch wierszach adresu
+     odjeżdżałby w dół. */
+  .hero__studioIkona {
+    --znak-size: 2rem;
+    margin-block-start: 0.1em;
   }
 
   .hero__studioTresc {
     display: grid;
-    gap: 0.1em;
+    gap: 0.15em;
   }
 
   .hero__studio strong {
@@ -157,7 +249,7 @@ const t = home.hero;
   .hero__studio span {
     font-size: var(--fs-small);
     color: var(--text-muted);
-    line-height: 1.45;
+    line-height: 1.4;
   }
 
   .hero__studio a:hover strong {
@@ -170,9 +262,9 @@ const t = home.hero;
     display: grid;
   }
 
-  /* Kadr przycięty do 4:5 zamiast naturalnych 3:4. Plik jest pionem, a na
-     makiecie zdjęcie jest znacznie bardziej krępe — przycięcie zabiera 6%
-     wysokości, więc nikomu nie ucina głowy ani stóp. */
+  /* 3:4 to NATYWNA proporcja pliku, więc nie ma tu żadnego przycięcia —
+     `object-fit` nie ma czego obcinać. Poprzednie 4:5 zabierało sześć
+     procent wysokości bez powodu. */
   .hero__image {
     display: block;
     inline-size: 100%;
@@ -182,20 +274,12 @@ const t = home.hero;
     border-radius: var(--radius-card);
   }
 
-  .hero__caption {
-    margin-block-start: var(--space-2xs);
-    font-size: var(--fs-caption);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
   @media (min-width: 40rem) {
-    /* Oba studia obok siebie, rozdzielone pionową kreską — układ z makiety.
-       Kreska na drugim elemencie, nie na pierwszym, żeby nie wisiała przy
-       lewej krawędzi kolumny. */
-    .hero__studios {
-      grid-template-columns: repeat(2, 1fr);
+    /* Obie lokalizacje obok siebie, rozdzielone pionową kreską. Kreska
+       na drugim elemencie, nie na pierwszym, żeby nie wisiała przy lewej
+       krawędzi kolumny. */
+    .hero__studia {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--space-lg);
     }
 
@@ -205,17 +289,22 @@ const t = home.hero;
     }
   }
 
+  /* Tablet: układ jednokolumnowy, więc kadr dostaje sufit SZEROKOŚCI.
+     Proporcja zostaje nietknięta, zdjęcie jest po prostu mniejsze. */
+  @media (min-width: 40rem) and (max-width: 63.99rem) {
+    .hero__figure {
+      inline-size: min(100%, 24rem);
+      margin-inline: auto;
+    }
+  }
+
   @media (min-width: 64rem) {
-    /* Kadr szerszy od kolumny tekstu, tak jak na makiecie. Poprzedni sufit
-       30 rem robił odwrotnie: tekst 586 px, zdjęcie 480 px. */
+    /* Kolumna tekstu wyraźnie szersza od kadru. Zdjęcie ma wspierać hero,
+       nie z nim konkurować — przy proporcjach bliskich równym pion 3:4
+       zaczynał dominować nad blokiem tekstowym. */
     .hero__grid {
-      /* Kolumna tekstu musi zmieścić najdłuższy człon tytułu w jednym
-         wierszu. Potrzebuje 556 px: 498 px samych liter plus 58 px, które
-         dokłada rozstrzelenie z --ls-display. Stąd te proporcje i węższy
-         odstęp — przy 2xl i 1fr/1.1fr wychodziło 531 px i tytuł łamał się
-         na trzy wiersze zamiast dwóch. */
-      grid-template-columns: 1.05fr 1fr;
-      gap: var(--space-lg);
+      grid-template-columns: 1.4fr 1fr;
+      gap: var(--space-xl);
     }
   }
 </style>

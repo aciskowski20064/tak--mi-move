@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
-import { typo } from '~/lib/typografia';
 import Section from '~/components/ui/Section.astro';
+import { typo } from '~/lib/typografia';
 import { home } from '~/data/copy/home';
 import spotkanie from '~/assets/photos/atmo-spotkanie.jpg';
 import szatnia from '~/assets/photos/atmo-szatnia.jpg';
@@ -9,26 +9,35 @@ import herbata from '~/assets/photos/atmo-herbata.jpg';
 import praktyka from '~/assets/photos/atmo-praktyka.jpg';
 
 /**
- * Brief §12.8: duże zdjęcia z krótkimi podpisami zamiast galerii miniatur.
+ * Brief §12.8: duże zdjęcia zamiast galerii miniatur.
  *
- * Układ celowo wyrównany — równe kolumny, wspólna linia góry i dołu.
- * Kadry są pionowe (3:4) i przycinamy je do wspólnych proporcji,
- * żeby wiersz nie „schodkował”.
+ * UKŁAD UPORZĄDKOWANY, NIE KOLAŻ (decyzja z 26.08.2026). Poprzednia wersja
+ * była siatką asymetryczną: kadr wiodący na siedmiu kolumnach z dwunastu,
+ * sąsiedzi w różnych proporcjach, jeden opadający niżej i celowa pustka
+ * w drugim wierszu. Czytała się jako chaos, nie jako kompozycja.
+ *
+ * Teraz cztery kafle w jednym rzędzie, wszystkie tej samej wielkości,
+ * w tej samej proporcji, z jednakowymi odstępami. Rytm robi powtarzalność,
+ * nie zaskoczenie — to ma wyglądać jak uporządkowana galeria studia.
+ *
+ * PROPORCJA 4:3 wobec natywnych 3:2 zabiera jedenaście procent szerokości.
+ * Tyle wystarczy, żeby kafle w rzędzie nie były zbyt płaskie, i za mało,
+ * żeby na którymkolwiek kadrze uciąć osoby stojące przy krawędzi —
+ * a ludzie są na wszystkich czterech.
  *
  * UWAGA: żadne z tych zdjęć nie jest przypisane do konkretnej lokalizacji.
- * Potwierdzony jest wyłącznie kadr z hero (Pruszcz Gdański).
  */
-const photoMap: Record<string, ImageMetadata> = {
-  'atmo-spotkanie': spotkanie,
-  'atmo-szatnia': szatnia,
-  'atmo-herbata': herbata,
-  'atmo-praktyka': praktyka,
-};
-
 const t = home.atmosphere;
+
+const kadry = [
+  { plik: spotkanie, alt: t.photos[0]!.alt },
+  { plik: szatnia, alt: t.photos[1]!.alt },
+  { plik: herbata, alt: t.photos[2]!.alt },
+  { plik: praktyka, alt: t.photos[3]!.alt },
+];
 ---
 
-<Section size="lg">
+<Section size="lg" class="atmo">
   <header class="atmo__head">
     {/* Klientka (25.08.2026) zdjęła podtytuł „Ludzie, przestrzeń, oddech"
         i podała jedno zdanie w miejsce opisu — stoi ono jako nagłówek,
@@ -37,25 +46,39 @@ const t = home.atmosphere;
     <h2>{typo(t.title)}</h2>
   </header>
 
-  <div class="atmo__grid">
+  <ul class="atmo__galeria">
     {
-      t.photos.map((photo) => (
-        <figure class="atmo__figure">
+      kadry.map((kadr) => (
+        <li class="atmo__pole">
           <Image
-            src={photoMap[photo.key]!}
-            alt={photo.alt}
-            widths={[480, 760, 1000]}
-            sizes="(min-width: 48rem) 46vw, 100vw"
+            src={kadr.plik}
+            alt={kadr.alt}
+            widths={[320, 480, 720]}
+            sizes="(min-width: 64rem) 23vw, (min-width: 36rem) 46vw, 100vw"
             loading="lazy"
-            class="atmo__image"
+            class="atmo__kadr"
           />
-        </figure>
+        </li>
       ))
     }
-  </div>
+  </ul>
 </Section>
 
 <style>
+  /* Styk z sekcją Opinie. Domyślny rytm sekcji `lg` dawał tu 124.8 px
+     od spodu i drugie tyle od góry Opinii — razem 278 px, czyli prawie
+     pusty ekran między galerią a kolejnym nagłówkiem.
+
+     Wartość jest policzona pod docelowe 90–110 px realnej przerwy na
+     desktopie: obie sekcje dostają tę samą krzywą, a struktura nagłówka
+     Opinii dokłada do tego stałe ~28 px. Bliźniacza reguła stoi
+     w Reviews.astro — zmiana jednej bez drugiej rozjedzie styk.
+
+     :global, bo klasa trafia na korzeń komponentu Section. */
+  :global(.section.atmo) {
+    padding-block-end: clamp(0.875rem, 0.3rem + 2.43vw, 2.25rem);
+  }
+
   .atmo__head {
     max-width: var(--container-text);
     margin-block-end: var(--space-lg);
@@ -65,38 +88,80 @@ const t = home.atmosphere;
     margin-block-start: var(--space-2xs);
   }
 
-  .atmo__grid {
-    display: grid;
-    gap: var(--space-md);
-  }
-
-  .atmo__figure {
+  /* Jeden rytm na wszystkich szerokościach: równe kolumny, równe odstępy,
+     równa wysokość. Odstęp celowo mały — kafle mają czytać się jako jedna
+     galeria, a nie jako cztery osobne zdjęcia obok siebie. */
+  .atmo__galeria {
+    list-style: none;
+    padding: 0;
     margin: 0;
+    display: grid;
+    gap: var(--space-xs);
   }
 
-  .atmo__image {
-    inline-size: 100%;
-    block-size: auto;
-    /* 3:2 to natywna proporcja wszystkich czterech kadrów — zero przycięcia.
-       Makieta ma kafle jeszcze szersze, ale przy 2:1 trzeba by zabrać 30%
-       wysokości, a na trzech zdjęciach stoją ludzie i ucięłoby im głowy. */
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
+  /* Kadr trzyma RAMKA, nie samo zdjęcie. Zaokrąglenie i przycięcie siedzą
+     na kaflu, więc powiększenie obrazu przy najechaniu dzieje się wewnątrz
+     stałej ramki — kafel nie zmienia wymiaru i siatka nie może się ruszyć. */
+  .atmo__pole {
+    overflow: hidden;
     border-radius: var(--radius-md);
   }
 
-  .atmo__caption {
-    margin-block-start: var(--space-2xs);
-    font-size: var(--fs-caption);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
-    color: var(--text-muted);
+  .atmo__kadr {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
   }
 
-  @media (min-width: 48rem) {
-    .atmo__grid {
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-lg);
+  /* ————————————————————— najechanie —————————————————————
+
+     Tylko tam, gdzie jest realny wskaźnik: `hover: hover` z `pointer: fine`
+     odcina dotyk, na którym stan najechania zostaje przyklejony po tapnięciu.
+
+     Warunek `prefers-reduced-motion: no-preference` wyłącza efekt u osób,
+     które ruchu sobie nie życzą. Sam globalny skrót czasu z base.css tu nie
+     wystarcza: skróciłby przejście do zera, ale przesunięcie i tak by
+     nastąpiło — skokiem, czyli gorzej niż wcale.
+
+     Cień jest jedynym w całym serwisie i jest celowo ledwie widoczny:
+     wyprowadzony z --ink przy 10% krycia, bez rozmycia kolorowego.
+     Ma sugerować uniesienie, a nie rysować pod kaflem plamę. */
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .atmo__pole {
+      transition:
+        transform var(--dur) var(--ease),
+        box-shadow var(--dur) var(--ease);
+    }
+
+    .atmo__kadr {
+      transition: transform var(--dur) var(--ease);
+    }
+
+    .atmo__pole:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 24px -12px color-mix(in srgb, var(--ink) 45%, transparent);
+    }
+
+    .atmo__pole:hover .atmo__kadr {
+      transform: scale(1.03);
+    }
+  }
+
+  /* Telefon zaczyna od jednej kolumny. Próg drugiej stoi na 36 rem, a nie
+     niżej, bo dopiero tam kafel ma ok. 260 px szerokości — przy 480 px okna
+     dwie kolumny dawały 204 px i zdjęcia czytały się jak miniatury, a nie
+     jak galeria. */
+  @media (min-width: 36rem) {
+    .atmo__galeria {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .atmo__galeria {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 </style>

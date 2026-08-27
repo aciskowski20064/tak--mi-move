@@ -13,17 +13,38 @@ import { home } from '~/data/copy/home';
 const t = home.finalCta;
 ---
 
-{/* Wąski pas domykający, nie kolejna pełnowymiarowa sekcja. Wcześniej miała
-    658 px wysokości przy 402 px samej treści — sam padding `lg` zjadał 256 px,
-    a wszystko stało w słupku: znak, tytuł, lead, przyciski i dopisek. */}
-<Section size="sm" tone="soft">
+{/* Pas domykający, nie kolejna pełnowymiarowa sekcja.
+
+    BEZ RÓŻOWEGO TŁA (26.08.2026). Stał tu ton `soft`, czyli --clay-wash —
+    terakota rozcieńczona w kremie, którego finalnej wartości nie znamy.
+    Skoro tło jest dziś placeholderem, jego pochodna jest nim podwójnie.
+    Sekcja bierze więc to samo jasne --surface, co reszta strony.
+
+    Wydzielenie robi teraz sam kontrast tonalny: nad tą sekcją stoi FAQ
+    na tonie `alt`, czyli ciemniejszym. Przejście z piasku na jasne tło
+    wystarcza za granicę i nie trzeba do tego prostokąta w kolorze,
+    którego nie mamy potwierdzonego.
+
+    Zamiast koloru sekcję niesie typografia i oddech: tytuł urósł
+    z --fs-h3 na --fs-h2, a padding z `sm` na `md`. Elementem marki
+    zostaje kropla przy tytule — była tu wcześniej i nie wymaga
+    dokładania niczego nowego. */}
+<Section size="md" class="final-strip">
   <div class="final">
     <div class="final__text">
       <h2 class="final__title">
-        <Mark size="0.85rem" class="final__mark" />
+        {/* Rozmiar w `em`, nie w `rem`: znak skaluje się razem z tytułem,
+            więc proporcja jest ta sama na każdej szerokości. 0.75em daje
+            przy 40 px nagłówka 30 px znaku — czytelny detal marki, który
+            nie konkuruje z tytułem stojącym obok w jednej linii.
+
+            Punktem odniesienia jest wysokość WERSALIKA, nie stopień pisma:
+            wersalik Tenor Sans ma ok. 0.7em, więc znak przy 0.75em jest
+            od liter minimalnie wyższy — dość, żeby prowadzić wzrok, za mało,
+            żeby przejmować nad nimi kontrolę. */}
+        <Mark size="0.75em" class="final__mark" />
         {typo(t.title)}
       </h2>
-      <p class="final__lead">{typo(t.lead)}</p>
     </div>
 
     <div class="final__actions">
@@ -54,34 +75,42 @@ const t = home.finalCta;
 </Section>
 
 <style>
-  /* Na wąskim ekranie słupek, od 52 rem pas: treść z lewej, przyciski z prawej.
-     Dopisek o pytaniu wszedł pod przyciski zamiast tworzyć osobny wiersz. */
+  /* Pas domykający, nie pełnowymiarowa sekcja. Domyślny rytm `md` dawał
+     76.8 px góra i dół przy 94 px samej treści — czyli 62% wysokości
+     sekcji było pustką. Padding zszedł do wartości, która przy 1280 px
+     daje 142 px zamiast 248 px.
+
+     :global, bo klasa trafia na korzeń komponentu Section. */
+  :global(.section.final-strip) {
+    padding-block: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+  }
+
   .final {
     display: grid;
-    gap: var(--space-md);
+    gap: var(--space-sm);
   }
 
-  .final__text {
-    display: grid;
-    gap: var(--space-2xs);
-  }
-
+  /* Tytuł niesie tę sekcję sam, odkąd odpadł opis pod nim — stąd większa
+     skala niż poprzednie --fs-h3. */
   .final__title {
-    font-size: var(--fs-h3);
+    font-size: var(--fs-h2);
     display: flex;
-    align-items: baseline;
-    gap: var(--space-2xs);
+    align-items: center;
+    /* 16 px: znak przy 30 px potrzebuje powietrza, żeby nie sklejał się
+       z pierwszą literą. Poprzednie 8 px było dobrane do znaku wielkości
+       kropki. */
+    gap: var(--space-sm);
   }
 
+  /* Wyrównanie do środka tekstu. Poprzednie wersje siadały na linii
+     bazowej i wymagały ręcznej korekty w `em`, innej dla każdej skali
+     znaku — raz w górę, raz w dół. Środkowanie znosi ten problem: nie ma
+     magicznej liczby do utrzymania, a przy nagłówku w jednej linii środek
+     bloku i środek tekstu to to samo miejsce. */
   .final :global(.final__mark) {
     color: var(--accent);
     flex: none;
-  }
-
-  .final__lead {
-    max-width: 46ch;
-    color: var(--text-muted);
-    font-size: var(--fs-small);
+    align-self: center;
   }
 
   .final__actions {
@@ -101,11 +130,33 @@ const t = home.finalCta;
     color: var(--text-accent);
   }
 
-  @media (min-width: 52rem) {
+  /* Dwie kolumny dopiero od 75 rem, nie od 52 rem.
+
+     Poprzedni próg był za niski i to on łamał nagłówek. Kolumna przycisków
+     była wyliczana z treści (`auto`), a jej szerokość naturalna liczy się
+     z WSZYSTKICH elementów w jednym rzędzie — razem z dopiskiem „Masz
+     pytanie?", który i tak spada niżej. Zabierała przez to 707 px z 1191,
+     a na tytuł zostawało 408 px przy potrzebnych 523. Przy 900–1024 px
+     było jeszcze gorzej: kolumna tytułu schodziła do 182 px i nagłówek
+     łamał się na cztery wiersze.
+
+     Teraz odwrotnie: tytuł bierze tyle, ile potrzebuje (`auto`), przyciski
+     dostają resztę. Próg 75 rem to najniższa szerokość, przy której obie
+     rzeczy mieszczą się obok siebie — 569 px tytułu, 64 px odstępu i 503 px
+     na przyciski, którym wystarcza 405. Poniżej wracamy do słupka, bo
+     ściśnięty nagłówek jest gorszy niż układ jednokolumnowy. */
+  @media (min-width: 75rem) {
     .final {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: auto minmax(0, 1fr);
       align-items: center;
       gap: var(--space-xl);
+    }
+
+    /* Kolumna jest liczona z treści, więc nagłówek i tak się nie złamie —
+       `nowrap` jest tu zabezpieczeniem na wypadek, gdyby krój zastępczy
+       narysował tekst szerzej, zanim wczyta się Tenor Sans. */
+    .final__title {
+      white-space: nowrap;
     }
 
     .final__actions {

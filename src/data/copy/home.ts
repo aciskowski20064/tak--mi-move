@@ -32,7 +32,15 @@ export const home = {
      * Trzy słowa NIE powtarzają się już jako plakietka przy zdjęciu —
      * klientka prosiła wprost, żeby nie dublować ich obok kadru.
      */
-    title: 'SIŁA ~ SPOKÓJ ~ RÓWNOWAGA',
+    /* Trzy człony, nie jeden napis z separatorami. Tylda znika: w hero
+       hasło jest ułożone w trzy wiersze wyrównane do lewej, więc podziału
+       nie musi nieść znak — niesie go sam układ. Rozbicie na tablicę
+       zamiast łamania w CSS, bo to podział treści, a nie łamanie wiersza:
+       przy każdej szerokości okna ma wyjść dokładnie tak samo.
+
+       Na /zajecia hasło zostaje jednym napisem z tyldami — tam stoi
+       w nagłówku podstrony i tego układu nie ruszamy. */
+    title: ['SIŁA', 'SPOKÓJ', 'RÓWNOWAGA'],
     // FAKT — wymienione formy zajęć i wspólny system zapisów.
     lead: 'Joga, pilates, stretching, aerial yoga i barre w kameralnych grupach — w dwóch studiach, z jednym systemem zapisów.',
     secondaryCta: 'Zobacz grafik',
@@ -97,7 +105,9 @@ export const home = {
     // Etykieta ujednolicona z /studia — klientka prosiła o „Poznaj przestrzeń"
     // w miejsce „Poznaj studio" i „Dojazd i szczegóły" (25.08.2026).
     linkLabel: 'Poznaj przestrzeń',
-    scheduleLabel: 'Grafik tej lokalizacji',
+    // Klientka nazywa to wyjście „grafik studia" — trzymamy jej nazewnictwo,
+    // to samo, które wraca na podstronach obu studiów.
+    scheduleLabel: 'Grafik studia',
     // Zdjęcie mamy tylko dla Pruszcza (potwierdzone przez klienta).
     missingPhoto: 'TODO(klientka): zdjęcie wnętrza tego studia',
   },
@@ -267,8 +277,10 @@ export const home = {
 
   /** Brief §12.14 podaje konstrukcję tej sekcji wprost. */
   finalCta: {
-    title: 'Znajdź zajęcia dla siebie.',
-    lead: 'Sprawdź aktualny grafik w Gdańsku i Pruszczu Gdańskim.',
+    title: 'Znajdź zajęcia dla siebie',
+    /* Zdanie o sprawdzeniu grafiku w obu miastach usunięte 26.08.2026.
+       Powtarzało to, co niosą oba przyciski obok, a pas domykający
+       ma być krótki. */
     firstVisitLabel: 'Zobacz, jak wygląda pierwsza wizyta',
     secondaryLead: 'Masz pytanie?',
     secondaryLabel: 'Napisz do nas',

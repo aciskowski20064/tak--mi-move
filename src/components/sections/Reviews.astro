@@ -29,7 +29,7 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
 
 {
   (reviews.length > 0 || isDev) && (
-    <Section size="lg">
+    <Section size="lg" class="reviews">
       <header class="reviews__head">
         <p class="eyebrow">{t.eyebrow}</p>
         <h2>{typo(t.title)}</h2>
@@ -80,6 +80,16 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
 }
 
 <style>
+  /* Styk z sekcją Atmosfera — bliźniacza reguła stoi w Atmosphere.astro.
+     Domyślny rytm sekcji dawał na tym styku 278 px pustki; ta sama krzywa
+     po obu stronach schodzi do ok. 100 px na desktopie. Zmiana jednej
+     bez drugiej rozjedzie przejście.
+
+     :global, bo klasa trafia na korzeń komponentu Section. */
+  :global(.section.reviews) {
+    padding-block-start: clamp(0.875rem, 0.3rem + 2.43vw, 2.25rem);
+  }
+
   .reviews__head {
     max-width: var(--container-text);
     margin-block-end: var(--space-lg);
