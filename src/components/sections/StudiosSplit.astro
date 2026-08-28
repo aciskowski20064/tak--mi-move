@@ -1,9 +1,8 @@
 ---
-import { Image } from 'astro:assets';
 import { typo } from '~/lib/typografia';
 import Section from '~/components/ui/Section.astro';
-import Mark from '~/components/ui/Mark.astro';
-import { locations, formatAddress, site } from '~/data/site';
+import StudioPanel from '~/components/ui/StudioPanel.astro';
+import { locations } from '~/data/site';
 import { home } from '~/data/copy/home';
 
 import zdjecieP from '~/assets/photos/studio-pruszcz-sala.jpg';
@@ -13,24 +12,9 @@ import zdjecieG from '~/assets/photos/studio-gdansk-sala.jpg';
  * Brief §12.4: podkreślić, że to jedna marka z dwiema przestrzeniami,
  * i ułatwić wybór.
  *
- * PANELE, NIE KARTY (decyzja z 26.08.2026 — częściowe cofnięcie reguły
- * ramek z Etapu 3). Tutaj wydzielenie dwóch lokalizacji jest funkcjonalnie
- * uzasadnione: to jedyne miejsce na stronie, gdzie czytelnik ma wybrać
- * JEDNĄ z dwóch rzeczy, a każda niesie własny komplet informacji — kadr,
- * adres, telefon, mail i dwa wyjścia. Bez wydzielenia te dwa komplety
- * zlewały się w jedną listę i trzeba było się domyślać, gdzie kończy się
- * Pruszcz, a zaczyna Gdańsk. To dokładnie przypadek 1 i 4 z zasady ramek
- * w base.css: panel grupuje treść i oddziela to, czego nie rozdzieli
- * sam odstęp.
- *
- * Odróżnienie jest jednak minimalne i nie polega na obramowaniu. Sekcja
- * stoi na tonie `alt`, panel dostaje jaśniejszy `--surface` — czyli różnicę
- * jasności, nie kreskę. Nie ma tu ani obwódki, ani cienia, ani wewnętrznej
- * linii nad nazwą, którą miał stary wariant.
- *
- * Kadr wchodzi na pełną szerokość panelu, bez marginesu — to on ma
- * prowadzić, zgodnie z prośbą klientki, żeby oba studia prezentowały się
- * „przede wszystkim przez zdjęcia". Treść dostaje padding, zdjęcie nie.
+ * Sam panel mieszka od Etapu 5 w `ui/StudioPanel.astro` — ta sama
+ * implementacja obsługuje rozdroże `/studia`. Tutaj zostaje wyłącznie
+ * obudowa sekcji: nadtytuł, nagłówek i siatka dwóch paneli.
  */
 const zdjecia: Record<string, ImageMetadata> = {
   'pruszcz-gdanski': zdjecieP,
@@ -49,49 +33,13 @@ const t = home.studios;
   <ul class="studios">
     {
       locations.map((location) => (
-        <li class="studio-card">
-          <figure class="studio-card__figure">
-            <Image
-              src={zdjecia[location.slug]}
-              alt={`Sala studia TAK MI MOVE w ${location.cityLocative}`}
-              widths={[480, 720, 1000]}
-              sizes="(min-width: 48rem) 42vw, 100vw"
-              loading="lazy"
-              class="studio-card__photo"
-            />
-          </figure>
-
-          <div class="studio-card__tresc">
-            <div class="studio-card__head">
-              <Mark size="0.9rem" class="studio-card__mark" />
-              <h3 class="studio-card__name">{location.city}</h3>
-            </div>
-
-            <p class="studio-card__address">{formatAddress(location)}</p>
-
-            <dl class="studio-card__contact">
-              <dt>Telefon</dt>
-              <dd>
-                <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-              </dd>
-              <dt>E-mail</dt>
-              <dd>
-                <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
-              </dd>
-            </dl>
-
-            {/* Dosunięte do dołu panelu, żeby oba wyjścia stały w jednej
-                linii niezależnie od długości adresu obu studiów. */}
-            <p class="studio-card__links">
-              <a href={`/studia/${location.slug}`} data-event="studio_location_select">
-                {t.linkLabel}
-              </a>
-              <a href={`/grafik?studio=${location.slug}`} data-event="schedule_page_view">
-                {t.scheduleLabel}
-              </a>
-            </p>
-          </div>
-        </li>
+        <StudioPanel
+          location={location}
+          photo={zdjecia[location.slug]!}
+          headingLevel={3}
+          linkLabel={t.linkLabel}
+          scheduleLabel={t.scheduleLabel}
+        />
       ))
     }
   </ul>
@@ -110,109 +58,6 @@ const t = home.studios;
     margin: 0;
     display: grid;
     gap: var(--space-lg);
-  }
-
-  /* Panel: jaśniejsza powierzchnia na tonie `alt`, zaokrąglenie, zero
-     obramowania i zero cienia. Kolumna, bo kadr i treść idą jedno pod
-     drugim, a odsyłacze mają zejść na sam dół.
-
-     `overflow: hidden` przycina górne rogi kadru do promienia panelu —
-     dzięki temu zdjęcie może wejść na pełną szerokość, bez własnego
-     zaokrąglenia i bez marginesu. */
-  .studio-card {
-    display: flex;
-    flex-direction: column;
-    background: var(--surface);
-    border-radius: var(--radius-card);
-    overflow: hidden;
-    /* Panele równej wysokości niezależnie od długości adresu. */
-    block-size: 100%;
-  }
-
-  .studio-card__figure {
-    margin: 0;
-  }
-
-  .studio-card__photo {
-    display: block;
-    inline-size: 100%;
-    block-size: auto;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-  }
-
-  /* Padding tylko wokół treści — kadr wyżej idzie od krawędzi do krawędzi. */
-  .studio-card__tresc {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3xs);
-    padding: var(--space-sm) var(--space-md);
-  }
-
-  .studio-card__head {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2xs);
-  }
-
-  .studio-card__head :global(.studio-card__mark) {
-    color: var(--accent);
-  }
-
-  .studio-card__name {
-    font-size: var(--fs-h4);
-  }
-
-  .studio-card__address {
-    color: var(--text-muted);
-    font-size: var(--fs-small);
-  }
-
-  .studio-card__contact {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-3xs) var(--space-sm);
-    margin-block-start: var(--space-2xs);
-    font-size: var(--fs-small);
-    line-height: 1.45;
-  }
-
-  .studio-card__contact dt {
-    color: var(--text-muted);
-  }
-
-  .studio-card__contact dd {
-    margin: 0;
-  }
-
-  .studio-card__contact a {
-    color: var(--text-accent);
-  }
-
-  /* `auto` na górnym marginesie dopycha odsyłacze do dołu panelu — to jest
-     mechanizm wyrównania obu paneli, nie sam `block-size: 100%`. */
-  .studio-card__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-lg);
-    margin-block-start: auto;
-    padding-block-start: var(--space-sm);
-    font-size: var(--fs-small);
-  }
-
-  .studio-card__links a {
-    display: inline-flex;
-    align-items: center;
-    min-block-size: 44px;
-    color: var(--text-accent);
-    border-block-end: var(--hairline) solid var(--line-strong);
-    text-decoration: none;
-    padding-block-end: 0.1em;
-  }
-
-  .studio-card__links a:hover {
-    border-block-end-color: currentColor;
   }
 
   @media (min-width: 48rem) {

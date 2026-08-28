@@ -69,39 +69,18 @@ export const home = {
     // Lead o wspólnym zespole zdjęty na prośbę klientki (25.08.2026).
     // Po jego usunięciu sekcja zaczyna się od razu od dwóch kadrów.
     /**
-     * Brief §16.4 zabrania identycznych opisów obu lokalizacji — i faktycznie
-     * te dwie sale różnią się na zdjęciach na tyle, że opisy same się rozeszły.
+     * OPISY WNĘTRZ USUNIĘTE (Etap 5, 27.08.2026).
      *
-     * Każdy opis stoi na dwóch nogach:
+     * Klientka: „nie podoba mi się ten tekst z opisem kolorów podłogi itd."
+     * Odpadły `descriptions` (dwa akapity o jodełce, łuku w terakocie,
+     * betonowym słupie i czarnym suficie) razem z `descriptionTitles`
+     * („Światło i przestrzeń", „Kameralnie i przytulnie") oraz kartą, która
+     * je pokazywała na podstronach studiów. Renderowały się wyłącznie tam —
+     * strona główna ich nie używała.
      *
-     * FAKT — przymiotniki klientki. Pruszcz „jasne, wspaniała społeczność"
-     * (odpowiedź 4), Gdańsk „przytulne, w centrum, eleganckie, intymna
-     * atmosfera" (odpowiedź 5). Że Pruszcz jest macierzysty — z materiałów marki.
-     *
-     * ROBOCZE — opis wnętrza. To, co widać na zdjęciach z sesji (20.08.2026):
-     * jodełka, łuk w terakocie i hamaki w Pruszczu, betonowy słup i czarny
-     * sufit z rurami w Gdańsku. Nie są to zmyślone fakty o marce, tylko opis
-     * pomieszczenia — ta sama zasada co przy opisach dyscyplin. Do akceptacji.
-     *
-     * Czego tu świadomie NIE ma: godzin otwarcia (odpowiedź 37 bez odpowiedzi)
-     * i nazwy ulicy wejścia w Gdańsku (odpowiedź 33 niepewna).
+     * Robotę, którą miały wykonać, przejmuje galeria: cztery duże kadry
+     * pokazują różnicę między salami szybciej, niż da się ją przeczytać.
      */
-    descriptions: {
-      'pruszcz-gdanski':
-        'Jasna sala z oknami z dwóch stron: dąb w jodełkę, biel ścian i łuk w kolorze terakoty. Hamaki do aerial yogi wiszą u sufitu na stałe, a przy oknie biegnie drążek do barre. To nasze pierwsze studio i to tutaj zebrała się wspaniała społeczność.',
-      gdansk:
-        'Kameralna, przytulna sala w centrum miasta: surowy betonowy słup, czarny sufit z odsłoniętymi rurami i dąb w jodełkę. Elegancko, ale bez chłodu — mniejsza przestrzeń robi intymną atmosferę.',
-    },
-    /**
-     * Nagłówek karty z opisem, osobny dla każdej sali — jeden wspólny byłby
-     * albo nieprawdziwy, albo pusty. Oba wprost z przymiotników klientki:
-     * Pruszcz „jasne" (odpowiedź 4), Gdańsk „przytulne, intymna atmosfera"
-     * (odpowiedź 5).
-     */
-    descriptionTitles: {
-      'pruszcz-gdanski': 'Światło i przestrzeń',
-      gdansk: 'Kameralnie i przytulnie',
-    },
     // Etykieta ujednolicona z /studia — klientka prosiła o „Poznaj przestrzeń"
     // w miejsce „Poznaj studio" i „Dojazd i szczegóły" (25.08.2026).
     linkLabel: 'Poznaj przestrzeń',

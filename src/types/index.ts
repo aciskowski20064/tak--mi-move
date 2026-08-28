@@ -42,6 +42,11 @@ export type StudioLocation = {
    * klientka nie chce nigdzie zamykać oferty w konkretnej liczbie form ruchu.
    */
   classesSummary?: string;
+  /**
+   * Co czeka na miejscu — sprzęt, szatnia, prysznic. Osobne pole na
+   * lokalizację, bo pełne zdanie klientka podała wyłącznie dla Pruszcza.
+   */
+  equipmentInfo?: string;
   classSlugs: string[];
   /** ID lokalizacji w Fitssey — pozwala filtrować widżet grafiku. */
   fitsseyLocationId?: string;

@@ -4,64 +4,86 @@ import { typo } from '~/lib/typografia';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
-import Button from '~/components/ui/Button.astro';
-import { locations, formatAddress, booking, site } from '~/data/site';
-import { home } from '~/data/copy/home';
-import { copyOrNull } from '~/lib/copy';
+import Todo from '~/components/ui/Todo.astro';
+import { locations, formatAddress, site } from '~/data/site';
+import { isPlaceholder } from '~/lib/copy';
 import FactIcon from '~/components/ui/FactIcon.astro';
 import SocialIcon from '~/components/ui/SocialIcon.astro';
 
 import pruszczPoczekalnia from '~/assets/photos/pruszcz-poczekalnia.jpg';
 import pruszczSala from '~/assets/photos/pruszcz-sala-hamaki.jpg';
-import pruszczAerial from '~/assets/photos/pruszcz-aerial.jpg';
-import pruszczSprzet from '~/assets/photos/pruszcz-sprzet.jpg';
-import pruszczSzatnia from '~/assets/photos/pruszcz-szatnia.jpg';
+import pruszczSalaSprzet from '~/assets/photos/pruszcz-sala-sprzet.jpg';
+import pruszczLazienka from '~/assets/photos/pruszcz-lazienka.jpg';
 
 import gdanskPoczekalnia from '~/assets/photos/gdansk-poczekalnia.jpg';
-import gdanskSala from '~/assets/photos/gdansk-sala.jpg';
-import gdanskSprzet from '~/assets/photos/gdansk-sprzet.jpg';
-import gdanskSzatnia from '~/assets/photos/gdansk-szatnia.jpg';
+import gdanskSalaLustra from '~/assets/photos/gdansk-sala-lustra.jpg';
 import gdanskRecepcja from '~/assets/photos/gdansk-recepcja.jpg';
+import gdanskZajecia from '~/assets/photos/gdansk-zajecia.jpg';
 
 /**
- * Kadry sesji przypisane do lokalizacji.
+ * Galeria studia — cztery kadry na lokalizację (Etap 5, 27.08.2026).
  *
- * Galeria nie jest ozdobą: każdy kadr odpowiada na inne pytanie osoby, która
- * nigdy tu nie była — jak wygląda sala, czy trzeba coś przynosić, gdzie się
- * przebrać. Oba studia trzymają ten sam schemat, żeby żadne nie wypadło
- * gorzej od drugiego przy tej samej liczbie zdjęć.
+ * Poprzedni układ klientka oceniła jako „jak z power pointa" i pomiar to
+ * potwierdzał: mały kadr 384 × 256 obok faktów, a pod nim rząd czterech
+ * miniatur 286 × 191 (na telefonie 159 × 106), bez nagłówka, zawieszony
+ * między sekcjami. Trzy z ośmiu kafli były do tego pionami przycinanymi
+ * do 3:2, a trzy powtarzały kadry stojące gdzie indziej w serwisie —
+ * `gdansk-sprzet` był DOKŁADNIE tym samym zdjęciem co kadr sali Gdańska
+ * na stronie głównej i na /studia (odległość sygnatur 0,6).
  *
- * Różnica jest jedna i wynika z materiału: w Pruszczu mamy kadr z zajęć
- * w hamakach, w Gdańsku takiego nie ma — jego miejsce zajmuje lada recepcji.
+ * Teraz: cztery równe kafle 2 × 2 w natywnej proporcji 3:2 (597 × 398 px
+ * na 1280), czyli zero przycięcia. Dobór jest celowo równoległy w obu
+ * studiach — przestrzeń wspólna, sala, detal, ludzie — żeby żadne nie
+ * wypadło gorzej od drugiego.
+ *
+ * Każdy plik sprawdzony sygnaturą wobec całego katalogu zdjęć: najbliższy
+ * sąsiad każdego z nich jest w odległości ponad 23, czyli żaden kadr nie
+ * powtarza się nigdzie indziej na stronie.
  */
-const kadryStudiow: Record<string, { hero: ImageMetadata; galeria: { plik: ImageMetadata; opis: string }[] }> = {
-  'pruszcz-gdanski': {
-    hero: pruszczPoczekalnia,
-    galeria: [
-      { plik: pruszczSala, opis: 'Sala z hamakami do aerial yogi i łukiem w kolorze terakoty' },
-      { plik: pruszczAerial, opis: 'Zajęcia aerial yogi — ćwiczące w hamakach' },
-      { plik: pruszczSprzet, opis: 'Regał ze sprzętem: klocki, piłki, wałki, koce i bolstery' },
-      { plik: pruszczSzatnia, opis: 'Szatnia z ławkami i przejściem do prysznica' },
-    ],
-  },
-  gdansk: {
-    hero: gdanskPoczekalnia,
-    galeria: [
-      { plik: gdanskSala, opis: 'Sala z betonową ścianą, złoconymi lustrami i podłogą w jodełkę' },
-      { plik: gdanskSprzet, opis: 'Regał ze sprzętem: klocki, piłki, wałki i odważnik' },
-      { plik: gdanskSzatnia, opis: 'Szatnia z ławką, mosiężnymi wieszakami i szafkami' },
-      { plik: gdanskRecepcja, opis: 'Lada recepcji z dębu, z łukowym panelem na ścianie' },
-    ],
-  },
+const kadryStudiow: Record<string, { plik: ImageMetadata; opis: string }[]> = {
+  'pruszcz-gdanski': [
+    {
+      plik: pruszczPoczekalnia,
+      opis: 'Poczekalnia studia: szałwiowa ściana, fotele i suszone trawy',
+    },
+    {
+      plik: pruszczSala,
+      opis: 'Sala z hamakami do aerial yogi, drążkiem do barre i podłogą w jodełkę',
+    },
+    {
+      plik: pruszczSalaSprzet,
+      opis: 'Sala od strony lustra: regał ze sprzętem i drabinka na terakotowym łuku',
+    },
+    {
+      plik: pruszczLazienka,
+      opis: 'Łazienka z umywalką w terrazzo, okrągłym lustrem i suszonymi trawami',
+    },
+  ],
+  gdansk: [
+    { plik: gdanskPoczekalnia, opis: 'Poczekalnia studia z podświetlanym znakiem TAK MI MOVE' },
+    { plik: gdanskRecepcja, opis: 'Lada recepcji z dębu, z łukowym panelem na ścianie' },
+    {
+      plik: gdanskSalaLustra,
+      opis: 'Sala z lustrami w mosiężnych ramach, betonową ścianą i podłogą w jodełkę',
+    },
+    {
+      plik: gdanskZajecia,
+      opis: 'Zajęcia w Gdańsku: cztery osoby w pozycji psa z głową w dół przy oknie',
+    },
+  ],
 };
 
 /**
  * Podstrona pojedynczego studia (brief §16).
  *
  * §16.4 zabrania stron typu doorway — czyli kopii z podmienioną nazwą miasta.
- * Dlatego cała treść lokalna (wejście, parking, dojazd, dostępność, opis)
- * pochodzi z danych konkretnej lokalizacji i dopóki jej nie ma, po prostu
- * się nie renderuje. Żadna z tych sekcji nie ma treści domyślnej.
+ * Dlatego cała treść lokalna pochodzi z danych konkretnej lokalizacji
+ * i dopóki jej nie ma, po prostu się nie renderuje. Żadna z tych pozycji
+ * nie ma treści domyślnej.
+ *
+ * KOLEJNOŚĆ (28.08.2026): nagłówek → fakty → grafik → galeria → kontakt.
+ * Wersja z galerią tuż pod nagłówkiem została odrzucona: cztery duże kadry
+ * dominowały, zanim czytelnik dowiedział się czegokolwiek o miejscu.
  */
 export function getStaticPaths() {
   return locations.map((location) => ({
@@ -72,58 +94,45 @@ export function getStaticPaths() {
 
 const { location } = Astro.props;
 
-/**
- * Funkcja `rodzajeRuchu()`, która składała napis w rodzaju „Pięć rodzajów
- * ruchu" z liczby wpisów w kolekcji, została usunięta (25.08.2026).
- * Klientka nie chce nigdzie zamykać oferty w konkretnej liczbie form ruchu,
- * a to był ostatni komunikat, który tę liczbę wyliczał. W jej miejsce
- * wchodzi zdanie z `location.classesSummary` — inne dla każdego studia.
- *
- * Razem z funkcją odpadło pobieranie kolekcji zajęć: służyło wyłącznie
- * do policzenia tych wpisów.
- */
-
-const description = copyOrNull(home.studios.descriptions[location.slug]);
-const descriptionTitle = home.studios.descriptionTitles[location.slug];
 const address = formatAddress(location);
 const kadry = kadryStudiow[location.slug];
 
 /**
- * Praktyczne informacje lokalne — każda osobno, bo każdej może brakować.
+ * CZTERY FAKTY — lista klientki, w jej kolejności:
+ * Adres · Jak nas znaleźć · Wyposażenie · Zajęcia.
  *
- * Dojazdu komunikacją i dostępności tu nie ma i nie będzie: na oba pytania
- * klientka odpowiedziała „nie opisujemy" (odpowiedzi 35 i 36). To decyzja,
- * nie brak danych, więc wiersze zniknęły, zamiast wisieć jako prośba o coś,
- * co już odrzuciła.
+ * Czego tu świadomie NIE ma:
+ *
+ * PARKING. `parkingInfo` dla Gdańska zostaje w danych (odpowiedź 34), ale
+ * nie wchodzi do widoku: klientka wskazała dokładnie cztery fakty i parkingu
+ * na tej liście nie ma.
+ *
+ * DOJAZD I DOSTĘPNOŚĆ. Na oba pytania klientka odpowiedziała „nie opisujemy"
+ * (odpowiedzi 35 i 36). To decyzja, nie brak danych.
  */
 const fakty = [
-  /* Adres łamany po ulicy, tak jak na makiecie — jednym ciągiem zawijał się
-     na trzy wiersze i rozpychał rząd faktów. */
   {
     ikona: 'pin' as const,
-    label: 'Lokalizacja',
+    label: 'Adres',
+    /* Adres łamany po ulicy — jednym ciągiem zawijał się na trzy wiersze. */
     value: location.street,
     drugaLinia: `${location.postalCode} ${location.city}`,
   },
-  { ikona: 'door' as const, label: 'Wejście', value: location.entranceInfo },
-  { ikona: 'locker' as const, label: 'Parking', value: location.parkingInfo },
-  {
-    ikona: 'locker' as const,
-    label: 'Szatnia',
-    // FAKT: odpowiedzi 10 i 50 — to samo wyposażenie w obu studiach.
-    value: 'Prysznic, ręczniki i kosmetyki na miejscu',
-  },
-  {
-    ikona: 'move' as const,
-    label: 'Zajęcia',
-    // FAKT: zdanie klientki, osobne dla każdej lokalizacji (25.08.2026).
-    value: location.classesSummary,
-  },
+  { ikona: 'door' as const, label: 'Jak nas znaleźć', value: location.entranceInfo },
+  { ikona: 'locker' as const, label: 'Wyposażenie', value: location.equipmentInfo },
+  /* NIE `move`: ta ikona to kropla praktycznie nie do odróżnienia od
+     `pin` przy „Adresie" — przy czterech faktach obok siebie było to
+     widać od razu. `users` mówi zresztą to, o czym ten fakt jest. */
+  { ikona: 'users' as const, label: 'Zajęcia', value: location.classesSummary },
 ]
-  /* Fakt bez wartości znika w całości, razem z etykietą i piktogramem.
-     Parkingu w Pruszczu po prostu nie znamy (odpowiedź 34 go nie rozstrzyga),
-     więc ta karta tam się nie pojawia. */
-  .filter((f) => f.value);
+  /* Brakującej treści NIE pokazujemy klientce.
+     Reszta serwisu używa `showPlaceholders`, czyli DEV **lub** DEMO_MODE —
+     przez to przerywana ramka „Do uzupełnienia" byłaby widoczna w wersji
+     poglądowej, którą klientka ogląda. Tutaj celowo stoi samo
+     `import.meta.env.DEV`: znacznik widzimy my przy `npm run dev`, a każdy
+     build (poglądowy i produkcyjny) po prostu nie renderuje tego faktu. */
+  .map((f) => ({ ...f, brakuje: isPlaceholder(f.value) }))
+  .filter((f) => f.value && (!f.brakuje || import.meta.env.DEV));
 
 const title = `${location.city} — studio jogi, pilatesu i aerial yogi`;
 const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates, stretching i aerial yoga w kameralnych grupach. Zapisy online.`;
@@ -131,8 +140,10 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
 
 <Base title={title} description={metaDescription}>
   {/* Bez nadtytułu: „Studio" wchodzi do samego tytułu, tak jak na makiecie.
-      Osobny nadtytuł powtarzałby słowo, które i tak stoi wiersz niżej. */}
+      `size="sm"` zamiast domyślnego `md` — pod H1 stały 124 px odstępu do
+      pierwszej treści, co przy nagłówku bez leadu robiło pusty pas. */}
   <PageHeader
+    size="sm"
     title={`Studio ${location.city}`}
     crumbs={[
       { label: 'Studia', href: '/studia' },
@@ -140,58 +151,66 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     ]}
   />
 
-  <Section as="div" size="sm">
-    <div class="studio__top">
-      <ul class="fakty">
-        {
-          fakty.map((f) => (
-            <li class="fakt">
-              <span class="znak fakt__ikona" aria-hidden="true">
-                <FactIcon name={f.ikona} />
-              </span>
-              <h2 class="fakt__label">{f.label}</h2>
-              <p class="fakt__tekst">
-                {typo(f.value!)}
-                {'drugaLinia' in f && f.drugaLinia && (
-                  <>
-                    <br />
-                    {f.drugaLinia}
-                  </>
-                )}
-              </p>
-            </li>
-          ))
-        }
-      </ul>
-
+  <Section as="div" size="sm" class="fakty-sekcja">
+    <ul class="fakty">
       {
-        kadry && (
-          <figure class="studio__hero">
-            <Image
-              src={kadry.hero}
-              alt={`Poczekalnia studia TAK MI MOVE w ${location.cityLocative}`}
-              widths={[600, 900, 1400]}
-              sizes="(min-width: 60rem) 46vw, 100vw"
-              loading="eager"
-              class="studio__heroFoto"
-            />
-          </figure>
-        )
+        fakty.map((f) => (
+          <li class="fakt">
+            <span class="znak fakt__ikona" aria-hidden="true">
+              <FactIcon name={f.ikona} />
+            </span>
+            <div class="fakt__tresc">
+              <h2 class="fakt__label">{f.label}</h2>
+              {f.brakuje ? (
+                <Todo label={f.value!} block />
+              ) : (
+                <p class="fakt__tekst">
+                  {typo(f.value!)}
+                  {'drugaLinia' in f && f.drugaLinia && (
+                    <>
+                      <br />
+                      {f.drugaLinia}
+                    </>
+                  )}
+                </p>
+              )}
+            </div>
+          </li>
+        ))
       }
-    </div>
+    </ul>
+
+    {/* Przejście fakty → grafik → galeria. Trzeci poziom wezwania
+        (`.link-cta` z base.css), nie przycisk: to jest wyjście z sekcji,
+        a nie druga akcja główna obok rezerwacji. Nazewnictwo klientki —
+        ta sama etykieta stoi na stronie głównej. */}
+    <p class="grafik">
+      <a
+        class="link-cta"
+        href={`/grafik?studio=${location.slug}`}
+        data-event="schedule_page_view"
+        data-source="location"
+      >
+        <FactIcon name="calendar" size="1.1rem" />
+        Grafik studia
+      </a>
+    </p>
   </Section>
 
+  {/* Galeria bez własnego nagłówka i bez copy — cztery kadry mają pokazać
+      miejsce, a nie je opisywać. Stoi POD faktami: najpierw czytelnik wie,
+      gdzie to jest i co go czeka, potem to ogląda. */}
   {
     kadry && (
-      <Section as="div" size="sm">
+      <Section as="div" size="md" class="galeria-sekcja">
         <ul class="galeria">
-          {kadry.galeria.map((k) => (
-            <li>
+          {kadry.map((k) => (
+            <li class="galeria__pole">
               <Image
                 src={k.plik}
                 alt={k.opis}
-                widths={[320, 480, 700]}
-                sizes="(min-width: 48rem) 23vw, 45vw"
+                widths={[480, 720, 1200]}
+                sizes="(min-width: 64rem) 46vw, (min-width: 36rem) 48vw, 100vw"
                 loading="lazy"
                 class="galeria__foto"
               />
@@ -202,95 +221,111 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     )
   }
 
-  <Section size="lg">
-    <div class="studio__dol">
-      {
-        description && (
-          <article class="karta karta--opis">
-            <span class="karta__ikona" aria-hidden="true">
-              <FactIcon name="sun" size="1.6rem" />
-            </span>
-            <div>
-              <h2 class="karta__tytul">{typo(descriptionTitle)}</h2>
-              <p class="karta__tekst">{typo(description)}</p>
-            </div>
-          </article>
-        )
-      }
+  <Section size="md" tone="alt" class="kontakt-sekcja">
+    <div class="kontakt-panel">
+      <h2 class="kontakt-panel__tytul">Kontakt</h2>
 
-      <article class="karta karta--kontakt">
-        <h2 class="karta__tytul">Dane kontaktowe</h2>
-
-        <ul class="kontakt">
-          <li>
-            <span class="kontakt__ikona" aria-hidden="true">
-              <FactIcon name="phone" size="1.1rem" />
-            </span>
-            <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-          </li>
-          <li>
-            <span class="kontakt__ikona" aria-hidden="true">
-              <FactIcon name="mail" size="1.1rem" />
-            </span>
-            <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
-          </li>
-          <li>
-            <span class="kontakt__ikona" aria-hidden="true">
-              <SocialIcon platform="instagram" size="1.1rem" />
-            </span>
-            <span class="kontakt__profile">
-              {location.social.map((s) => (
-                <a href={s.url} target="_blank" rel="noopener me">
-                  {s.label}
-                </a>
-              ))}
-            </span>
-          </li>
-        </ul>
-
-        <Button
-          href={`/grafik?studio=${location.slug}`}
-          source="location"
-          event="schedule_page_view"
-          class="kontakt__cta"
-        >
-          Zobacz grafik i zapisz się
-        </Button>
-      </article>
+      <ul class="kontakt">
+        <li>
+          <span class="kontakt__ikona" aria-hidden="true">
+            <FactIcon name="phone" size="1.1rem" />
+          </span>
+          <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+        </li>
+        <li>
+          <span class="kontakt__ikona" aria-hidden="true">
+            <FactIcon name="mail" size="1.1rem" />
+          </span>
+          <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
+        </li>
+        {
+          location.social.map((s) => (
+            <li>
+              <span class="kontakt__ikona" aria-hidden="true">
+                <SocialIcon platform={s.platform} size="1.1rem" />
+              </span>
+              <a href={s.url} target="_blank" rel="noopener me">
+                {s.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </Section>
 
   {/* FAQ zdjęte 20.08.2026. Żadne z pięciu pytań nie dotyczy konkretnej
       lokalizacji, więc obie podstrony studiów pokazywały ten sam blok co
-      strona główna. Jedyne, które mogłoby być lokalne — „czy wszystkie
-      zajęcia odbywają się w obu studiach" — opiera się na moim wniosku,
-      bo pytanie 25 klientka przekreśliła bez odpowiedzi. */}
+      strona główna. */}
 </Base>
 
 <style>
-  /* ————————————————— fakty praktyczne + kadr ————————————————— */
+  /* ————————————————— rytm pionowy ——————————————————
 
-  .studio__top {
-    display: grid;
-    gap: var(--space-lg);
-    align-items: center;
+     Wartości policzone z pomiaru na 1280 px, nie dobrane na oko.
+     Kolejno: kreska pod H1 → pierwszy fakt 90 px, rząd do rzędu 77,
+     ostatni fakt → „Grafik studia" 46, „Grafik studia" → galeria 123,
+     padding Kontaktu 77/77. Suma pustki na desktopie sięgała pół
+     ekranu, mimo że żadna pojedyncza wartość nie wyglądała źle.
+
+     :global na sekcjach, bo klasa przekazana propem trafia na korzeń
+     komponentu Section i nosi JEGO scope — bez :global reguła po cichu
+     nie działa (ta sama pułapka co w Atmosphere).
+
+     PageHeader ma własny `padding-block-end` i nie przyjmuje klasy,
+     więc górę skracamy ujemnym marginesem sekcji. Jest to bezpieczne
+     wyłącznie dlatego, że obie sekcje stoją na tym samym tonie
+     `default`, czyli na tym samym `--surface` — nie ma szwu do
+     odsłonięcia. Przy tonie `alt` ta sztuczka zostawiłaby pasek. */
+  :global(.section.fakty-sekcja) {
+    padding-block-start: 0;
+    margin-block-start: calc(var(--space-sm) * -1.5);
   }
 
+  /* 123 px → ok. 62 px. Górę galerii ścinamy do `sm`; dolna krawędź
+     sekcji faktów zostaje, żeby CTA nie kleiło się do pierwszego kadru. */
+  :global(.section.galeria-sekcja) {
+    padding-block-start: var(--space-sm);
+  }
+
+  /* 77 px → ok. 62 px. Między `--space-xl` (77) a `--space-lg` (46) nie
+     ma tokenu, a 46 byłoby już ścisłe jak na sekcję domykającą stronę. */
+  :global(.section.kontakt-sekcja) {
+    padding-block: clamp(2.25rem, 1.875rem + 2.5vw, 4.5rem);
+  }
+
+  /* ————————————————— cztery fakty ——————————————————
+
+     LEKKO, NIE KARTAMI. Rozdziela je znak w kółku, wielkość pisma etykiety
+     i odstęp — nie obramowanie i nie wypełnienie. Ramka byłaby tu dokładnie
+     tym „pudełkiem na informację", które zasada z base.css odrzuca: fakty
+     są krótkie, równoległe i niczego nie trzeba przed nimi zamykać.
+
+     UKŁAD 2 × 2, NIE CZTERY WĄSKIE TORY. Rząd czterech kolumn dawał na
+     1280 px tor 281 px: dla „Adresu" o wiele za dużo pustki, dla zdania
+     klientki o zajęciach wciąż za mało. W siatce 2 × 2 tor ma 583 px,
+     czyli mieści dłuższą treść w dwóch–trzech wierszach i nie zostawia
+     pod krótką pustego pasa.
+
+     Znak stoi OBOK treści, nie nad nią — przy szerokim torze kolumna
+     ikona + tekst czyta się jak jeden wiersz informacji. */
   .fakty {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
-    /* minmax(0, …), nie minmax(8rem, …): najdłuższe słowo w adresie
-       („Grunwaldzka") ma większą szerokość min-content niż 8 rem, więc
-       auto-fit liczył węższe tory i fakty łamały się na dwa wiersze. */
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-lg) var(--space-md);
+    gap: var(--space-lg);
+  }
+
+  .fakt {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-sm);
+    align-items: start;
   }
 
   .fakt__ikona {
     --znak-size: 2.75rem;
-    margin-block-end: var(--space-sm);
   }
 
   .fakt__label {
@@ -300,111 +335,91 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     margin-block-end: var(--space-3xs);
   }
 
-  /* Stopień pisma jak na makiecie. Przy --fs-small „ul. Grunwaldzka 55/7"
-     nie mieściło się w torze i adres rozpadał się na pięć wierszy. */
   .fakt__tekst {
-    font-size: var(--fs-caption);
+    font-size: var(--fs-small);
     color: var(--text-muted);
     line-height: 1.55;
+    /* Miara, nie szerokość toru: pełne 541 px dałoby wiersz na ok. 90
+       znaków, czyli za długo. 42ch trafia w pasmo czytelności i nie
+       zostawia przy tym połowy toru pustej. */
+    max-width: 42ch;
   }
 
-  .studio__hero {
-    margin: 0;
-    border-radius: var(--radius-card);
-    overflow: hidden;
-  }
+  /* ————————————————— wyjście do grafiku ————————————————— */
 
-  .studio__heroFoto {
-    display: block;
-    inline-size: 100%;
-    block-size: auto;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
+  .grafik {
+    margin-block-start: var(--space-md);
   }
 
   /* ————————————————————— galeria ————————————————————— */
 
-  /* Równy rząd, nie schodki i nie przewijany pas. Kadry są różnych proporcji
-     (pion i poziom), więc wspólne `aspect-ratio` przycina je do jednej linii. */
+  /* Cztery równe kafle: 2 × 2 od 36 rem w górę, jedna kolumna na telefonie.
+     Progu trzeciej ani czwartej kolumny nie ma i nie będzie — przy czterech
+     torach kafel schodzi do 286 px i galeria znów czyta się jak miniatury.
+
+     Odstęp celowo mały: kafle mają czytać się jako jedna galeria, a nie
+     jako cztery osobne zdjęcia obok siebie. Ten sam rytm co na stronie
+     głównej. */
   .galeria {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-sm);
+    gap: var(--space-xs);
+  }
+
+  /* Kadr trzyma RAMKA, nie samo zdjęcie — zaokrąglenie i przycięcie siedzą
+     na kaflu, więc powiększenie obrazu przy najechaniu dzieje się wewnątrz
+     stałej ramki i siatka nie może się ruszyć. */
+  .galeria__pole {
+    overflow: hidden;
+    border-radius: var(--radius-md);
   }
 
   .galeria__foto {
     display: block;
     inline-size: 100%;
     block-size: auto;
+    /* Proporcja natywna wszystkich ośmiu plików — kafel niczego nie obcina. */
     aspect-ratio: 3 / 2;
     object-fit: cover;
-    border-radius: var(--radius-md);
   }
 
-  /* ————————————————————— dwie karty ————————————————————— */
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .galeria__foto {
+      transition: transform var(--dur) var(--ease);
+    }
 
-  .studio__dol {
-    display: grid;
-    gap: var(--space-lg);
-    align-items: start;
+    .galeria__pole:hover .galeria__foto {
+      transform: scale(1.03);
+    }
   }
 
-  .karta {
-    border-radius: var(--radius-card);
-    padding: var(--space-lg);
-  }
+  /* ————————————————— kontakt ————————————————— */
 
-  .karta--opis {
-    background: var(--surface-alt);
-  }
-
-  .karta--kontakt {
-    background: var(--surface);
-    border: var(--hairline) solid var(--line);
-  }
-
-  /* Piktogram stoi obok tekstu, nie nad nim — inaczej niż w faktach, bo tu
-     jest jeden na całą kartę i pełni rolę znacznika, a nie etykiety. */
-  .karta--opis {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-md);
-    align-items: start;
-  }
-
-  .karta__ikona {
-    color: var(--accent);
-    display: grid;
-    place-items: center;
-    margin-block-start: 0.15em;
-  }
-
-  .karta__tytul {
-    font-size: var(--fs-h3);
+  /* Kompaktowo: nagłówek wielkości etykiety i jeden rząd pozycji.
+     Poprzednia wersja stała na sekcji `lg` z nagłówkiem H3 i listą
+     w słupku — zajmowała pół ekranu na trzy linijki treści. */
+  .kontakt-panel__tytul {
+    font-size: var(--fs-caption);
+    letter-spacing: var(--ls-eyebrow);
+    text-transform: uppercase;
+    font-family: var(--font-text);
+    color: var(--text-muted);
     margin-block-end: var(--space-sm);
   }
-
-  .karta__tekst {
-    max-width: var(--measure);
-    line-height: var(--lh-loose);
-  }
-
-  /* ————————————————— dane kontaktowe ————————————————— */
 
   .kontakt {
     list-style: none;
     padding: 0;
-    margin: 0 0 var(--space-lg);
-    display: grid;
-    gap: var(--space-sm);
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-xl);
   }
 
   .kontakt li {
-    display: grid;
-    grid-template-columns: 2rem 1fr;
+    display: flex;
     align-items: center;
     gap: var(--space-2xs);
   }
@@ -420,56 +435,46 @@ const metaDescription = `TAK MI MOVE ${location.city}, ${address}. Joga, pilates
     display: inline-flex;
     align-items: center;
     min-block-size: 44px;
-  }
-
-  .kontakt__profile {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
     font-size: var(--fs-small);
   }
 
-  /* Przycisk na całą szerokość karty, tak jak na makiecie.
-     :global, bo klasa podana propem ląduje na korzeniu komponentu Button,
-     a ten nosi swój własny scope Astro — reguła bez :global po prostu
-     nigdy by nie trafiła. */
-  .karta--kontakt :global(.kontakt__cta) {
-    display: flex;
-    inline-size: 100%;
-    justify-content: center;
-  }
-
-  @media (min-width: 48rem) {
-    /* Cztery kadry w jednym rzędzie — układ z makiety. */
+  @media (min-width: 36rem) {
     .galeria {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
-  @media (min-width: 60rem) {
-    .studio__top {
-      /* Kadr zwężony, żeby tor faktu zmieścił „83-000 Pruszcz Gdański"
-         w jednym wierszu — przy szerszym kadrze brakowało kilkunastu pikseli
-         i kod pocztowy zjeżdżał do trzeciej linii. */
-      grid-template-columns: 1fr minmax(16rem, 24rem);
-      gap: var(--space-2xl);
-    }
-
-    /* Wszystkie fakty w jednym rzędzie, niezależnie od tego, ile ich jest:
-       Pruszcz ma cztery, Gdańsk pięć (dochodzi parking). `grid-auto-flow`
-       radzi sobie z obiema liczbami bez wpisywania ich do arkusza. */
+  /* Fakty schodzą w dwie kolumny dopiero na desktopie. Na tablecie tor
+     miałby ok. 340 px — mniej, niż potrzebuje najdłuższy fakt, więc
+     jedna kolumna jest tam zwyczajnie czytelniejsza. */
+  @media (min-width: 64rem) {
     .fakty {
-      grid-template-columns: none;
-      grid-auto-flow: column;
-      grid-auto-columns: minmax(0, 1fr);
-      gap: var(--space-md);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg) var(--space-2xl);
     }
 
-    /* Karta z opisem szersza od kontaktowej: opis to tekst ciągły, dane
-       kontaktowe to krótkie wiersze i przycisk. */
-    .studio__dol {
-      grid-template-columns: 1.15fr 1fr;
-      gap: var(--space-lg);
+    /* Subtelny separator: jedna włoskowata linia między kolumnami,
+       najcieńsza rzecz na stronie. Bez linii poziomych — rytm rzędów
+       robi już odstęp.
+
+       Linia stoi POŚRODKU rynny, nie przy prawej kolumnie. Sama
+       `border-inline-start` rysuje się na krawędzi elementu, czyli na
+       końcu odstępu — wizualnie kleiła się do prawej kolumny i rynna
+       wyglądała, jakby miała dwie różne szerokości. Ujemny margines
+       cofa krawędź o pół rynny, a padding tej samej wielkości oddaje
+       treści jej miejsce: linia siada w osi, a kolumny się nie ruszają. */
+    .fakt:nth-child(even) {
+      border-inline-start: var(--hairline) solid var(--line-detail);
+      margin-inline-start: calc(var(--space-2xl) / -2);
+      padding-inline-start: calc(var(--space-2xl) / 2);
+    }
+
+    /* Nieparzysta liczba faktów — dziś Gdańsk, dopóki klientka nie
+       potwierdzi wyposażenia. Ostatni fakt bierze wtedy oba tory,
+       zamiast zostawiać w drugim rzędzie dziurę na pół szerokości.
+       Przy czterech faktach ta reguła nie łapie. */
+    .fakt:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
     }
   }
 </style>

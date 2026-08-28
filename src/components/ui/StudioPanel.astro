@@ -1,0 +1,236 @@
+---
+import { Image } from 'astro:assets';
+import Mark from '~/components/ui/Mark.astro';
+import { formatAddress, site } from '~/data/site';
+import type { StudioLocation } from '~/types';
+
+/**
+ * Panel jednej lokalizacji — wspólny dla strony głównej i rozdroża /studia.
+ *
+ * Do Etapu 5 ten sam kafel istniał w dwóch niezależnych wersjach: panel
+ * bez obramowania w `StudiosSplit.astro` (zatwierdzony w Etapie 4) i ciężka
+ * karta z obwódką, paddingiem 46 px i włoskową kreską nad nazwą na `/studia`.
+ * Ta druga była dokładnie tym wzorcem, który klientka odrzuciła. Zamiast
+ * poprawiać go drugi raz, obie strony dostają jedną implementację.
+ *
+ * PANELE, NIE KARTY (decyzja z 26.08.2026 — częściowe cofnięcie reguły ramek
+ * z Etapu 3). Wydzielenie dwóch lokalizacji jest funkcjonalnie uzasadnione:
+ * czytelnik ma wybrać JEDNĄ z dwóch rzeczy, a każda niesie własny komplet
+ * informacji — kadr, adres, telefon, mail i dwa wyjścia. Bez wydzielenia oba
+ * komplety zlewają się w jedną listę. To przypadek 1 i 4 z zasady ramek
+ * w base.css: panel grupuje treść i oddziela to, czego nie rozdzieli odstęp.
+ *
+ * Odróżnienie jest minimalne i nie polega na obramowaniu — jaśniejszy
+ * `--surface` zamiast kreski. Zero obwódki, zero cienia.
+ *
+ * Kadr wchodzi na pełną szerokość panelu, bez marginesu: to on ma prowadzić,
+ * zgodnie z prośbą klientki, żeby oba studia prezentowały się „przede
+ * wszystkim przez zdjęcia". Treść dostaje padding, zdjęcie nie.
+ */
+interface Props {
+  location: StudioLocation;
+  photo: ImageMetadata;
+  /** Kadry ładowane leniwie na stronie głównej, od razu na /studia. */
+  eager?: boolean;
+  /**
+   * Zwarty rytm wnętrza panelu — o kilkanaście pikseli krótsze odstępy
+   * między kadrem, nazwą, adresem i wyjściami.
+   *
+   * Wariant istnieje, bo strona główna jest ZATWIERDZONA i ma zostać
+   * wizualnie nietknięta, a rozdroże /studia prosiło o skrócenie kart.
+   * Domyślnie wyłączony, więc strona główna nie wie o tej zmianie.
+   */
+  compact?: boolean;
+  /**
+   * Poziom nagłówka z nazwą miasta. Na stronie głównej panel stoi pod `h2`
+   * sekcji, więc nazwa jest `h3`; na `/studia` panel jest treścią pierwszego
+   * rzędu i nazwa musi być `h2`. Bez tego jedna z dwóch stron miałaby
+   * dziurę w hierarchii nagłówków.
+   */
+  headingLevel?: 2 | 3;
+  linkLabel: string;
+  scheduleLabel: string;
+}
+
+const {
+  location,
+  photo,
+  eager = false,
+  compact = false,
+  headingLevel = 3,
+  linkLabel,
+  scheduleLabel,
+}: Props = Astro.props;
+
+const Naglowek = `h${headingLevel}` as 'h2' | 'h3';
+---
+
+<li class:list={['studio-card', compact && 'studio-card--zwarty']}>
+  <figure class="studio-card__figure">
+    <Image
+      src={photo}
+      alt={`Sala studia TAK MI MOVE w ${location.cityLocative}`}
+      widths={[480, 720, 1000]}
+      sizes="(min-width: 48rem) 42vw, 100vw"
+      loading={eager ? 'eager' : 'lazy'}
+      class="studio-card__photo"
+    />
+  </figure>
+
+  <div class="studio-card__tresc">
+    <div class="studio-card__head">
+      <Mark size="0.9rem" class="studio-card__mark" />
+      <Naglowek class="studio-card__name">{location.city}</Naglowek>
+    </div>
+
+    <p class="studio-card__address">{formatAddress(location)}</p>
+
+    <dl class="studio-card__contact">
+      <dt>Telefon</dt>
+      <dd>
+        <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+      </dd>
+      <dt>E-mail</dt>
+      <dd>
+        <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
+      </dd>
+    </dl>
+
+    {/* Dosunięte do dołu panelu, żeby oba wyjścia stały w jednej linii
+        niezależnie od długości adresu obu studiów. */}
+    <p class="studio-card__links">
+      <a href={`/studia/${location.slug}`} data-event="studio_location_select">
+        {linkLabel}
+      </a>
+      <a href={`/grafik?studio=${location.slug}`} data-event="schedule_page_view">
+        {scheduleLabel}
+      </a>
+    </p>
+  </div>
+</li>
+
+<style>
+  /* Panel: jaśniejsza powierzchnia, zaokrąglenie, zero obramowania i zero
+     cienia. Kolumna, bo kadr i treść idą jedno pod drugim, a odsyłacze mają
+     zejść na sam dół.
+
+     `overflow: hidden` przycina górne rogi kadru do promienia panelu —
+     dzięki temu zdjęcie może wejść na pełną szerokość, bez własnego
+     zaokrąglenia i bez marginesu. */
+  .studio-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    /* Panele równej wysokości niezależnie od długości adresu. */
+    block-size: 100%;
+  }
+
+  .studio-card__figure {
+    margin: 0;
+  }
+
+  .studio-card__photo {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  /* Padding tylko wokół treści — kadr wyżej idzie od krawędzi do krawędzi. */
+  .studio-card__tresc {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .studio-card__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .studio-card__head :global(.studio-card__mark) {
+    color: var(--accent);
+  }
+
+  .studio-card__name {
+    font-size: var(--fs-h4);
+  }
+
+  .studio-card__address {
+    color: var(--text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .studio-card__contact {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3xs) var(--space-sm);
+    margin-block-start: var(--space-2xs);
+    font-size: var(--fs-small);
+    line-height: 1.45;
+  }
+
+  .studio-card__contact dt {
+    color: var(--text-muted);
+  }
+
+  .studio-card__contact dd {
+    margin: 0;
+  }
+
+  .studio-card__contact a {
+    color: var(--text-accent);
+  }
+
+  /* `auto` na górnym marginesie dopycha odsyłacze do dołu panelu — to jest
+     mechanizm wyrównania obu paneli, nie sam `block-size: 100%`. */
+  .studio-card__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    margin-block-start: auto;
+    padding-block-start: var(--space-sm);
+    font-size: var(--fs-small);
+  }
+
+  .studio-card__links a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    color: var(--text-accent);
+    border-block-end: var(--hairline) solid var(--line-strong);
+    text-decoration: none;
+    padding-block-end: 0.1em;
+  }
+
+  .studio-card__links a:hover {
+    border-block-end-color: currentColor;
+  }
+
+  /* ————————————————— wariant zwarty —————————————————
+
+     Pomiar panelu na 1280 px przed zmianą: kadr → nazwa 16 px,
+     nazwa → adres 4, adres → kontakt 12, kontakt → wyjścia 4,
+     wyjścia → dół 16, cała karta 585 px.
+
+     Ścinamy tylko to, co jest odstępem, i tylko o jeden stopień skali.
+     Wysokość minimalna wyjść (44 px) zostaje nietknięta — to cel
+     dotykowy, nie ozdoba. */
+  .studio-card--zwarty .studio-card__tresc {
+    padding-block: var(--space-xs);
+  }
+
+  .studio-card--zwarty .studio-card__contact {
+    margin-block-start: var(--space-3xs);
+  }
+
+  .studio-card--zwarty .studio-card__links {
+    padding-block-start: var(--space-xs);
+  }
+</style>

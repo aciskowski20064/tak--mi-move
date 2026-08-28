@@ -109,7 +109,10 @@ export const pages = {
     // Lead obiecywał wcześniej „dojazd", a sekcja dojazdu zniknęła z podstron
     // studiów — klientka odpowiedziała na to pytanie „nie opisujemy"
     // (odpowiedź 35). Zapowiedź musi zgadzać się z tym, co stoi niżej.
-    lead: 'Wybierz studio, do którego łatwiej Ci dotrzeć. Na podstronie każdego znajdziesz adres, wejście i listę zajęć, które się w nim odbywają.',
+    // Treść wskazana przez klienta (28.08.2026), przepisana bez zmian.
+    // Kropka na końcu dołożona — pozostałe leady w serwisie są zdaniami
+    // zamkniętymi i brak jednej byłby widoczny.
+    lead: 'Wybierz studio bliżej siebie. Poznaj przestrzeń, najważniejsze informacje i sprawdź, jakie zajęcia odbywają się w danej lokalizacji.',
   },
 
   classes: {

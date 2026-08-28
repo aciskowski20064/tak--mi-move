@@ -1,11 +1,11 @@
 ---
-import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
-import Mark from '~/components/ui/Mark.astro';
-import { locations, formatAddress, site } from '~/data/site';
+import StudioPanel from '~/components/ui/StudioPanel.astro';
+import { locations } from '~/data/site';
 import { pages } from '~/data/copy/pages';
+import { home } from '~/data/copy/home';
 
 import zdjecieP from '~/assets/photos/studio-pruszcz-sala.jpg';
 import zdjecieG from '~/assets/photos/studio-gdansk-sala.jpg';
@@ -21,168 +21,100 @@ const zdjecia: Record<string, ImageMetadata> = {
  *
  * Brief (dok. projektowy §5) ostrzega przed dublowaniem treści między
  * podstronami lokalizacji a stroną główną — dlatego to jest zwięzły spis
- * praktyczny (adres, kontakt, dojazd), a nie powtórzenie sekcji z „Start”.
+ * praktyczny (adres, kontakt, wyjścia), a nie powtórzenie sekcji z „Start”.
+ *
+ * Etap 5: karta z obwódką, paddingiem 46 px i włoskową kreską nad nazwą
+ * ustąpiła panelowi ze strony głównej. Ten sam komponent, te same etykiety
+ * wyjść — rozdroże przestało być osobnym wzorcem wizualnym.
  */
 const t = pages.studios;
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
   <PageHeader
+    size="sm"
     eyebrow={t.eyebrow}
     title={t.title}
     lead={t.lead}
     crumbs={[{ label: 'Studia', href: '/studia' }]}
   />
 
-  <Section size="md">
+  <Section size="md" tone="alt" class="karty-sekcja">
     <ul class="studios">
       {
-        locations.map((location) => {
-          return (
-            <li class="studio-card">
-              <div class="studio-card__head">
-                <Mark size="0.9rem" class="studio-card__mark" />
-                <h2 class="studio-card__name">{location.city}</h2>
-              </div>
-
-              <p class="studio-card__address">{formatAddress(location)}</p>
-
-              {/* Kadr zamiast opisu — decyzja z 20.08.2026. Opis sali został
-                  na podstronie studia; tutaj tę samą robotę wykonuje zdjęcie.
-                  Różnicę między jasną salą z jodełką w Pruszczu a betonem
-                  i złoconymi lustrami w Gdańsku widać szybciej, niż da się
-                  ją przeczytać. */}
-              <figure class="studio-card__figure">
-                <Image
-                  src={zdjecia[location.slug]}
-                  alt={`Sala studia TAK MI MOVE w ${location.cityLocative}`}
-                  widths={[480, 720, 1000]}
-                  sizes="(min-width: 48rem) 42vw, 100vw"
-                  loading="eager"
-                  class="studio-card__photo"
-                />
-              </figure>
-
-              <dl class="studio-card__contact">
-                <dt>Telefon</dt>
-                <dd>
-                  <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-                </dd>
-                <dt>E-mail</dt>
-                <dd>
-                  <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
-                </dd>
-              </dl>
-
-              <p class="studio-card__links">
-                <a href={`/studia/${location.slug}`} data-event="studio_location_select">
-                  Poznaj przestrzeń
-                </a>
-                <a href={`/grafik?studio=${location.slug}`} data-event="schedule_page_view">
-                  Grafik
-                </a>
-              </p>
-            </li>
-          );
-        })
+        locations.map((location) => (
+          <StudioPanel
+            location={location}
+            photo={zdjecia[location.slug]!}
+            eager
+            compact
+            headingLevel={2}
+            linkLabel={home.studios.linkLabel}
+            scheduleLabel={home.studios.scheduleLabel}
+          />
+        ))
       }
     </ul>
   </Section>
 </Base>
 
 <style>
+  /* ————————————————— rytm i podział —————————————————
+
+     ODDZIELENIE SEKCJI. Do tej pory sekcja kart stała na tonie
+     `default`, czyli na tym samym `--bone` co panele w środku —
+     pomiar potwierdzał, że tło sekcji i tło panelu miały identyczną
+     wartość rgb(247, 244, 235). Panele nie miały się więc na czym
+     odciąć i cała sekcja czytała się jak dalszy ciąg nagłówka.
+
+     Ton `alt` to dokładnie ten sam mechanizm, którym oddzielona jest
+     sekcja studiów na stronie głównej: różnica jasności powierzchni,
+     bez kreski, bez obwódki i bez cienia. Żadnego nowego ozdobnika
+     ani podniesienia kontrastu — to ta sama para tonów, która na
+     stronie głównej jest już zatwierdzona.
+
+     ODSTĘP DO KART. Przed zmianą od spodu leadu do górnej krawędzi
+     karty było 153 px, dziś 93 — o 39% mniej. Składają się na to dwie
+     rzeczy: `size="sm"` na nagłówku (77 → 46 px pod leadem) i krótsza
+     góra tej sekcji (77 → 46 px). Sam podział tonem robi teraz robotę,
+     którą wcześniej musiała robić pustka, więc 47 px oddechu przed
+     krawędzią pasa w zupełności wystarcza.
+
+     Bez ujemnych marginesów: przy zmianie tonu ciągnęłyby pas `alt`
+     w górę pod nagłówek, a dobrane na oko dały 23 px między leadem
+     a krawędzią koloru — wizualnie zlepek.
+
+     :global, bo klasa trafia na korzeń komponentu Section i nosi JEGO
+     scope (ta sama pułapka co w Atmosphere i na podstronach studiów). */
+  /* Lead łamany na równe wiersze, nie na "ile się zmieści".
+     Globalne `pretty` dla akapitów pilnuje tylko sierot i przy tym
+     tekście dawało 48 / 49 / 33 znaki — trzeci wiersz o jedną trzecią
+     krótszy od dwóch pierwszych, co pod wyśrodkowaną kreską nagłówka
+     widać od razu. `balance` wyrównuje długości wierszy.
+
+     Reguła jest globalna, bo element nosi scope komponentu PageHeader,
+     ale arkusz tej strony linkuje wyłącznie /studia — pozostałe leady
+     w serwisie zostają na `pretty`. */
+  :global(.page-header__lead) {
+    text-wrap: balance;
+    /* 40ch zamiast globalnych 46ch. Przy 46ch balans dawał trzy wiersze
+       451 / 395 / 382 px, czyli schodek. Przy 40ch łamanie trafia
+       w kropkę po pierwszym zdaniu, a trzy kolejne wiersze mają
+       318 / 328 / 310 px — rozrzut 18 px, czyli 5%. Blok jest o wiersz
+       wyższy i o to samo spokojniejszy. */
+    max-width: 40ch;
+  }
+
+  :global(.section.karty-sekcja) {
+    padding-block-start: var(--space-lg);
+  }
+
   .studios {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
     gap: var(--space-lg);
-  }
-
-  /* Kafel zamiast kolumny z kreską u góry. Cienka linia została, ale
-     teraz siedzi w środku karty, nad nazwą — tak jak na makiecie. */
-  .studio-card {
-    display: grid;
-    align-content: start;
-    gap: var(--space-2xs);
-    background: var(--surface);
-    border: var(--hairline) solid var(--line);
-    border-radius: var(--radius-card);
-    padding: var(--space-lg);
-  }
-
-  .studio-card::before {
-    content: '';
-    block-size: 1px;
-    background: var(--line-detail);
-    margin-block-end: var(--space-sm);
-  }
-
-  .studio-card__figure {
-    margin: 0;
-    margin-block-start: var(--space-md);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-
-  .studio-card__photo {
-    display: block;
-    inline-size: 100%;
-    block-size: auto;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-  }
-
-  .studio-card__head {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2xs);
-  }
-
-  .studio-card__head :global(.studio-card__mark) {
-    color: var(--accent);
-  }
-
-  .studio-card__name {
-    font-size: var(--fs-h2);
-  }
-
-  .studio-card__address {
-    color: var(--text-muted);
-    font-size: var(--fs-small);
-  }
-
-  .studio-card__contact {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-3xs) var(--space-sm);
-    margin-block-start: var(--space-sm);
-    font-size: var(--fs-small);
-  }
-
-  .studio-card__contact dt {
-    color: var(--text-muted);
-  }
-
-  .studio-card__contact dd {
-    margin: 0;
-  }
-
-  .studio-card__contact a {
-    color: var(--text-accent);
-  }
-
-  .studio-card__links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs) var(--space-lg);
-    margin-block-start: var(--space-md);
-    font-size: var(--fs-small);
-  }
-
-  .studio-card__links a {
-    color: var(--text-accent);
-    padding-block: 0.25rem;
   }
 
   @media (min-width: 48rem) {

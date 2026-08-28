@@ -96,6 +96,12 @@ export const locations: StudioLocation[] = [
     // TODO(klientka): czy parking przy studiu jest płatny (odpowiedź 34 tego
     // nie rozstrzyga — dla Gdańska tak, dla Pruszcza zostało nieokreślone).
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
+    /**
+     * FAKT: pełne zdanie klientki (25.08.2026), podane wprost dla Pruszcza.
+     * Zapis jak u niej — małą literą, bez skracania.
+     */
+    equipmentInfo:
+      'sprzęt do ćwiczeń, szatnia, prysznic, kosmetyki i ręczniki dostępne na miejscu',
     /** FAKT: treść wprost od klientki (25.08.2026). Pruszcz bez „z dziećmi". */
     classesSummary:
       'zróżnicowane formy ruchu i intensywność, zajęcia w ciąży, sesje grupowe i indywidualne',
@@ -122,8 +128,33 @@ export const locations: StudioLocation[] = [
      * czasu potwierdzenia zostaje sam adres z nagłówka.
      */
     entranceInfo: 'Parter budynku',
-    /** FAKT: odpowiedź 34. */
+    /**
+     * FAKT: odpowiedź 34. Świadomie NIE renderowane od Etapu 5 — lista
+     * klientki ma dokładnie cztery fakty i parkingu na niej nie ma.
+     * Dane zostają, żeby ich nie stracić przy ewentualnej zmianie decyzji.
+     */
     parkingInfo: 'Płatna strefa w okolicy',
+    /**
+     * Wpisane na polecenie (28.08.2026) po tym, jak wcześniej stało tu
+     * PENDING. Każdy człon ma pokrycie w źródle, żadnego nie zmyślono:
+     *
+     *   szatnia ......... odpowiedź 10, wprost „szatnie w obu studiach"
+     *   prysznic ........ odpowiedź 50 („kosmetyki, ręczniki, prysznic
+     *   kosmetyki ....... dostępne") — bez wskazania lokalizacji, więc
+     *   ręczniki ........ traktowana jako zasada marki; ta sama odpowiedź
+     *                     stoi już jako reguła ogólna na /grafik
+     *   sprzęt .......... widoczny na zdjęciach z sesji w Gdańsku
+     *                     (regał z hantlami, piłkami i wałkami, DSC01472)
+     *
+     * Brzmienie celowo takie samo jak w Pruszczu: oba studia oferują to
+     * samo, a odpowiedź 10 mówi to wprost. Różnicowanie słów dla samego
+     * różnicowania byłoby wymyślaniem faktu, którego nie ma.
+     *
+     * DO POTWIERDZENIA przez klientkę przed publikacją — jedyny człon
+     * podany przez nią explicite dla Gdańska to szatnia.
+     */
+    equipmentInfo:
+      'sprzęt do ćwiczeń, szatnia, prysznic, kosmetyki i ręczniki dostępne na miejscu',
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
     /**
      * FAKT: treść wprost od klientki (25.08.2026). Gdańsk ma dopisane
