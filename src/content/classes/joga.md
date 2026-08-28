@@ -24,25 +24,15 @@ preparation: 'Zjedz lekki posiłek na min. 2 godziny przed zajęciami. Wybierz s
 contraindicationsNote: 'Jeśli jesteś w ciąży, wracasz po urazie albo operacji, skonsultuj udział z lekarzem lub fizjoterapeutą i uprzedź prowadzącą przed zajęciami. Dobierze warianty pozycji.'
 locationSlugs: ['gdansk', 'pruszcz-gdanski']
 draft: false
+# ——— Etap 6 (28.08.2026) ———
+# Ciało tego pliku to WYŁĄCZNIE treść bloku „Czego się spodziewać".
+# Zniknęły z niego: akapit wprowadzający (klientka: po wejściu w konkretne
+# zajęcia ma nie być opisu przed właściwymi blokami) oraz dodatkowe sekcje
+# H2 — lista bloków jest zamknięta i liczy cztery pozycje.
+#
+# PENDING CLIENT CONTENT: poniższy tekst nadal jest NASZĄ treścią roboczą.
+# Opisów poszczególnych zajęć od klientki nie ma ani w repo, ani
+# w materiałach — odpowiedzi 40–47 opisują wszystkie formy łącznie.
 ---
 
-<!--
-  TREŚĆ ROBOCZA — do akceptacji klientki.
-
-  Opisuje samą dyscyplinę, a nie fakty o TAK MI MOVE. Brief §13 zabrania
-  dogenerowywania opisów z nazw zajęć i wymyślania informacji o marce —
-  tu nie ma ani jednego zdania o poziomach, prowadzących, długości zajęć
-  czy sprzęcie studia. Te pola zostają puste do potwierdzenia.
--->
-
-Joga łączy trzy rzeczy, które w ciągu dnia zwykle rozjeżdżają się w różne strony: pozycje ciała, oddech i uwagę. Ćwiczysz sekwencje pozycji, utrzymując przy tym równy oddech — i to właśnie oddech, a nie głębokość skłonu, decyduje o tym, czy praktyka działa.
-
-Efekt jest podwójny. Ciało odzyskuje zakres ruchu w miejscach, które siedzenie przy biurku systematycznie skraca — biodra, klatka piersiowa, kark. Głowa dostaje godzinę bez telefonu i bez rozproszeń, co dla wielu osób okazuje się ważniejsze niż sama część fizyczna.
-
-## Czego się spodziewać
-
 Zajęcia zaczynają się spokojnie — od uspokojenia oddechu i rozgrzania kręgosłupa. Potem przechodzisz przez sekwencję pozycji stojących i pracujących z równowagą, a kończysz odpoczynkiem w leżeniu. Nie ma lustra, przed którym trzeba wypaść dobrze, i nie ma tempa, za którym trzeba nadążyć.
-
-## Nie musisz być rozciągnięta
-
-To najczęstsze nieporozumienie wokół jogi. Rozciągnięcie nie jest warunkiem wejścia — jest jednym z możliwych skutków regularnej praktyki. Każdą pozycję da się wykonać w wersji łatwiejszej, z podparciem albo w mniejszym zakresie, i tak właśnie zaczyna większość osób.

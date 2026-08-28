@@ -23,21 +23,15 @@ preparation: 'Zjedz lekki posiłek na min. 2 godziny przed zajęciami. Wybierz s
 contraindicationsNote: 'Świeży uraz, stan zapalny i nadmierna ruchomość stawów wymagają ostrożności — skonsultuj je z fizjoterapeutą i powiedz prowadzącej przed zajęciami.'
 locationSlugs: ['gdansk', 'pruszcz-gdanski']
 draft: false
+# ——— Etap 6 (28.08.2026) ———
+# Ciało tego pliku to WYŁĄCZNIE treść bloku „Czego się spodziewać".
+# Zniknęły z niego: akapit wprowadzający (klientka: po wejściu w konkretne
+# zajęcia ma nie być opisu przed właściwymi blokami) oraz dodatkowe sekcje
+# H2 — lista bloków jest zamknięta i liczy cztery pozycje.
+#
+# PENDING CLIENT CONTENT: poniższy tekst nadal jest NASZĄ treścią roboczą.
+# Opisów poszczególnych zajęć od klientki nie ma ani w repo, ani
+# w materiałach — odpowiedzi 40–47 opisują wszystkie formy łącznie.
 ---
 
-<!--
-  TREŚĆ ROBOCZA — do akceptacji klientki.
-  Opis dyscypliny, bez faktów o marce (brief §13).
--->
-
-Stretching bywa traktowany jak dodatek na końcu treningu. Jako osobne zajęcia działa inaczej: masz całą godzinę na to, żeby dojść do zakresu, którego pięciominutowe rozciąganie po biegu nigdy nie osiągnie.
-
-Pracujesz nad miejscami, które w codziennym życiu skracają się najszybciej — zginaczami bioder, tylną taśmą nóg, klatką piersiową i obręczą barkową. Pozycje utrzymujesz dłużej, oddychając w napięcie, bo to oddech, a nie siła, przesuwa granicę.
-
-## Czego się spodziewać
-
 Tempo jest wolne i przewidywalne. Nie ma sekwencji, za którą trzeba nadążać, ani ćwiczeń, w których łatwo się zgubić. Dla wielu osób to najspokojniejsze zajęcia w tygodniu — i jednocześnie te, po których najbardziej czuć różnicę następnego dnia.
-
-## Rozciąganie to nie ból
-
-Granica jest prosta: ma być odczuwalne napięcie, nie ostry ból. Ból oznacza, że zakres jest za duży i ciało broni się skurczem — czyli że robisz dokładnie odwrotnie do zamierzonego efektu. Prowadząca pokazuje, jak rozpoznać tę różnicę.

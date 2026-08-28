@@ -5,7 +5,6 @@ import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import ClassCard from '~/components/ui/ClassCard.astro';
-import Todo from '~/components/ui/Todo.astro';
 import { pages } from '~/data/copy/pages';
 import { home } from '~/data/copy/home';
 import { copyOrNull } from '~/lib/copy';
@@ -32,6 +31,7 @@ const choose = home.choose;
   <PageHeader
     eyebrow={t.eyebrow}
     title={t.title}
+    titleLines={t.titleLines}
     lead={t.lead}
     crumbs={[{ label: 'Zajęcia', href: '/zajecia' }]}
   />
@@ -48,18 +48,22 @@ const choose = home.choose;
     <ul class="classes">
       {classes.map((entry, index) => (
         <li>
+          {/* Klientka: przy zajęciach zamiast lokalizacji ma stać wyjście
+              do grafiku. Adres bez parametru — /grafik jest prerenderowany
+              i filtrowania po formie ruchu jeszcze nie obsługuje. */}
           <ClassCard
             href={`/zajecia/${entry.id}`}
             name={entry.data.name}
             description={copyOrNull(entry.data.shortDescription)}
             index={index + 1}
+            scheduleHref="/grafik"
           />
         </li>
       ))}
     </ul>
   </Section>
 
-  <Section size="md" tone="alt">
+  <Section size="md" tone="alt" class="wybor">
     <header class="choose__head">
       <p class="eyebrow">{choose.eyebrow}</p>
       <h2>{choose.title}</h2>
@@ -67,17 +71,16 @@ const choose = home.choose;
 
     <ul class="choose__list">
       {
+        /* Podpowiedzi pod hasłami zdjęte (28.08.2026). Sekcja ma mocny
+           nagłówek, a cała logika siedzi w samym haśle i w pigułkach obok
+           — dwa dodatkowe wiersze pod każdym z trzech haseł rozciągały
+           blok w pionie i robiły z niego opis zamiast wyboru.
+           Pole `hint` zostaje w danych: nie renderujemy go, nie kasujemy. */
         choose.scenarios.map((scenario) => {
-          const hint = copyOrNull(scenario.hint);
           return (
             <li class="scenariusz">
               <div class="scenariusz__tresc">
                 <h3 class="scenariusz__label">{typo(scenario.label)}</h3>
-                {hint ? (
-                  <p class="scenariusz__hint">{typo(hint)}</p>
-                ) : (
-                  <Todo label={scenario.hint} block />
-                )}
               </div>
 
               <ul class="scenariusz__zajecia">
@@ -116,6 +119,39 @@ const choose = home.choose;
      własny scope Astro, nie tej strony. */
   /* Dwie klasy w selektorze, bo pojedyncza przegrywała kolejnością
      z regułą .section--md z komponentu Section. */
+  /* ————————————————— H1 w słupku —————————————————
+
+     Ten sam rytm co w zatwierdzonym hero strony głównej: trzy słowa,
+     każde w osobnym wierszu, wszystkie od lewej krawędzi.
+
+     `min-content` zamiast trzech elementów blokowych albo twardych
+     złamań: szerokość spada do najdłuższego słowa („RÓWNOWAGA"), więc
+     każde kolejne musi zejść niżej. Treść nagłówka zostaje jednym
+     ciągiem ze spacjami, czyli czytnik ekranu odczyta „SIŁA SPOKÓJ
+     RÓWNOWAGA", a nie trzy osobne wyrazy. Globalne `max-width: 18ch`
+     z base.css przestaje mieć znaczenie, bo min-content jest węższe.
+
+     Stopień pisma i światło przepisane z hero: 1.08 na interlinii
+     i 0.03em na rozstrzeleniu. Hero liczy stopień w `cqw`, czego tu
+     powtórzyć nie można — nagłówek podstrony nie stoi w kontenerze
+     zapytań. Clamp na `vw` jest dobrany tak, żeby trafić w te same
+     wartości: ok. 54 px na 1280 i 32 px na 375, czyli dokładnie tyle,
+     ile daje hero na tych szerokościach.
+
+     :global, bo element nosi scope komponentu PageHeader. Arkusz tej
+     strony linkuje wyłącznie /zajecia — sprawdzone pomiarem na
+     pozostałych podstronach. */
+  :global(.page-header__title) {
+    /* Wiersze są blokowe, więc łamaniem nie steruje już szerokość
+       pudełka — `min-content` i `text-wrap` nie mają tu nic do roboty.
+       Zostaje samo wyrównanie do lewej krawędzi kolumny. */
+    display: grid;
+    justify-items: start;
+    font-size: clamp(2rem, 1.5rem + 2.5vw, 3.375rem);
+    line-height: 1.08;
+    letter-spacing: 0.03em;
+  }
+
   :global(.section.siatkaZajec) {
     padding-block-start: 0;
   }
@@ -137,9 +173,22 @@ const choose = home.choose;
     gap: var(--space-md);
   }
 
+  /* ————————————————— rytm sekcji wyboru —————————————————
+
+     Pomiar przed zmianą na 1280 px: sekcja 940 px wysokości, z czego
+     153 px to jej własny padding, 278 px to padding trzech wierszy
+     (46,4 px na każdą stronę), a treść zajmowała resztę. Struktura
+     zostaje bez zmian — ścinamy wyłącznie odstępy.
+
+     :global, bo klasa trafia na korzeń komponentu Section i nosi JEGO
+     scope (ta sama pułapka co przy siatce kafli wyżej). */
+  :global(.section.wybor) {
+    padding-block: var(--space-lg) var(--space-md);
+  }
+
   .choose__head {
     max-width: var(--container-text);
-    margin-block-end: var(--space-lg);
+    margin-block-end: var(--space-md);
   }
 
   .choose__head h2 {
@@ -159,7 +208,7 @@ const choose = home.choose;
   .scenariusz {
     display: grid;
     gap: var(--space-sm);
-    padding-block: var(--space-lg);
+    padding-block: var(--space-sm);
   }
 
   .scenariusz + .scenariusz {
@@ -172,12 +221,6 @@ const choose = home.choose;
     line-height: var(--lh-heading);
   }
 
-  .scenariusz__hint {
-    margin-block-start: var(--space-2xs);
-    font-size: var(--fs-small);
-    color: var(--text-muted);
-    max-width: var(--measure);
-  }
 
   /* Nazwy zajęć jako pigułki — ten sam element, co przy specjalizacjach
      na /o-nas. Wcześniej nazwy tkwiły w środku szarego zdania i tylko
@@ -215,7 +258,7 @@ const choose = home.choose;
   }
 
   .choose__contact {
-    margin-block-start: var(--space-lg);
+    margin-block-start: var(--space-md);
     font-size: var(--fs-small);
     color: var(--text-muted);
   }
@@ -242,9 +285,24 @@ const choose = home.choose;
   }
 
   @media (min-width: 52rem) {
+    /* Stała szerokość toru tekstu zamiast `1fr`. Przy `1fr` kolumna
+       zabierała całą wolną szerokość i pigułki lądowały dosunięte do
+       prawej krawędzi kontenera — potrzeba stała po lewej, a jej
+       rekomendacja 300 px dalej, bez wizualnego związku między nimi.
+
+       `max-content` rozwiązywał odległość, ale psuł porządek: każde
+       hasło ma inną długość, więc pigułki startowały w trzech różnych
+       miejscach. 38 rem to szerokość, w której najdłuższe hasło
+       („Chcę poprawić mobilność i rozciągnięcie", 597 px) nadal mieści
+       się w jednym wierszu — pigułki stoją blisko treści I w równej
+       kolumnie.
+
+       `justify-content: start` jest konieczne, bo bez niego siatka
+       rozepchnęłaby oba tory po całej szerokości. */
     .scenariusz {
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: var(--space-xl);
+      grid-template-columns: minmax(0, 38rem) auto;
+      justify-content: start;
+      gap: var(--space-lg);
       align-items: center;
     }
   }

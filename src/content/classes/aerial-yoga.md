@@ -25,25 +25,17 @@ preparation: 'TODO(klientka): opis „Jak się przygotować” dla aerial yogi �
 contraindicationsNote: 'Pozycje odwrócone nie są dla każdego. Jaskra i inne choroby oczu, nadciśnienie, problemy kardiologiczne, świeże operacje, ciąża i zaburzenia błędnika wymagają wcześniejszej konsultacji z lekarzem. Uprzedź prowadzącą przed zajęciami.'
 locationSlugs: ['gdansk', 'pruszcz-gdanski']
 draft: false
+# ——— Etap 6 (28.08.2026) ———
+# Ciało tego pliku to WYŁĄCZNIE treść bloku „Czego się spodziewać".
+# Zniknęły z niego: akapit wprowadzający (klientka: po wejściu w konkretne
+# zajęcia ma nie być opisu przed właściwymi blokami) oraz dodatkowe sekcje
+# H2 — lista bloków jest zamknięta i liczy cztery pozycje.
+#
+# PENDING CLIENT CONTENT: poniższy tekst nadal jest NASZĄ treścią roboczą.
+# Opisów poszczególnych zajęć od klientki nie ma ani w repo, ani
+# w materiałach — odpowiedzi 40–47 opisują wszystkie formy łącznie.
 ---
-
-<!--
-  TREŚĆ ROBOCZA — do akceptacji klientki.
-  Opis dyscypliny, bez faktów o marce (brief §13).
-  Uwaga: przeciwwskazania przy pozycjach odwróconych są realne i zostały
-  wypisane świadomie — brief §9.3 wymaga odpowiedzialnego języka przy zdrowiu.
--->
-
-Aerial yoga to praktyka z hamakiem — szeroką tkaniną podwieszoną pod sufitem, która przejmuje część albo całość ciężaru ciała. Dzięki temu robisz rzeczy niemożliwe na macie: pozycje odwrócone bez obciążania karku, głębokie wygięcia z podparciem i zwisy, w których kręgosłup rozciąga się pod własnym ciężarem.
-
-Ten ostatni element jest zwykle powodem, dla którego ludzie wracają. Kilka minut w zwisie po dniu spędzonym przy biurku daje odczucie, którego trudno szukać gdzie indziej.
-
-## Czego się spodziewać
 
 Pierwsze zajęcia to głównie oswajanie się z hamakiem — jak w nim usiąść, jak przenieść ciężar, gdzie chwycić. Tkanina jest mocniejsza, niż wygląda, ale zaufanie do niej przychodzi dopiero po kilku pozycjach.
 
 Wysokość hamaka ustawia się indywidualnie, a każdą pozycję poprzedza pokaz i asekuracja. Nie musisz mieć doświadczenia w jodze na macie.
-
-## O czym warto wiedzieć wcześniej
-
-Tkanina uciska skórę pod kolanami i pod pachami — dlatego strój ma zakrywać te miejsca. Zdejmij biżuterię i sprawdź, czy legginsy nie mają zamków ani ozdób. I zjedz odpowiednio wcześniej: pozycje odwrócone tuż po posiłku to zły pomysł.

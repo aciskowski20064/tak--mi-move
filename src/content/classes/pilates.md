@@ -23,23 +23,17 @@ preparation: 'Zjedz lekki posiłek na min. 2 godziny przed zajęciami. Wybierz s
 contraindicationsNote: 'Przy przepuklinie krążka, świeżym urazie kręgosłupa, rozejściu mięśnia prostego brzucha i w ciąży decyzję podejmij razem z lekarzem lub fizjoterapeutą. Prowadzącą uprzedź przed zajęciami.'
 locationSlugs: ['gdansk', 'pruszcz-gdanski']
 draft: false
+# ——— Etap 6 (28.08.2026) ———
+# Ciało tego pliku to WYŁĄCZNIE treść bloku „Czego się spodziewać".
+# Zniknęły z niego: akapit wprowadzający (klientka: po wejściu w konkretne
+# zajęcia ma nie być opisu przed właściwymi blokami) oraz dodatkowe sekcje
+# H2 — lista bloków jest zamknięta i liczy cztery pozycje.
+#
+# PENDING CLIENT CONTENT: poniższy tekst nadal jest NASZĄ treścią roboczą.
+# Opisów poszczególnych zajęć od klientki nie ma ani w repo, ani
+# w materiałach — odpowiedzi 40–47 opisują wszystkie formy łącznie.
 ---
-
-<!--
-  TREŚĆ ROBOCZA — do akceptacji klientki.
-  Opis dyscypliny, bez faktów o marce (brief §13).
--->
-
-Pilates to metoda opracowana przez Josepha Pilatesa, oparta na kilku zasadach: kontroli, precyzji, oddechu i pracy od centrum ciała na zewnątrz. W praktyce oznacza to ruchy pozornie małe i powolne, które okazują się znacznie trudniejsze, niż wyglądają.
-
-Zamiast dużych, machowych ruchów pracujesz nad mięśniami głębokimi — tymi, które stabilizują kręgosłup i miednicę, a których zwykle nie czuć, dopóki nie zaczną zawodzić. To dlatego pilates tak często wraca w rozmowach o bólu krzyża.
-
-## Czego się spodziewać
 
 Dużo uwagi poświęca się ustawieniu: gdzie jest miednica, co robią żebra, czy szyja pracuje wtedy, kiedy nie powinna. Prowadząca poprawia i podpowiada, bo w pilatesie różnica między ćwiczeniem skutecznym a bezużytecznym bywa kwestią centymetra.
 
 Nie ma tu skoków ani obciążeń zewnętrznych. Wysiłek bierze się z powtórzeń i z kontroli, nie z ciężaru.
-
-## Pilates a joga
-
-Bywają mylone, bo obie formy odbywają się na macie i obie pracują z oddechem. Różni je cel. Joga prowadzi w stronę wyciszenia i zakresu ruchu, pilates w stronę siły i stabilności. Wiele osób ćwiczy obie naprzemiennie i dobrze się to uzupełnia.

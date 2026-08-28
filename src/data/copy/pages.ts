@@ -125,7 +125,14 @@ export const pages = {
     // Oba komunikaty wskazane przez klientkę (25.08.2026): hasło marki
     // w miejsce „Znajdź formę ruchu dla siebie", a pod nim jedno zdanie
     // zamiast akapitu o tym, dokąd prowadzą zajęcia.
-    title: 'SIŁA ~ SPOKÓJ ~ RÓWNOWAGA',
+    // Bez tyld: klientka podała hasło jako trzy słowa, a tyldy w jej
+    // odręcznej notatce (odpowiedź 55) były separatorem zapisu, nie częścią
+    // hasła. Odstęp między słowami niesie sama typografia nagłówka.
+    title: 'SIŁA SPOKÓJ RÓWNOWAGA',
+    // Wiersze hasła — po jednym słowie, jak w hero strony głównej.
+    // `title` zostaje jednym ciągiem, bo idzie też do <title> i do opisu
+    // dla wyszukiwarek, gdzie łamanie nie ma sensu.
+    titleLines: ['SIŁA', 'SPOKÓJ', 'RÓWNOWAGA'],
     lead: 'Wybierz, czego dziś potrzebujesz',
   },
 

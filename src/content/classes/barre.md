@@ -23,23 +23,15 @@ preparation: 'Zjedz lekki posiłek na min. 2 godziny przed zajęciami. Wybierz s
 contraindicationsNote: 'Duża liczba powtórzeń obciąża stawy kolanowe i skokowe. Przy problemach z kolanami, świeżym urazie i w ciąży skonsultuj udział z lekarzem lub fizjoterapeutą i uprzedź prowadzącą.'
 locationSlugs: ['pruszcz-gdanski', 'gdansk']
 draft: false
+# ——— Etap 6 (28.08.2026) ———
+# Ciało tego pliku to WYŁĄCZNIE treść bloku „Czego się spodziewać".
+# Zniknęły z niego: akapit wprowadzający (klientka: po wejściu w konkretne
+# zajęcia ma nie być opisu przed właściwymi blokami) oraz dodatkowe sekcje
+# H2 — lista bloków jest zamknięta i liczy cztery pozycje.
+#
+# PENDING CLIENT CONTENT: poniższy tekst nadal jest NASZĄ treścią roboczą.
+# Opisów poszczególnych zajęć od klientki nie ma ani w repo, ani
+# w materiałach — odpowiedzi 40–47 opisują wszystkie formy łącznie.
 ---
 
-<!--
-  TREŚĆ ROBOCZA — do akceptacji klientki.
-  Opis dyscypliny, bez faktów o marce (brief §13).
-  Lokalizacja: barre występuje tylko w opisie profilu Pruszcza — DO POTWIERDZENIA,
-  czy zajęcia są też w Gdańsku.
--->
-
-Barre wziął z baletu drążek, ustawienie ciała i estetykę ruchu, a z pilatesu i treningu funkcjonalnego — sposób pracy nad mięśniami. Nie musisz mieć nic wspólnego z tańcem. Drążek służy tu jako podparcie, nie jako scena.
-
-Ruchy są małe, czasem ledwo widoczne, wykonywane w wysokiej liczbie powtórzeń w stałym rytmie. Ten format jest podstępny: przez pierwsze dwadzieścia sekund wydaje się banalny, przez kolejne czterdzieści przestaje.
-
-## Czego się spodziewać
-
 Zajęcia idą partiami — najpierw nogi i pośladki przy drążku, potem brzuch i ramiona, na końcu rozciąganie. Muzyka nadaje tempo, a mięśnie dostają jasny sygnał, kiedy pracują odpowiednio długo: zaczyna im drżeć. To normalne i jest częścią metody.
-
-## Barre a siłownia
-
-Barre nie zastąpi treningu z ciężarem, jeśli celem jest maksymalna siła. Robi coś innego — buduje wytrzymałość mięśniową i kontrolę w zakresach, których duże ćwiczenia siłowe zwykle pomijają. Dobrze działa jako uzupełnienie, nie jako konkurencja.

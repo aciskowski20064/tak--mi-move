@@ -1,22 +1,41 @@
 ---
 import { getCollection, render } from 'astro:content';
 import { typo } from '~/lib/typografia';
-import { Image } from 'astro:assets';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
-import Button from '~/components/ui/Button.astro';
 import Todo from '~/components/ui/Todo.astro';
 import FactIcon from '~/components/ui/FactIcon.astro';
-import { locations, booking } from '~/data/site';
-import { copyOrNull, showPlaceholders } from '~/lib/copy';
+import { locations } from '~/data/site';
+import { copyOrNull, isPlaceholder } from '~/lib/copy';
 
 /**
- * Szablon podstrony zajęć — dwanaście elementów z briefu §14.
+ * Szablon podstrony zajęć.
  *
- * Teksty nie mogą obiecywać leczenia schorzeń ani gwarantowanych rezultatów,
- * dlatego nota o przeciwwskazaniach zawsze odsyła do specjalisty, a nie
- * do nas.
+ * UKŁAD PO ETAPIE 6 (28.08.2026): nagłówek → cztery bloki → „Grafik" →
+ * pas domykający. Lista bloków jest ZAMKNIĘTA i liczy dokładnie cztery
+ * pozycje: Czego się spodziewać, Dla kogo, Efekty, Jak się przygotować.
+ *
+ * Co z tej strony zniknęło i dlaczego:
+ *
+ *   opis wprowadzający  klientka: po wejściu w konkretne zajęcia ma nie być
+ *                       opisu przed właściwymi blokami. Zdjęty jest zarówno
+ *                       lead w nagłówku, jak i akapit otwierający w treści.
+ *   Tempo               poza listą czterech. Pola `duration`, `intensity`
+ *                       i `level` zostają w modelu — nie renderujemy ich.
+ *   Co zabrać           poza listą. `equipment` i tak nie było renderowane.
+ *   lokalizacje         klientka: przy zajęciach lokalizacji nie podajemy.
+ *   para przycisków     stała między nagłówkiem a treścią i była trzecim
+ *                       wezwaniem na stronie. Wyjście do grafiku jest teraz
+ *                       jedno, lekkie, pod blokami.
+ *   Zanim zaczniesz     poza listą czterech. TO JEST TREŚĆ ZDROWOTNA —
+ *                       przeciwwskazania, przy aerial yodze konkretne
+ *                       (jaskra, nadciśnienie, kardiologia, ciąża, błędnik).
+ *                       Dane zostają w kolekcji, rolę tej sekcji przejmuje
+ *                       „Urazy i szczególne potrzeby" na /pierwsza-wizyta.
+ *                       Zgłoszone do decyzji w raporcie Etapu 6.
+ *
+ * Teksty nie mogą obiecywać leczenia schorzeń ani gwarantowanych rezultatów.
  */
 export async function getStaticPaths() {
   const entries = await getCollection('classes', ({ data }) => import.meta.env.DEV || !data.draft);
@@ -27,71 +46,61 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 const d = entry.data;
 
+/**
+ * Miasta idą już WYŁĄCZNIE do tytułu i opisu dla wyszukiwarek. W widocznej
+ * treści strony lokalizacji nie ma nigdzie — ani w nagłówku, ani w blokach.
+ */
 const cityName = (slug: string) => locations.find((l) => l.slug === slug)?.city ?? slug;
-const shortDescription = copyOrNull(d.shortDescription);
-/* Tekst „Jak się przygotować". Dla aerial yogi stoi w kolekcji jako `TODO(`,
-   więc `copyOrNull` zwraca null: w wersji poglądowej klientka zobaczy w tym
-   miejscu znacznik brakującej treści, a w produkcji blok zniknie. */
-const przygotowanie = copyOrNull(d.preparation);
-
-const intensityLabel: Record<string, string> = {
-  low: 'spokojne',
-  medium: 'umiarkowane',
-  high: 'intensywne',
-  varied: 'zmienne',
-};
-
-
-
-/**
- * Miasta w tytule biorą się z `locationSlugs` konkretnych zajęć, nie ze
- * sztywnej listy — barre odbywa się tylko w Pruszczu, więc obiecywanie
- * Gdańska byłoby nieprawdą także w wynikach wyszukiwania.
- */
 const cities = d.locationSlugs.map(cityName);
-const citiesLabel = cities.length > 1 ? `${cities.slice(0, -1).join(', ')} i ${cities.at(-1)}` : cities[0];
+const citiesLabel =
+  cities.length > 1 ? `${cities.slice(0, -1).join(', ')} i ${cities.at(-1)}` : cities[0];
+
+const shortDescription = copyOrNull(d.shortDescription);
 
 /**
- * Karty faktów — układ z makiety z 22.08.2026. Każda karta bierze dane,
- * które już siedzą w kolekcji, więc nic nie trzeba dopisywać:
- * `audience`, `goals` oraz `intensity`/`duration`/`level`.
+ * „Jak się przygotować". Cztery formy ruchu mają tekst wprost od klientki
+ * (25.08.2026). Aerial yoga ma dostać własny, którego w żadnym materiale
+ * nie ma — jej pole stoi jako `TODO(`.
  *
- * Makieta miała tu jeszcze kadr obok nagłówka i zdjęcie przy cytacie.
- * Zdjęć poszczególnych zajęć nie mamy, więc nagłówek jest wyśrodkowany,
- * a karty niosą całą sekcję same.
+ * Warunek stoi na `import.meta.env.DEV`, nie na `showPlaceholders`.
+ * Różnica jest istotna: `showPlaceholders` obejmuje też DEMO_MODE, czyli
+ * wersję poglądową, którą ogląda klientka — a ona nie ma oglądać przerywanej
+ * ramki „Do uzupełnienia". Znacznik widzimy my przy `npm run dev`, w każdym
+ * buildzie blok znika W CAŁOŚCI, razem z nagłówkiem i piktogramem.
  *
- * Typ jest wypisany jawnie, a filtr jest strażnikiem typu. Wcześniej brał
- * się z wnioskowania, bo w tablicy stała karta lokalizacji, której `punkty`
- * na pewno istniały. Po jej usunięciu każda pozycja może być pusta i sam
- * `filter` tego TypeScriptowi nie zawęża.
+ * Osierocony nagłówek bez treści był już raz wykryty próbnym buildem
+ * z DEMO_MODE = false — zabezpieczenie zostaje.
  */
-type KartaFaktu = {
-  ikona: 'users' | 'heart' | 'clock';
+const przygotowanieBrakuje = isPlaceholder(d.preparation);
+
+type Blok = {
+  ikona: 'sun' | 'users' | 'heart' | 'check';
   label: string;
+  /** Lista punktów albo pojedynczy akapit — bloki mają różny kształt treści. */
   punkty?: readonly string[];
+  tekst?: string;
+  /** Treść bierze się z ciała pliku Markdown, nie z pola. */
+  zTresci?: boolean;
+  brakuje?: boolean;
 };
 
-const kartyWszystkie: KartaFaktu[] = [
+const blokiWszystkie: Blok[] = [
+  { ikona: 'sun', label: 'Czego się spodziewać', zTresci: true },
   { ikona: 'users', label: 'Dla kogo', punkty: d.audience },
   // Etykieta „Efekty" w miejsce „Co daje" — wskazana przez klientkę (25.08.2026).
   { ikona: 'heart', label: 'Efekty', punkty: d.goals },
   {
-    ikona: 'clock',
-    label: 'Tempo',
-    punkty: [
-      d.duration,
-      d.intensity ? `Tempo ${intensityLabel[d.intensity]}` : undefined,
-      d.level,
-    ].filter(Boolean) as string[],
+    ikona: 'check',
+    label: 'Jak się przygotować',
+    tekst: d.preparation,
+    brakuje: przygotowanieBrakuje,
   },
-  // Karta „Lokalizacje" usunięta: klientka nie chce podawać lokalizacji przy
-  // zajęciach ani tutaj, ani na stronie zbiorczej. `cities` zostaje, bo niesie
-  // je jeszcze tytuł i opis dla wyszukiwarek.
 ];
 
-const karty = kartyWszystkie.filter(
-  (k): k is KartaFaktu & { punkty: readonly string[] } => Boolean(k.punkty?.length),
-);
+const bloki = blokiWszystkie.filter((b) => {
+  if (b.brakuje) return import.meta.env.DEV;
+  return b.zTresci || b.punkty?.length || b.tekst;
+});
 
 const title = d.seoTitle ?? `${d.name} — ${citiesLabel}`;
 const description =
@@ -101,131 +110,106 @@ const description =
 ---
 
 <Base title={title} description={description}>
+  {/* Bez leadu: opis wprowadzający zdjęty na prośbę klientki. Po nagłówku
+      strona przechodzi od razu do uporządkowanej informacji. */}
   <PageHeader
+    size="sm"
     eyebrow="Zajęcia"
     title={d.name}
-    lead={shortDescription ?? undefined}
     crumbs={[
       { label: 'Zajęcia', href: '/zajecia' },
       { label: d.name, href: `/zajecia/${entry.id}` },
     ]}
-    size="md"
-    rule
   />
 
-  {!shortDescription && (
-    <Section as="div" size="sm">
-      <Todo label={d.shortDescription} block />
-    </Section>
-  )}
-
-  <Section as="div" size="sm">
-    <div class="klasa__akcje">
-      <Button
-        href={booking.frontOfficeUrl}
-        newTab={booking.newTab}
-        source="class"
-        event="booking_cta_click"
-      >
-        {booking.label}
-      </Button>
-      <Button href="/grafik" variant="secondary" source="class">Zobacz grafik</Button>
-    </div>
-  </Section>
-
-  <Section size="md" tone="alt">
-    <ul class="fakty">
+  <Section as="div" size="sm" class="bloki-sekcja">
+    <ul class="bloki">
       {
-        karty.map((k) => (
-          <li class="fakt">
-            <span class="znak fakt__znak" aria-hidden="true">
-              <FactIcon name={k.ikona} size="1.2rem" />
+        bloki.map((b) => (
+          <li class="blok">
+            <span class="znak blok__ikona" aria-hidden="true">
+              <FactIcon name={b.ikona} />
             </span>
-            <h2 class="fakt__label">{k.label}</h2>
-            <ul class="fakt__punkty">
-              {k.punkty.map((p) => (
-                <li>{typo(p)}</li>
-              ))}
-            </ul>
+            <div class="blok__tresc">
+              <h2 class="blok__label">{b.label}</h2>
+
+              {b.zTresci && (
+                <div class="blok__proza">
+                  <Content />
+                </div>
+              )}
+
+              {b.punkty && (
+                <ul class="blok__punkty">
+                  {b.punkty.map((p) => (
+                    <li>{typo(p)}</li>
+                  ))}
+                </ul>
+              )}
+
+              {b.tekst && !b.brakuje && <p class="blok__tekst">{typo(b.tekst)}</p>}
+              {b.brakuje && <Todo label={b.tekst!} block />}
+            </div>
           </li>
         ))
       }
     </ul>
+
+    {/* Przejście bloki → grafik → rezerwacja. Trzeci poziom wezwania
+        (`.link-cta` z base.css), ten sam, który zamyka pas faktów na
+        podstronach studiów. Lokalizacji w tym miejscu nie ma. */}
+    <p class="grafik">
+      <a
+        class="link-cta"
+        href="/grafik"
+        aria-label={`Grafik — ${d.name}`}
+        data-event="schedule_page_view"
+        data-source="class"
+      >
+        <FactIcon name="calendar" size="1.1rem" />
+        Grafik
+      </a>
+    </p>
   </Section>
 
-  <Section size="lg">
-    <div class="klasa__tresc">
-      <div class="prose">
-        <Content />
-      </div>
-
-      <aside class="klasa__bok">
-        {/* Blok „Co zabrać" zdjęty na prośbę klientki (25.08.2026), a na jego
-            miejsce weszło „Jak się przygotować" z jej własnym tekstem.
-            Pole `equipment` zostaje w kolekcji do rozstrzygnięcia w Etapie 6 —
-            nie renderuje się nigdzie, ale kasowanie danych przed decyzją
-            byłoby nieodwracalne. */}
-        {/* Warunek obejmuje CAŁĄ sekcję razem z nagłówkiem, nie samą treść.
-            Pierwsza wersja renderowała `<h2>` zawsze, gdy pole istniało,
-            a w środku stawiała <Todo>. W wersji poglądowej wyglądało to
-            dobrze, ale w produkcji <Todo> znika i na stronie aerial yogi
-            zostawał nagłówek „Jak się przygotować" bez ani jednego zdania
-            pod spodem. Wykryte próbnym buildem z DEMO_MODE = false. */}
-        {przygotowanie ? (
-          <section class="blok">
-            <h2 class="blok__tytul">Jak się przygotować</h2>
-            <p class="blok__tekst">{typo(przygotowanie)}</p>
-          </section>
-        ) : showPlaceholders && d.preparation ? (
-          <section class="blok">
-            <h2 class="blok__tytul">Jak się przygotować</h2>
-            <Todo label={d.preparation} block />
-          </section>
-        ) : null}
-
-        {
-          d.contraindicationsNote && (
-            <section class="blok blok--uwaga">
-              <h2 class="blok__tytul">Zanim zaczniesz</h2>
-              <p class="blok__tekst">{typo(d.contraindicationsNote)}</p>
-            </section>
-          )
-        }
-      </aside>
-    </div>
-  </Section>
-
-  <Section size="md" tone="soft">
-    <div class="domkniecie">
-      <div>
-        <h2 class="domkniecie__tytul">Sprawdź, kiedy odbywają się zajęcia</h2>
-        <p class="domkniecie__lead">Wybierz termin w grafiku i dołącz do kameralnej grupy.</p>
-      </div>
-      <div class="domkniecie__akcje">
-        <Button
-          href={booking.frontOfficeUrl}
-          newTab={booking.newTab}
-          source="class"
-          event="booking_cta_click"
-        >
-          {booking.label}
-        </Button>
-        <Button href="/grafik" variant="secondary" source="class">Zobacz grafik</Button>
-      </div>
-    </div>
-  </Section>
+  {/* Pas domykający „Sprawdź, kiedy odbywają się zajęcia" USUNIĘTY
+      (28.08.2026). Dublował funkcję wyjścia „Grafik", które stoi tuż nad
+      nim — na jednym ekranie były dwa wezwania do tej samej rzeczy.
+      Rezerwacja ma własny, stały przycisk w nagłówku serwisu. */}
 </Base>
 
 <style>
-  .klasa__akcje {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
+  /* Nagłówek bez leadu zostawiał pod kreską pas pustki — ta sama sytuacja
+     i to samo rozwiązanie co na podstronach studiów.
+
+     :global, bo klasa trafia na korzeń komponentu Section i nosi JEGO scope. */
+  /* Nagłówek bez leadu zostawiał pod kreską pas pustki. `PageHeader` ma
+     własny `padding-block-end` i nie przyjmuje klasy, więc górę tej sekcji
+     zerujemy i dokładamy ujemny margines. Bezpieczne wyłącznie dlatego,
+     że obie sekcje stoją na tonie `default`, czyli na tym samym
+     `--surface` — nie ma szwu do odsłonięcia. */
+  :global(.section.bloki-sekcja) {
+    padding-block-start: 0;
+    margin-block-start: calc(var(--space-sm) * -1.5);
   }
 
-  /* ————————————————— cztery karty faktów ————————————————— */
+  /* ————————————————— cztery karty ——————————————————
 
-  .fakty {
+     LEKKO, NIE KARTAMI — ten sam wzorzec, który został zatwierdzony na
+     podstronach studiów w Etapie 5: znak w kółku, nagłówek, tekst, odstęp
+     i jedna włoskowata kreska między kolumnami. Żadnej obwódki wokół
+     informacji, żadnego wypełnienia, zero efektu panelu administracyjnego.
+
+     Wzorzec jest tu powtórzony, a nie wyciągnięty do wspólnego komponentu:
+     Etap 5 jest zatwierdzony commitem 739e965, a wspólny komponent oznaczałby
+     ruch w jego stylach. Ryzyko regresji przewyższa zysk z odchudzenia kodu.
+
+     UKŁAD 2 × 2 dobrany pod REALNE długości: „Czego się spodziewać" to
+     245–348 znaków, „Dla kogo" ok. 150, „Efekty" ok. 120, „Jak się
+     przygotować" 170. Najdłuższy blok jest ok. dwa razy dłuższy od
+     najkrótszego — przy dwóch szerokich torach różnica jest do zniesienia,
+     przy czterech wąskich zrobiłaby z jednego bloku pionową wstążkę. */
+  .bloki {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -233,30 +217,47 @@ const description =
     gap: var(--space-md);
   }
 
-  .fakt {
-    background: var(--surface);
+  /* Karta lekka: włoskowata obwódka, promień większy niż w kaflach zajęć
+     (14 px wobec 10), spokojny wewnętrzny margines. Bez cienia, bez
+     wypełnienia, bez stanu najechania — to nie jest element klikalny,
+     tylko pudełko na informację. Promień i padding stoją tu wartościami,
+     nie tokenami: `--radius-card` to 10 px, a między `--space-md` (27 px)
+     a `--space-lg` (46 px) nie ma stopnia, który trafiłby w zamówione 28–32. */
+  .blok {
+    display: block;
     border: var(--hairline) solid var(--line);
-    border-radius: var(--radius-card);
-    padding: var(--space-md);
+    border-radius: 14px;
+    padding: clamp(1.5rem, 1.1rem + 1vw, 2rem);
   }
 
-  /* Kształt i kolor ze wspólnej klasy `.znak` (base.css). */
-  .fakt__znak {
-    --znak-size: 2.75rem;
+  /* Znak NAD tytułem, nie obok. W karcie z własnym marginesem układ
+     poziomy zabierałby tekstowi 3,5 rem szerokości na każdym torze. */
+  .blok__ikona {
+    --znak-size: 2.5rem;
     margin-block-end: var(--space-sm);
   }
 
-  .fakt__label {
-    font-size: var(--fs-caption);
-    letter-spacing: var(--ls-eyebrow);
-    text-transform: uppercase;
-    color: var(--text-accent);
+  .blok__label {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    font-weight: 400;
     margin-block-end: var(--space-2xs);
+  }
+
+  .blok__tekst,
+  .blok__proza {
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .blok__proza :global(p + p) {
+    margin-block-start: var(--space-2xs);
   }
 
   /* Punkty bez kropek — to nie jest wyliczanka do przeczytania po kolei,
      tylko trzy fakty, z których każdy stoi sam. */
-  .fakt__punkty {
+  .blok__punkty {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -264,43 +265,15 @@ const description =
     gap: var(--space-2xs);
     font-size: var(--fs-small);
     color: var(--text-muted);
-    line-height: 1.5;
+    line-height: 1.55;
   }
+  /* ————————————————— wyjście do grafiku ————————————————— */
 
-  /* ————————————————— treść i bok ————————————————— */
-
-  .klasa__tresc {
-    display: grid;
-    gap: var(--space-xl);
-    align-items: start;
-  }
-
-  .blok + .blok {
+  .grafik {
     margin-block-start: var(--space-lg);
   }
 
-  .blok__tytul {
-    font-size: var(--fs-h4);
-    margin-block-end: var(--space-sm);
-  }
-
-  /* Nota o przeciwwskazaniach dostaje własne tło i pasek — to jedyny tekst
-     na tej stronie, którego przeoczenie ma realne konsekwencje. */
-  .blok--uwaga {
-    background: var(--surface-alt);
-    border-inline-start: 3px solid var(--accent);
-    border-start-end-radius: var(--radius-md);
-    border-end-end-radius: var(--radius-md);
-    padding: var(--space-md);
-  }
-
-  .blok__tekst {
-    font-size: var(--fs-small);
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-
-  /* ————————————————— domknięcie ————————————————— */
+  /* ————————————————— pas domykający ————————————————— */
 
   .domkniecie {
     display: grid;
@@ -313,8 +286,8 @@ const description =
 
   .domkniecie__lead {
     margin-block-start: var(--space-2xs);
-    font-size: var(--fs-small);
     color: var(--text-muted);
+    max-width: var(--measure);
   }
 
   .domkniecie__akcje {
@@ -323,33 +296,27 @@ const description =
     gap: var(--space-xs);
   }
 
-  @media (min-width: 40rem) {
-    .fakty {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
   @media (min-width: 52rem) {
     .domkniecie {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       align-items: center;
       gap: var(--space-xl);
     }
   }
 
   @media (min-width: 64rem) {
-    /* Trzy kolumny, nie cztery — karta „Lokalizacje" odpadła (25.08.2026)
-       i przy czterech torach zostawał pusty tor po prawej. */
-    .fakty {
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-sm);
+    .bloki {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      /* Odstęp jednakowy w obu osiach: karty mają własne krawędzie,
+         więc rynna nie musi już zastępować wydzielenia. */
+      gap: var(--space-md);
     }
 
-    /* Bok trzyma stałą kolumnę: to krótkie listy, a treść główna jest
-       tekstem ciągłym i potrzebuje pełnej miary czytelności. */
-    .klasa__tresc {
-      grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
-      gap: var(--space-2xl);
+    /* Nieparzysta liczba bloków — dziś aerial yoga, dopóki klientka nie
+       przyśle opisu przygotowania. Ostatni blok bierze wtedy oba tory,
+       zamiast zostawiać w drugim rzędzie dziurę na pół szerokości. */
+    .blok:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
     }
   }
 </style>

@@ -11,13 +11,26 @@ import type { NavItem } from '~/data/nav';
 interface Props {
   eyebrow?: string;
   title: string;
+  /**
+   * Tytuł łamany na WIERSZE, po jednym elemencie blokowym na wiersz —
+   * ten sam mechanizm co w hero strony głównej.
+   *
+   * Potrzebny tam, gdzie hasło ma stać w słupku niezależnie od tego, ile
+   * miejsca zostaje w wierszu. Samo zwężenie pudełka do `min-content`
+   * nie wystarcza: szerokość spada wtedy do najdłuższego słowa, a krótsze
+   * wyrazy potrafią się w niej zmieścić po dwa (zmierzone na /zajecia:
+   * „SIŁA SPOKÓJ" mieści się w 426 px szerokości słowa „RÓWNOWAGA").
+   *
+   * Pominięty — tytuł renderuje się dokładnie jak dotąd, jednym ciągiem.
+   */
+  titleLines?: readonly string[];
   lead?: string;
   crumbs?: NavItem[];
   tone?: 'default' | 'alt' | 'soft';
   size?: 'sm' | 'md';
 }
 
-const { eyebrow, title, lead, crumbs, tone = 'default', size = 'md' } = Astro.props;
+const { eyebrow, title, titleLines, lead, crumbs, tone = 'default', size = 'md' } = Astro.props;
 ---
 
 <Section as="div" size={size} tone={tone} class="page-header">
@@ -25,7 +38,20 @@ const { eyebrow, title, lead, crumbs, tone = 'default', size = 'md' } = Astro.pr
   {eyebrow && <p class="eyebrow">{eyebrow}</p>}
   {/* Wiązanie sierot stoi tu, a nie na czternastu podstronach z osobna —
       to jedyne wejście w treść, przez które przechodzą wszystkie. */}
-  <h1 class="page-header__title">{typo(title)}</h1>
+  {/* Spacja MIĘDZY wierszami jest konieczna, choć wizualnie nic nie robi.
+      Wiersze są blokowe, więc odstęp się nie renderuje — ale bez niego
+      treść nagłówka to jeden ciąg „SIŁASPOKÓJRÓWNOWAGA" i tak właśnie
+      przeczytałby go czytnik ekranu. Ta sama uwaga stoi w Hero.astro. */}
+  <h1 class="page-header__title">
+    {titleLines
+      ? titleLines.map((wiersz, i) => (
+          <>
+            {i > 0 && ' '}
+            <span class="page-header__titleWiersz">{wiersz}</span>
+          </>
+        ))
+      : typo(title)}
+  </h1>
   {/* Kreska stoi też pod tytułem bez leadu (np. podstrony studiów, polityki) —
       domyka nagłówek, zamiast zostawiać go zawieszonym nad treścią. */}
   <span class="page-header__rule" aria-hidden="true"></span>
@@ -37,5 +63,11 @@ const { eyebrow, title, lead, crumbs, tone = 'default', size = 'md' } = Astro.pr
      dwukolumnowy nagłówek pierwszej wizyty. Tutaj zostaje sam odstęp. */
   .page-header {
     padding-block-end: var(--space-lg);
+  }
+
+  /* Wiersz tytułu. Reguła jest tu, a nie w base.css, bo dotyczy wyłącznie
+     nagłówków korzystających z `titleLines` — reszta serwisu jej nie widzi. */
+  .page-header__titleWiersz {
+    display: block;
   }
 </style>

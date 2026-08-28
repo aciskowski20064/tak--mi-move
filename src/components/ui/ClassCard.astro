@@ -11,6 +11,16 @@ import { typo } from '~/lib/typografia';
  * Wiersz z miastami zdjęty na prośbę klientki (25.08.2026): lokalizacji nie
  * podajemy przy zajęciach ani na stronie zbiorczej, ani w ich opisach.
  * Wraz z nim odpadł prop `locationSlugs` — kafel nie ma już po co go dostawać.
+ *
+ * DWA WARIANTY MARKUPU (Etap 6). Kafel z wyjściem do grafiku nie może być
+ * jednym wielkim `<a>`, bo odsyłacz w odsyłaczu jest niepoprawny i przeglądarki
+ * radzą sobie z nim po swojemu. Wariant z `scheduleHref` jest więc kontenerem
+ * z rozciągniętym odsyłaczem na nazwie, a „Grafik" stoi nad nim w warstwie.
+ *
+ * Wariant bez tego propa zostaje CO DO ZNAKU taki, jaki był: strona główna
+ * jest zatwierdzona commitem d7b87bb i nie wolno jej ruszyć. Dlatego to są
+ * dwie gałęzie markupu, a nie jedna wspólna struktura „która i tak wygląda
+ * tak samo" — przy stanie skupienia i najechaniu różnice byłyby widoczne.
  */
 interface Props {
   href: string;
@@ -18,31 +28,79 @@ interface Props {
   description?: string | null;
   /** Numer porządkowy. Bez niego kafel po prostu go nie pokazuje. */
   index?: number;
+  /**
+   * Adres grafiku. Podany — kafel dostaje drugie, samodzielne wyjście
+   * i lżejszą oprawę. Pominięty — kafel renderuje się jak dotąd.
+   */
+  scheduleHref?: string;
 }
 
-const { href, name, description, index } = Astro.props;
+const { href, name, description, index, scheduleHref } = Astro.props;
 ---
 
-<a class="karta" href={href} data-event="class_detail_view">
-  {index !== undefined && <span class="karta__numer">{String(index).padStart(2, '0')}</span>}
+{
+  scheduleHref ? (
+    <div class="karta karta--zGrafikiem">
+      {index !== undefined && <span class="karta__numer">{String(index).padStart(2, '0')}</span>}
 
-  <span class="karta__nazwa">{name}</span>
+      <span class="karta__nazwa">
+        <a class="karta__link" href={href} data-event="class_detail_view">
+          {name}
+        </a>
+      </span>
 
-  {description && <span class="karta__opis">{typo(description)}</span>}
+      {description && <span class="karta__opis">{typo(description)}</span>}
 
-  <span class="znak znak--pelny karta__strzalka" aria-hidden="true">
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    >
-      <path d="M4 12h15m0 0-6-6m6 6-6 6"></path>
-    </svg>
-  </span>
-</a>
+      <span class="karta__stopka">
+        {/* Osobna nazwa dostępna, bo samo „Grafik" powtórzone pięć razy pod
+            rząd nic nie mówi osobie przeglądającej listę odsyłaczy. */}
+        <a
+          class="link-cta karta__grafik"
+          href={scheduleHref}
+          aria-label={`Grafik — ${name}`}
+          data-event="schedule_page_view"
+          data-source="class-list"
+        >
+          Grafik
+        </a>
+
+        <span class="znak znak--pelny karta__strzalka" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 12h15m0 0-6-6m6 6-6 6" />
+          </svg>
+        </span>
+      </span>
+    </div>
+  ) : (
+    <a class="karta" href={href} data-event="class_detail_view">
+      {index !== undefined && <span class="karta__numer">{String(index).padStart(2, '0')}</span>}
+
+      <span class="karta__nazwa">{name}</span>
+
+      {description && <span class="karta__opis">{typo(description)}</span>}
+
+      <span class="znak znak--pelny karta__strzalka" aria-hidden="true">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M4 12h15m0 0-6-6m6 6-6 6" />
+        </svg>
+      </span>
+    </a>
+  )
+}
 
 <style>
   /* `1fr` na wierszu opisu dosuwa strzałkę do dołu, więc kafle w rzędzie
@@ -110,6 +168,90 @@ const { href, name, description, index } = Astro.props;
      głównym (Button.astro, wariant primary). Krem na przyciemnionej terakocie
      daje 5.85:1, więc strzałka zostaje czytelna także w tym stanie. */
   .karta:hover .karta__strzalka {
+    background: var(--accent-strong);
+    color: var(--text-invert);
+  }
+
+  /* ————————————————— wariant z wyjściem do grafiku —————————————————
+
+     Klientka dwa razy wracała do tego, że ramek jest za dużo. Pięć kafli
+     w rzędzie to było pięć zamkniętych prostokątów obok siebie — najcięższy
+     element całej podstrony. Zamiast obwódki zostaje jedna włoskowata kreska
+     u góry: kafle nadal czytają się jako osobne pozycje, ale rząd przestaje
+     wyglądać jak panel administracyjny.
+
+     Kliknięcie sygnalizują dwie rzeczy, które zostały: terakotowa strzałka
+     (Etap 3) i podkreślenie nazwy przy najechaniu. */
+  .karta--zGrafikiem {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: var(--space-2xs);
+    block-size: 100%;
+    /* Wydzielenie wraca (28.08.2026). Sama kreska u góry toru czytała się
+       tabelarycznie i słabo grupowała treść — nazwa, opis i dwa wyjścia
+       rozsypywały się na pięć kolumn bez wskazania, gdzie kończy się
+       jedna pozycja. Obwódka jest włoskowata, promień ten sam co
+       w panelach studiów, a wypełnienie pojawia się dopiero przy
+       najechaniu. To NIE jest powrót do ciężkiej karty: nie ma cienia,
+       nie ma wypełnienia w spoczynku, nie ma grubej ramy.
+
+       Padding poziomy o stopień mniejszy niż pionowy: przy pięciu
+       kolumnach na 1280 px kafel ma ok. 225 px, więc każde 10 px
+       marginesu wewnętrznego widać na długości wiersza. */
+    border: var(--hairline) solid var(--line);
+    border-radius: var(--radius-card);
+    padding: var(--space-md) var(--space-sm);
+    transition:
+      border-color var(--dur) var(--ease),
+      background-color var(--dur) var(--ease);
+  }
+
+  .karta--zGrafikiem:hover {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+
+  /* Rozciągnięty odsyłacz: klikalny jest cały kafel, ale w drzewie
+     dostępności stoi jedna nazwa — „Joga" — a nie cała treść kafla.
+     `z-index` zostaje domyślny, żeby „Grafik" mógł się wybić wyżej. */
+  .karta__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .karta__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .karta--zGrafikiem:hover .karta__link {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: var(--hairline);
+  }
+
+  .karta__stopka {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2xs);
+    margin-block-start: var(--space-sm);
+  }
+
+  /* Nad rozciągniętym odsyłaczem, inaczej byłby nieklikalny. */
+  .karta__grafik {
+    position: relative;
+    z-index: 1;
+    font-size: var(--fs-small);
+  }
+
+  .karta--zGrafikiem .karta__strzalka {
+    margin-block-start: 0;
+  }
+
+  .karta--zGrafikiem:hover .karta__strzalka {
     background: var(--accent-strong);
     color: var(--text-invert);
   }

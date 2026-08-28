@@ -115,12 +115,21 @@ export const home = {
      * drugi wymieniony rodzaj nie miał dokąd prowadzić — tekst obiecywał
      * wybór, a strona dawała jedno wyjście.
      *
-     * ROBOCZE — rekomendacje wynikają z charakteru samych dyscyplin, nie
-     * z ustaleń o poziomach grup. Te wymagają potwierdzenia zespołu (§12.5).
+     * PENDING CLIENT CONTENT (zweryfikowane 28.08.2026).
+     *
+     * Ani jedno zdanie w tej sekcji nie pochodzi od klientki. Etykiety
+     * („Chcę zacząć spokojnie.") i podpowiedzi pod nimi napisaliśmy my,
+     * wyprowadzając je z charakteru samych dyscyplin. Przypisanie zajęć
+     * do potrzeb też jest nasze — odpowiedzi 40–47 opisują wszystkie
+     * pięć form ŁĄCZNIE i nie różnicują ich ani po poziomie, ani po celu.
+     * Do zatwierdzenia przez klientkę, nie traktować jak finalne copy.
      */
+    // Kropki na końcu haseł zdjęte razem z podpowiedziami: to były zdania
+    // wprowadzające do opisu pod spodem, a teraz są samodzielnymi
+    // etykietami kategorii. Pole `hint` zostaje w danych — nierenderowane.
     scenarios: [
       {
-        label: 'Chcę zacząć spokojnie.',
+        label: 'Chcę zacząć spokojnie',
         hint: 'Wolne tempo, brak sekwencji, za którymi trzeba nadążać, i każda pozycja w wersji łatwiejszej.',
         zajecia: [
           { nazwa: 'Joga', slug: 'joga' },
@@ -128,7 +137,7 @@ export const home = {
         ],
       },
       {
-        label: 'Chcę się wzmocnić.',
+        label: 'Chcę się wzmocnić',
         hint: 'Pilates buduje stabilny gorset wokół kręgosłupa, barre — wytrzymałość nóg i pośladków.',
         zajecia: [
           { nazwa: 'Pilates', slug: 'pilates' },
@@ -136,7 +145,7 @@ export const home = {
         ],
       },
       {
-        label: 'Chcę poprawić mobilność i rozciągnięcie.',
+        label: 'Chcę poprawić mobilność i rozciągnięcie',
         hint: 'Godzina na zakres ruchu zamiast pięciu minut na koniec treningu — a w hamaku dochodzi odciążenie kręgosłupa.',
         zajecia: [
           { nazwa: 'Stretching', slug: 'stretching' },
