@@ -1,11 +1,9 @@
 ---
-import { Image } from 'astro:assets';
 import { typo } from '~/lib/typografia';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import FactIcon from '~/components/ui/FactIcon.astro';
-import fotoPomoc from '~/assets/photos/pomoc-korekta.jpg';
 import ScheduleEmbed from '~/components/fitssey/ScheduleEmbed.astro';
 import LocationSwitch from '~/components/fitssey/LocationSwitch.astro';
 import { locations, formatAddress, site } from '~/data/site';
@@ -50,7 +48,7 @@ const t = pages.schedule;
     <ScheduleEmbed />
   </Section>
 
-  <Section size="lg" tone="alt">
+  <Section size="lg" tone="alt" class="zasadySekcja">
     <div class="schedule__info">
       <article class="karta karta--zasady">
         <span class="znak karta__znak" aria-hidden="true">
@@ -77,47 +75,41 @@ const t = pages.schedule;
         </ul>
       </article>
 
-      <div class="schedule__prawa">
-        <article class="karta karta--pomoc">
-          <div class="pomoc__tresc">
-            <span class="znak znak--pelny karta__znak" aria-hidden="true">
-              <FactIcon name="chat" size="1.4rem" />
-            </span>
-            {/* Nadtytuł „Coś nie działa?" zdjęty (25.08.2026) — nowy lead
-                sam zadaje to pytanie. */}
-            <h2 class="karta__tytul">{typo(t.helpTitle)}</h2>
-            <span class="karta__kreska" aria-hidden="true"></span>
-            <p class="pomoc__lead">{typo(t.helpLead)}</p>
+      {/* JEDEN PANEL PO PRAWEJ (28.08.2026).
 
-            <ul class="pomoc__kontakt">
-              <li>
-                <span class="znak znak--pelny pomoc__ikona" aria-hidden="true">
-                  <FactIcon name="phone" size="1rem" />
-                </span>
-                <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-              </li>
-              <li>
-                <span class="znak znak--pelny pomoc__ikona" aria-hidden="true">
-                  <FactIcon name="mail" size="1rem" />
-                </span>
-                <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
-              </li>
-            </ul>
-          </div>
+          „Dwa studia, jeden karnet" stało wcześniej jako osobna karta pod
+          kartą pomocy i wisiało samotnie: prawa kolumna kończyła się 628 px
+          nad dolną krawędzią lewej, więc wyglądało to jak sekcja przesunięta
+          przypadkiem. Teraz jest stopką tego samego panelu, za włoskowatą
+          kreską. Owijka `.schedule__prawa` odpadła razem z drugą kartą —
+          przy jednym dziecku nie miała czego układać. */}
+      <article class="karta karta--pomoc">
+        <div class="pomoc__tresc">
+          <span class="znak znak--pelny karta__znak" aria-hidden="true">
+            <FactIcon name="chat" size="1.4rem" />
+          </span>
+          {/* Nadtytuł „Coś nie działa?" zdjęty (25.08.2026) — nowy lead
+              sam zadaje to pytanie. */}
+          <h2 class="karta__tytul">{typo(t.helpTitle)}</h2>
+          <span class="karta__kreska" aria-hidden="true"></span>
+          <p class="pomoc__lead">{typo(t.helpLead)}</p>
 
-          <figure class="pomoc__figura">
-            <Image
-              src={fotoPomoc}
-              alt={t.helpPhoto}
-              widths={[420, 660, 900]}
-              sizes="(min-width: 60rem) 22vw, 90vw"
-              loading="lazy"
-              class="pomoc__foto"
-            />
-          </figure>
-        </article>
-
-        <article class="karta karta--karnet">
+          <ul class="pomoc__kontakt">
+            <li>
+              <span class="znak znak--pelny pomoc__ikona" aria-hidden="true">
+                <FactIcon name="phone" size="1rem" />
+              </span>
+              <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
+            </li>
+            <li>
+              <span class="znak znak--pelny pomoc__ikona" aria-hidden="true">
+                <FactIcon name="mail" size="1rem" />
+              </span>
+              <a href={`mailto:${site.email}`} data-event="email_click">{site.email}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="pomoc__karnet">
           <span class="znak karnet__znak" aria-hidden="true">
             <FactIcon name="pin" size="1.15rem" />
           </span>
@@ -125,8 +117,8 @@ const t = pages.schedule;
             <h2 class="karnet__tytul">{typo(t.passHighlight.title)}</h2>
             <p class="karnet__tekst">{typo(t.passHighlight.body)}</p>
           </div>
-        </article>
-      </div>
+        </div>
+      </article>
     </div>
   </Section>
 
@@ -158,6 +150,15 @@ const t = pages.schedule;
     color: var(--text-accent);
   }
 
+  /* Sekcja stoi na rytmie `lg`, czyli 124,8 px góra i dół przy 1280 px.
+     Przy dwóch panelach, z których prawy jest o połowę niższy, tyle
+     padding schodził poniżej progu „premium" i wchodził w „pusto".
+
+     :global, bo klasa trafia na korzeń komponentu Section. */
+  :global(.section.zasadySekcja) {
+    padding-block: var(--space-lg);
+  }
+
   .schedule__info {
     display: grid;
     gap: var(--space-lg);
@@ -166,23 +167,24 @@ const t = pages.schedule;
 
   /* ————————————————————— karty ————————————————————— */
 
+  /* Padding o ok. 18% krótszy od `--space-lg` (46,4 px na 1280). Między
+     `md` (27 px) a `lg` nie ma stopnia, a `md` byłoby cięciem o 41%,
+     czyli już nie polishem tylko ściskaniem. */
   .karta {
     border-radius: var(--radius-card);
-    padding: var(--space-lg);
+    padding: clamp(1.5rem, 1.4rem + 1.2vw, 2.75rem);
   }
 
   .karta--zasady,
+  /* PANEL BEZ KADRU (28.08.2026). Zdjęcie prowadzącej stało obok tekstu
+     i konkurowało z nim o tę samą przestrzeń — najpierw jako połowa
+     karty, potem jako kadr 144 px. Usunięte w całości: panel jest
+     kontaktowy, a nie fotograficzny. `helpPhoto` zostaje w `pages.ts`
+     jako opis alternatywny, gdyby kadr miał kiedyś wrócić. */
   .karta--pomoc {
     background: var(--surface);
   }
 
-  .karta--karnet {
-    background: var(--surface-alt);
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-md);
-    align-items: center;
-  }
 
   /* Znacznik konturowy przy zasadach, wypełniony przy pomocy — tak jak na
      makiecie. Wypełniony ciągnie wzrok do karty kontaktowej.
@@ -192,7 +194,7 @@ const t = pages.schedule;
      i odstęp pod znakiem. */
   .karta__znak {
     --znak-size: 3rem;
-    margin-block-end: var(--space-md);
+    margin-block-end: var(--space-sm);
   }
 
   .karta__tytul {
@@ -205,7 +207,7 @@ const t = pages.schedule;
     inline-size: 3rem;
     block-size: 2px;
     background: var(--accent);
-    margin-block: var(--space-sm) var(--space-md);
+    margin-block: var(--space-2xs) var(--space-sm);
   }
 
   /* ————————————————————— lista zasad ————————————————————— */
@@ -218,12 +220,15 @@ const t = pages.schedule;
 
   /* Włoskowata linia między zasadami zamiast punktorów. Ostatnia jej nie
      dostaje, żeby lista nie kończyła się kreską w powietrzu. */
+  /* Odstęp ikona → treść z 27,2 na 16 px: przy znaku 40 px tamten robił
+     z dwóch elementów jednego wiersza dwie osobne kolumny.
+     Padding pionowy o ok. 18% krótszy — polish, nie ściskanie. */
   .zasada {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: var(--space-md);
+    gap: var(--space-sm);
     align-items: start;
-    padding-block: var(--space-md);
+    padding-block: clamp(1rem, 0.95rem + 0.55vw, 1.5rem);
   }
 
   .zasada + .zasada {
@@ -253,15 +258,22 @@ const t = pages.schedule;
 
   /* ————————————————————— karta pomocy ————————————————————— */
 
-  .schedule__prawa {
-    display: grid;
-    gap: var(--space-lg);
-    align-content: start;
-  }
-
   .karta--pomoc {
     display: grid;
-    gap: var(--space-lg);
+    gap: var(--space-md);
+  }
+
+
+  /* Stopka panelu: to samo, co wcześniej stało jako osobna karta niżej.
+     Oddziela ją włoskowata kreska, nie własne tło — panel ma zostać
+     jednym elementem, a nie kartą w karcie. */
+  .pomoc__karnet {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-sm);
+    align-items: center;
+    border-block-start: var(--hairline) solid var(--line);
+    padding-block-start: var(--space-md);
   }
 
   .pomoc__lead {
@@ -269,7 +281,7 @@ const t = pages.schedule;
     color: var(--text-muted);
     line-height: 1.7;
     max-width: var(--measure-narrow);
-    margin-block-end: var(--space-md);
+    margin-block-end: var(--space-sm);
   }
 
   .pomoc__kontakt {
@@ -306,27 +318,13 @@ const t = pages.schedule;
     min-block-size: 44px;
   }
 
-  .pomoc__figura {
-    margin: 0;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-  }
-
-  .pomoc__foto {
-    display: block;
-    inline-size: 100%;
-    block-size: 100%;
-    object-fit: cover;
-    aspect-ratio: 4 / 3;
-  }
 
   /* ————————————————————— karnet ————————————————————— */
 
-  /* Karta karnetu stoi na tle --surface-alt, więc znak konturowy czyta się
-     na niej bez dodatkowego krążka pod spodem. */
+  /* Znak stoi teraz wewnątrz panelu pomocy, czyli na --surface — własne
+     tło w tym samym kolorze byłoby krążkiem nie do odróżnienia od tła. */
   .karnet__znak {
-    --znak-size: 2.75rem;
-    background: var(--surface);
+    --znak-size: 2.5rem;
   }
 
   .karnet__tytul {
@@ -337,20 +335,6 @@ const t = pages.schedule;
   .karnet__tekst {
     font-size: var(--fs-small);
     color: var(--text-muted);
-  }
-
-  @media (min-width: 48rem) {
-    /* Równy podział, nie 1fr + sufit. Przy `minmax(9rem, 14rem)` tor zdjęcia
-       schodził do 147 px, czyli o jedną trzecią mniej, niż ma na makiecie. */
-    .karta--pomoc {
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      align-items: center;
-      gap: var(--space-md);
-    }
-
-    .pomoc__foto {
-      aspect-ratio: 3 / 4;
-    }
   }
 
   @media (min-width: 60rem) {
