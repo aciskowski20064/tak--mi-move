@@ -185,7 +185,11 @@ export const home = {
         text: 'Wybierz „Pierwszą wizytę”, wejście pojedyncze albo karnet — x4, x8 lub Open. Ważność karnetu liczy się od dnia pierwszej wizyty, nie od zakupu.',
       },
       {
-        title: 'Przyjdź trochę wcześniej',
+        /* Tytuł kroku dosłownie wg klientki — „około 10 min", bez
+           wcześniejszego „trochę wcześniej". Renderuje się wyłącznie
+           na /pierwsza-wizyta; sekcja na stronie głównej pokazuje
+           sam `text`, więc zmiana tytułu jej nie dotyka. */
+        title: 'Przyjdź około 10 min przed zajęciami',
         text: 'Przyjdź około 10 min przed zajęciami, żeby w ciszy wypić herbatę i spokojnie wejść na salę. W obu studiach są szatnie.',
       },
       {
@@ -193,7 +197,7 @@ export const home = {
         text: 'Ubierz się wygodnie, w coś, co nie krępuje ruchów — ćwiczymy boso lub w skarpetkach. Resztę sprzętu masz na miejscu.',
       },
       {
-        title: 'Powiedz nam o ważnych rzeczach',
+        title: 'Powiedz nam o ważnych urazach / szczególnych potrzebach',
         text: 'O kontuzji, ciąży czy innej szczególnej potrzebie napisz wcześniej na takmimove@gmail.com, a przed samymi zajęciami powiedz prowadzącej.',
       },
     ],

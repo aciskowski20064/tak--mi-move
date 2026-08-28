@@ -149,6 +149,19 @@ export const pages = {
      * Twoja pierwsza wizyta" oraz para nagłówków nad blokami informacyjnymi.
      */
     title: 'Twoja pierwsza wizyta w Tak Mi Move',
+    // Dwa kontrolowane wiersze zamiast zdania łamanego szerokością
+    // pudełka — przy pełnej skali H1 rozpadało się na cztery linie.
+    // `title` zostaje jednym ciągiem: idzie też do <title> i do opisu
+    // dla wyszukiwarek, gdzie łamanie nie ma sensu.
+    titleLines: ['Twoja pierwsza wizyta', 'w Tak Mi Move'],
+    /**
+     * `stepsEyebrow` i `stepsTitle` USUNIĘTE 28.08.2026, tym razem
+     * ostatecznie. Wróciły na jeden dzień razem z układem asymetrycznym
+     * i wypadły z powrotem, gdy okazało się, że lewa kolumna trzyma się
+     * bez nich: niesie ją sam H1 z kreską, a oś czasu po prawej domyka
+     * kompozycję. Uwaga klientki z 25.08.2026 obowiązuje bez wyjątku —
+     * poza krokami na tej stronie stoi JEDEN tytuł.
+     */
     /** FAKT: odpowiedzi 10 i 50 — co realnie zastaje się na miejscu. */
     amenities: ['Szatnie', 'Prysznic', 'Ręczniki', 'Kosmetyki'],
     photos: {
@@ -159,6 +172,12 @@ export const pages = {
     },
     // FAKT: cała treść tej podstrony pochodzi z odpowiedzi 48–52 oraz
     // powtórzonych tam odpowiedzi 10–12, 24, 26, 28–30 i 42 (19.08.2026).
+    /**
+     * NIE RENDEROWANY od 28.08.2026. Uwaga klientki („poza podpunktami
+     * jeden tytuł") obejmuje też ten akapit — po H1 strona przechodzi
+     * od razu do osi czasu. Treść zostaje w danych, bo pochodzi wprost
+     * z odpowiedzi 48 i może się przydać w opisie dla wyszukiwarek.
+     */
     lead: 'Na pierwszych zajęciach prowadząca pokaże Ci studio i podpowie, które jeszcze formy ruchu mogą Ci odpowiadać. Każde ćwiczenie ma łagodniejszy wariant — korzystasz z niego, kiedy potrzebujesz.',
     sections: {
       bring: {
@@ -171,8 +190,18 @@ export const pages = {
       },
       health: {
         title: 'Urazy i szczególne potrzeby',
-        // ROBOCZE: klientka zapowiedziała osobną, zredagowaną wersję treści
-        // zdrowotnych (odpowiedź 26). Do podmiany, gdy przyjdzie.
+        // PENDING CLIENT CONTENT (potwierdzone 28.08.2026).
+        //
+        // Klientka zapowiedziała osobną, zredagowaną wersję treści
+        // zdrowotnych (odpowiedź 26) i do dziś jej nie przysłała. Poniższy
+        // akapit jest NASZ: wyprowadzony z odpowiedzi 51 („zgłoś
+        // nauczycielowi prowadzącemu") i 26 („zielone światło od lekarza"),
+        // ale sformułowany przez nas. Do podmiany, nie do cytowania.
+        //
+        // Nie dopisujemy tu ostrzeżeń przeniesionych z aerial yogi
+        // (jaskra, nadciśnienie, kardiologia, błędnik) — tamte też są
+        // naszą treścią, a łączenie dwóch niepotwierdzonych źródeł
+        // w jedno zdanie o zdrowiu byłoby najgorszym z możliwych ruchów.
         body: 'O kontuzji, ciąży albo innej szczególnej potrzebie napisz nam wcześniej na takmimove@gmail.com, a przed samymi zajęciami powiedz o niej prowadzącej — dobierze warianty ćwiczeń. W ciąży ćwiczą u nas osoby, które mają zielone światło od lekarza prowadzącego. Nie zastępujemy diagnozy ani leczenia: jeśli coś Cię niepokoi, skonsultuj się najpierw z lekarzem lub fizjoterapeutą.',
       },
       cancel: {

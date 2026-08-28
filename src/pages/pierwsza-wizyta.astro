@@ -4,6 +4,7 @@ import Base from '~/layouts/Base.astro';
 import Section from '~/components/ui/Section.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Mark from '~/components/ui/Mark.astro';
+import Button from '~/components/ui/Button.astro';
 import Todo from '~/components/ui/Todo.astro';
 import Faq from '~/components/sections/Faq.astro';
 import { booking, site } from '~/data/site';
@@ -30,7 +31,6 @@ const steps = home.firstVisit.steps.filter((step) => !isPlaceholder(step.text));
 const missingSteps = showPlaceholders
   ? home.firstVisit.steps.filter((step) => isPlaceholder(step.text))
   : [];
-const lead = copyOrNull(t.lead);
 
 /** Bloki ze zdjęciem stoją w pierwszym rzędzie — dowód czyta się przed regułą. */
 const blocks = [
@@ -42,56 +42,50 @@ const blocks = [
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
-  {/* Bez zdjęcia nagłówek nie ma czego stawiać w drugiej kolumnie, więc
-      wraca do wspólnego komponentu podstron. Zostawienie pustej prawej
-      połowy czytałoby się jak niezaładowany obrazek, a nie jak decyzja. */}
-  {/* Bez nadtytułu „Pierwszy raz?" — klientka prosiła, żeby na tej podstronie,
-      poza podpunktami, został jeden tytuł (25.08.2026). */}
+  {/* Nagłówek na pełnej szerokości. Poza krokami stoi tu jeden tytuł
+      i kreska — bez leadu, bez nadtytułu, bez nagłówka sekcji.
+      `titleLines` wymusza dwa wiersze; przy łamaniu szerokością pudełka
+      tytuł rozpadał się na cztery. */}
   <PageHeader
+    size="sm"
     title={t.title}
-    lead={lead ?? undefined}
+    titleLines={t.titleLines}
     crumbs={[{ label: 'Pierwsza wizyta', href: '/pierwsza-wizyta' }]}
-    size="md"
-    rule
   />
 
-  {/* Sekcja miała wcześniej dwie kolumny: nagłówek po lewej, oś czasu po
-      prawej, a piaskowe tło podnosiło się łukiem w pas nagłówka. Po zdjęciu
-      nagłówków (prośba klientki, 25.08.2026) obie te konstrukcje straciły
-      przedmiot — druga kolumna nie miała czego trzymać, a łuk nie miał czego
-      spinać. Zostały usunięte razem z nimi. Docelowy, prostszy układ tej
-      podstrony przychodzi w Etapie 7. */}
-  <Section size="lg" tone="alt" class="stepsSection">
-    <div class="stepsLayout">
-      {/* Nadtytuł „Krok po kroku" i nagłówek „Tak wygląda Twoja pierwsza
-          wizyta" zdjęte na prośbę klientki (25.08.2026). Oś czasu zaczyna
-          sekcję sama — kroki są ponumerowane, więc nie potrzebują zapowiedzi. */}
-      <ol class="steps">
-        {
-          steps.map((step, index) => (
-            <li class="step">
-              <span class="step__marker" aria-hidden="true">
-                <Mark size="2.2rem" />
-                <span class="step__num">{String(index + 1).padStart(2, '0')}</span>
-              </span>
-              <div class="step__body">
-                <h3 class="step__title">{typo(step.title)}</h3>
-                <p class="step__text">{typo(step.text)}</p>
-              </div>
-            </li>
-          ))
-        }
-        {
-          missingSteps.map((step) => (
-            <li class="step step--todo">
-              <Todo label={step.text} block />
-            </li>
-          ))
-        }
-      </ol>
-    </div>
+  {/* Kroki w siatce 2 × 3, nie w pionowej osi po prawej. Split-screen
+      odpadł: przy dwóch kolumnach lewa zostawała pusta na całą wysokość
+      listy, a prawa robiła się gęsta. Tło `alt` wydziela sekcję samą
+      różnicą jasności — bez różu i bez organicznego panelu. */}
+  <Section size="md" tone="alt" class="stepsSection">
+    <ol class="steps">
+      {
+        steps.map((step, index) => (
+          <li class="step">
+            {/* Znak marki z numerem w środku — ten sam komponent Mark
+                (wariant pierścieniowy), którego używa reszta serwisu.
+                Całość dekoracyjna: kolejność niesie znacznik `ol`, więc
+                czytnik ekranu dostaje ją z HTML-a, a nie z liczby. */}
+            <span class="step__marker" aria-hidden="true">
+              <Mark size="2.6rem" />
+              <span class="step__num">{String(index + 1).padStart(2, '0')}</span>
+            </span>
+            <div class="step__body">
+              <h2 class="step__title">{typo(step.title)}</h2>
+              <p class="step__text">{typo(step.text)}</p>
+            </div>
+          </li>
+        ))
+      }
+      {
+        missingSteps.map((step) => (
+          <li class="step step--todo">
+            <Todo label={step.text} block />
+          </li>
+        ))
+      }
+    </ol>
   </Section>
-
   <Section size="lg">
     {/* Nadtytuł „Ważne informacje" i nagłówek „Wszystko, co warto wiedzieć
         wcześniej" zdjęte na prośbę klientki (25.08.2026) — cztery bloki
@@ -113,7 +107,7 @@ const blocks = [
                 />
               )}
               <div class="card__body">
-                <h3 class="card__title">{typo(block.title)}</h3>
+                <h2 class="card__title">{typo(block.title)}</h2>
                 {body ? <p class="card__text">{typo(body)}</p> : <Todo label={block.body} block />}
                 {block.amenities && (
                   <ul class="amenities">
@@ -135,101 +129,144 @@ const blocks = [
 
   <Faq />
 
-  {/* Karta rezerwacji stała wcześniej na zdjęciu w nagłówku i tam się dusiła.
-      Tu domyka stronę, której wcześniej brakowało wyjścia: najpierw sześć
-      kroków i odpowiedzi na obawy, dopiero potem prośba o rezerwację. */}
-  <Section size="md" tone="soft">
-    <aside class="booking">
+  {/* PAS DOMYKAJĄCY, NIE BANNER (28.08.2026).
+
+      Zdjęte: różowe tło (ton `soft`, czyli --clay-wash — terakota
+      rozcieńczona w kremie, którego finalnej wartości nie znamy, więc
+      pochodna placeholdera jest placeholderem podwójnie), nadmiarowy
+      padding oraz powtórzenie „Zarezerwuj pierwsze zajęcia" naraz jako
+      nagłówka i jako etykiety przycisku.
+
+      Konstrukcja jest teraz bliźniacza wobec zatwierdzonego pasa na
+      stronie głównej (FinalCta): to samo jasne --surface, ten sam
+      wspólny komponent Button, ten sam próg dwóch kolumn. Strzałka
+      odpadła razem z własnym przyciskiem — przycisk z systemu jej
+      nie ma, a rysowanie jej ręcznie było jedynym powodem, dla którego
+      ten CTA istniał poza wspólnym komponentem. */}
+  <Section size="md" class="booking-strip">
+    <div class="booking">
       <div class="booking__text">
-        <h2 class="booking__title">{home.firstVisit.ctaLabel}</h2>
+        <h2 class="booking__title">{typo(home.firstVisit.ctaLabel)}</h2>
         <p class="booking__help">
           Wolisz zapisać się przez telefon?
           <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
         </p>
       </div>
 
-      <a
-        class="booking__go"
-        href={booking.frontOfficeUrl}
-        target={booking.newTab ? '_blank' : undefined}
-        rel={booking.newTab ? 'noopener' : undefined}
-        data-cta-source="first-visit"
-        data-event="first_visit_cta_click"
-      >
-        <span>{home.firstVisit.ctaLabel}</span>
-        <svg class="booking__goIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path
-            d="M4 12h15m0 0-6-6m6 6-6 6"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-        </svg>
-      </a>
-    </aside>
+      <div class="booking__actions">
+        <Button
+          href={booking.frontOfficeUrl}
+          newTab={booking.newTab}
+          size="lg"
+          source="first-visit"
+          event="first_visit_cta_click"
+        >
+          {booking.label}
+        </Button>
+      </div>
+    </div>
   </Section>
 </Base>
 
 <style>
-  /* ————————————————————————— oś czasu ————————————————————————— */
+  /* ————————————————————————— nagłówek —————————————————————————
 
-  .stepsLayout {
-    display: grid;
-    gap: var(--space-lg);
-    align-items: start;
+     Stopień pisma niżej niż globalne --fs-h1 (60 px na 1280). Tytuł ma
+     tu dwa wiersze wersalikami i przy pełnej skali zajmował jedną trzecią
+     pierwszego ekranu. 44 px daje te same dwa wiersze w proporcji, która
+     nie konkuruje z treścią pod spodem.
+
+     :global, bo element nosi scope komponentu PageHeader. Arkusz tej
+     strony linkuje wyłącznie /pierwsza-wizyta — sprawdzone pomiarem
+     na pozostałych podstronach. */
+  :global(.page-header__title) {
+    font-size: clamp(1.75rem, 1.35rem + 2vw, 2.75rem);
+    line-height: 1.14;
+    /* base.css tnie każdy tytuł podstrony do 18ch, żeby długie zdania
+       łamały się na wiersze zamiast rozciągać w jeden. Tutaj wiersze są
+       już podane wprost, więc ta miara tylko psuje: przy 44 px daje
+       ok. 380 px, a „Twoja pierwsza wizyta" potrzebuje 420 — pierwszy
+       wiersz łamał się na dwa i z dwóch robiły się trzy. */
+    max-width: none;
   }
 
+  /* ————————————————————————— sekcja kroków ————————————————————————— */
+
+  :global(.section.stepsSection) {
+    padding-block: var(--space-lg);
+  }
+  /* ————————————————— sekwencja 01–06 —————————————————
+
+     Jedna lista na pełnej szerokości, krok pod krokiem. Kolejność niosą
+     duży numer po lewej i rytm wierszy — nie diagram. Poprzednie wersje
+     próbowały pokazać proces siatką 2 × 3 z connectorami i pionową osią;
+     obie czytały się jak schemat, a nie jak lista do przeczytania.
+
+     Czego tu celowo NIE ma: kart, obwódek, kółek wokół numerów, kropli
+     marki przy każdym kroku, strzałek i linii łączących. */
   .steps {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
-    gap: var(--space-md);
   }
 
   .step {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-md);
+    /* Wąska kolumna numeru trzyma stałą szerokość na każdej pozycji —
+       przy `auto` tory rozjeżdżałyby się o subpiksele między wierszami
+       i tytuły traciłyby wspólną linię. */
+    grid-template-columns: 3.5rem minmax(0, 1fr);
+    gap: var(--space-sm);
     align-items: start;
-    position: relative;
+    padding-block: var(--space-md);
   }
 
-  /* Linia łącząca kolejne kroki. Rysowana od znacznika w dół, ostatni krok
-     jej nie dostaje, żeby oś nie wisiała w powietrzu pod listą. */
-  .step:not(:last-child)::before {
-    content: '';
-    position: absolute;
-    inset-block: 2.6rem calc(-1 * var(--space-md));
-    inset-inline-start: calc(1.3rem - var(--hairline) / 2);
-    inline-size: var(--hairline);
-    background: var(--line);
+  /* Separator włoskowaty, w `--line-detail`: `--line` jest dobrana do
+     jasnego --surface i na piaskowym tle sekcji praktycznie znika. */
+  .step + .step {
+    border-block-start: var(--hairline) solid var(--line-detail);
   }
 
   .step--todo {
     grid-template-columns: 1fr;
   }
 
-  /* Tło kropki zasłania linię łączącą, żeby nie przechodziła przez znacznik. */
+  /* Znak marki obejmujący numer. To ten sam komponent i te same wymiary,
+     które stały tu przed przebudową na listę — nic nie jest odrysowane
+     od nowa. Pudełko 3.05 rem mieści kroplę 2.6 rem z zapasem, w którym
+     numer nie dotyka konturu.
+
+     Bez tła i bez własnego zaokrąglenia: kształt rysuje sam SVG, więc
+     kółko pod spodem byłoby drugą obwódką pod pierwszą.
+
+     Kanoniczna terakota (#DA9787) dziedziczona przez `currentColor`
+     do wnętrza SVG. Całość jest dekoracyjna i siedzi w `aria-hidden`,
+     a kolejność niesie znacznik `ol` — więc obowiązuje ją wymóg
+     rozpoznawalności kształtu, nie kontrastu tekstowego. */
   .step__marker {
     display: grid;
     place-items: center;
-    inline-size: 2.6rem;
-    block-size: 2.6rem;
-    border-radius: var(--radius-pill);
-    background: var(--surface-alt);
-    color: var(--text-accent);
+    inline-size: 3.05rem;
+    block-size: 3.05rem;
+    color: var(--accent);
     position: relative;
+    /* Wyrównanie do PIERWSZEGO WIERSZA tytułu, nie do góry pudełka.
+       Środek znaku ma trafić w środek wersaliki tytułu; bez tego znak
+       zaczyna się równo z tytułem i optycznie wisi nad nim.
+       Wartość dobrana pomiarem — patrz raport. */
+    margin-block-start: -0.7rem;
   }
 
+  /* `tabular-nums` wyrównuje cyfry — bez tego „01" i „06" mają różną
+     szerokość i numer skacze w środku znaku. */
   .step__num {
     position: absolute;
-    font-size: var(--fs-caption);
+    font-size: var(--fs-small);
     letter-spacing: 0.02em;
-    color: var(--text-accent);
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
   }
-
   .step__title {
     font-size: var(--fs-h4);
     margin-block-end: var(--space-3xs);
@@ -246,15 +283,24 @@ const blocks = [
   /* Na wąskim ekranie treść i przycisk stoją w słupku, od 40 rem rozchodzą
      się na boki jednego paska. Karta nie leży już na zdjęciu, więc nie
      potrzebuje ani pozycjonowania, ani chowania etykiety pod strzałkę. */
+  /* Pas, nie sekcja. Domyślny rytm `md` dawał 76,8 px góra i dół —
+     te same proporcje, które na stronie głównej zeszły do wartości
+     poniżej. Klamra jest wspólna z FinalCta i ma nią pozostać.
+
+     :global, bo klasa trafia na korzeń komponentu Section. */
+  :global(.section.booking-strip) {
+    padding-block: clamp(1rem, 0.8rem + 1vw, 1.5rem);
+  }
+
   .booking {
     display: grid;
-    gap: var(--space-md);
+    gap: var(--space-sm);
     align-items: center;
   }
 
   .booking__text {
     display: grid;
-    gap: var(--space-2xs);
+    gap: var(--space-3xs);
   }
 
   .booking__title {
@@ -271,26 +317,12 @@ const blocks = [
     margin-inline-start: 0.35em;
   }
 
-  .booking__go {
-    display: inline-flex;
+  .booking__actions {
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: var(--space-2xs);
-    min-block-size: 44px;
-    padding-inline: var(--space-md);
-    border-radius: var(--radius-pill);
-    background: var(--accent);
-    color: var(--on-accent);
-    text-decoration: none;
-    font-size: var(--fs-small);
-    text-align: center;
+    gap: var(--space-xs);
   }
-
-  .booking__goIcon {
-    inline-size: 1.15rem;
-    block-size: 1.15rem;
-  }
-
   /* ————————————————————————— bloki informacyjne ————————————————————————— */
 
   .blocks {
@@ -350,6 +382,30 @@ const blocks = [
     color: var(--text-accent);
   }
 
+  /* Sam symbol w kanonicznej terakocie, etykieta obok zostaje
+     w ciemniejszej — inaczej wersaliki 12 px przestałyby być czytelne.
+     :global, bo Mark wstawia surowy SVG spoza scope tej strony. */
+  .amenities__item :global(svg) {
+    color: var(--accent);
+  }
+
+  /* Na szerokim ekranie treść kroku dostaje sufit, a nadmiar kolumny
+     zostaje pustką po prawej — to jest ten kontrolowany oddech, nie
+     niedokończony układ. Bez sufitu opis rozciągałby się na 1000 px,
+     czyli ok. 150 znaków w wierszu. */
+  @media (min-width: 60rem) {
+    .step__body {
+      max-width: 46rem;
+    }
+
+    /* `--space-md`, nie `lg`: przy sześciu krokach każde 20 px na wiersz
+       to 240 px wysokości sekcji. Oddech ma być kontrolowany, nie
+       przypadkowy. */
+    .step {
+      grid-template-columns: 5rem minmax(0, 1fr);
+      padding-block: var(--space-md);
+    }
+  }
   @media (min-width: 48rem) {
     .blocks {
       grid-template-columns: repeat(2, 1fr);
