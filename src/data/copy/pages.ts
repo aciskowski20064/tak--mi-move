@@ -227,7 +227,21 @@ export const pages = {
     title: 'Zdrowy ruch w kameralnej przestrzeni',
     // FAKT: odpowiedź 53 — „studio zdrowego ruchu” z formularza plus opis marki
     // przysłany mailem („bezpieczna, inkluzywna i wspierająca przestrzeń…”).
-    lead: 'Jesteśmy studiem zdrowego ruchu. Tworzymy bezpieczną, inkluzywną i wspierającą przestrzeń — miejsce treningu i praktyki, spotkań oraz holistycznej troski o ciało i głowę.',
+    /**
+     * SŁOWA TE SAME, ZMIENIONA JEST JEDNA SPACJA. Między „Tworzymy"
+     * a „bezpieczną" stoi twarda spacja (U+00A0), żeby pierwsze słowo
+     * drugiego zdania nie mogło zostać na końcu pierwszego wiersza.
+     *
+     * `typo()` tego nie załatwi: jego reguła początku zdania obejmuje
+     * wyrazy DWULITEROWE, a „Tworzymy" ma osiem znaków. Rozszerzenie
+     * tej reguły ruszyłoby skład na wszystkich podstronach, więc
+     * wiązanie stoi punktowo, w tym jednym zdaniu.
+     *
+     * Efekt na 1280 px: cztery wiersze, złamanie na kropce.
+     * Na telefonie para „Tworzymy bezpieczną," przechodzi razem
+     * do następnego wiersza i nic się nie psuje.
+     */
+    lead: 'Jesteśmy studiem zdrowego ruchu. Tworzymy bezpieczną, inkluzywną i wspierającą przestrzeń — miejsce treningu i praktyki, spotkań oraz holistycznej troski o ciało i głowę.',
     /**
      * FAKT: tekst przysłany przez klientkę 19.08.2026 — pierwszy materiał
      * napisany przez nią w pierwszej osobie. Dlatego ten blok jest wreszcie
@@ -299,8 +313,14 @@ export const pages = {
     values: {
       // Tytuł sekcji wprost od klientki (25.08.2026).
       title: 'Wartości Tak Mi Move',
-      // FAKT: hasło marki z mediów społecznościowych i z maila (odpowiedź 55).
-      motto: 'Siła ~ Spokój ~ Równowaga',
+      /**
+       * FAKT: hasło marki z mediów społecznościowych i z maila (odpowiedź 55).
+       *
+       * Bez tyld — tak samo jak w H1 na /zajecia od Etapu 6. Tyldy były
+       * separatorem zapisu w jej odręcznej notatce, nie częścią hasła.
+       * Rozdzielenie słów niesie teraz sam odstęp w typografii.
+       */
+      motto: 'SIŁA SPOKÓJ RÓWNOWAGA',
       /**
        * FAKT: cztery tytuły wprost od klientki (25.08.2026) — zastąpiły
        * przymiotniki „Bezpiecznie / Dla każdego / Ze wsparciem / Ciało i głowa".
@@ -334,11 +354,28 @@ export const pages = {
     // W jego miejsce ma mocniej wybrzmieć informacja o wydarzeniach —
     // to Etap 8, nie ten.
     community: {
+      eyebrow: 'Wydarzenia',
       title: 'Społeczność i wydarzenia',
       // FAKT: odpowiedź 56 — „Tak, regularnie warsztaty i wyjazdy → info na FB i IG”,
       // plus uzupełnienie z maila o wydarzeniach na zamówienie („gotowy pakiet
       // albo uszyte na miarę”) i o ofercie wysyłanej mailem.
-      body: 'Warsztaty i wyjazdy organizujemy regularnie — terminy ogłaszamy na Facebooku i Instagramie. U nas można też zamówić własne wydarzenie: gotowy pakiet albo coś uszytego na miarę. Pełną ofertę i ceny wysyłamy mailem.',
+      /**
+       * Zostało jedno zdanie — to z odpowiedzi 56, jedyne potwierdzone.
+       *
+       * Zdjęte 28.08.2026: „U nas można też zamówić własne wydarzenie:
+       * gotowy pakiet albo coś uszytego na miarę" oraz „Pełną ofertę
+       * i ceny wysyłamy mailem". Pierwsze było moją parafrazą maila,
+       * drugie dodatkowo kłóci się z przygotowywanym PDF-em: obiecywało
+       * ofertę mailem w miejscu, w którym stanie przycisk do dokumentu.
+       */
+      body: 'Warsztaty i wyjazdy organizujemy regularnie — terminy ogłaszamy na Facebooku i Instagramie.',
+      /**
+       * FAKT: oba zdania wprost od klientki. Pytanie ma być mocniejszym
+       * komunikatem tej podstrony, etykieta prowadzi do jej PDF-a
+       * z ofertą — patrz `eventOffer` w site.ts.
+       */
+      eventTitle: 'Chcesz zorganizować u nas swoje wydarzenie?',
+      eventCta: 'Poznaj nasze pakiety eventowe',
     },
   },
 

@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import Section from '~/components/ui/Section.astro';
 import { typo } from '~/lib/typografia';
 import Mark from '~/components/ui/Mark.astro';
@@ -6,77 +7,113 @@ import { pages } from '~/data/copy/pages';
 
 /**
  * Sekcja „Prowadzące" po decyzji klientki (odpowiedź 1): bez nazwisk,
- * bez zdjęć, bez kart osób. Zostaje ogólna informacja, cztery cechy wspólne
+ * bez zdjęć osób, bez kart. Zostaje ogólna informacja, cztery cechy wspólne
  * z odpowiedzi 13–16 i odesłanie do grafiku — dokładnie to, o co prosiła.
  *
- * Układ wg makiety z 20.08.2026, przełożony na nasz system: kompozycja
- * wyśrodkowana, pigułki po dwie w rzędzie, ornament rozdzielający. Makieta
- * miała w ornamentach botaniczne gałązki, a w kółkach słoneczka — jedno
- * i drugie zastępuje symbol-kropla, który brief §8 wybrał zamiast
- * biblioteki ikon.
+ * UKŁAD DWUKOLUMNOWY (28.08.2026). Wcześniej cała sekcja była jedną
+ * wyśrodkowaną kolumną: kadr na środku, pod nim tekst, pod nim śródtytuł
+ * i karty. Przy pionowym zdjęciu zespołu dawało to prawie 1500 px wysokości
+ * i sekcja rozjeżdżała się w pionie.
  *
- * To jedyna wyśrodkowana sekcja na tej podstronie i tak ma zostać: domyka
- * stronę, która wcześniej kończyła się trzema powtórzonymi wyjściami.
+ * Teraz góra sekcji jest dwukolumnowa — kadr po lewej, nagłówek i opis po
+ * prawej — a „Co nas łączy" stoi pod nią jako osobny blok, oddzielony
+ * ornamentem. Ten sam ornament (kreska, znak marki, kreska) był tu wcześniej
+ * pod tytułem; przeniesiony w miejsce, gdzie realnie coś rozdziela.
  */
+// TEMP — final team photo pending client approval.
+// Jedyne miejsce ze ścieżką kadru zespołu: podmiana to zmiana tej linii.
+// Kandydatki wskazane w shortliście, żadna niezatwierdzona: `TAK MI MOVE (3)`
+// i `DSC01989` z materiałów oraz `zespol-przy-logo.jpg` (ten stoi już
+// w intro tej podstrony, więc świadomie go tu nie powtarzam).
+import fotoZespolu from '~/assets/photos/zespol-grupa.jpg';
+
 const t = pages.about.crew;
+
+/**
+ * Dwa zdania klientki rozdzielone na osobne akapity. Treść jest nietknięta —
+ * dzielimy ją przy renderowaniu, po kropce kończącej pierwsze zdanie, żeby
+ * w danych została jednym ciągiem (idzie stamtąd również do opisów dla
+ * wyszukiwarek, gdzie podział na akapity nie ma sensu).
+ */
+const zdania = t.body.split(/(?<=\.)\s+/).filter(Boolean);
 ---
 
-<Section size="lg" tone="alt">
+<Section size="lg" tone="alt" class="crewSekcja">
   <div class="crew">
-    <p class="crew__eyebrow eyebrow">{t.eyebrow}</p>
-    <h2 class="crew__title">{typo(t.title)}</h2>
+    <div class="crew__glowna">
+      <figure class="crew__figura">
+        <Image
+          src={fotoZespolu}
+          alt="Cztery prowadzące TAK MI MOVE w sali studia"
+          widths={[380, 560, 760]}
+          sizes="(min-width: 60rem) 42vw, 100vw"
+          loading="lazy"
+          class="crew__foto"
+        />
+      </figure>
 
+      <div class="crew__tresc">
+        <p class="crew__eyebrow eyebrow">{t.eyebrow}</p>
+        <h2 class="crew__title">{typo(t.title)}</h2>
+
+        {zdania.map((zdanie) => <p class="crew__lead">{typo(zdanie)}</p>)}
+      </div>
+    </div>
+
+    {/* Separator między „Prowadzącymi" a „Co nas łączy" — kreska, znak
+        marki, kreska. Element już obecny w systemie, nie nowy pomysł. */}
     <div class="crew__ornament" aria-hidden="true">
       <span class="crew__rule"></span>
       <Mark size="1.5rem" />
       <span class="crew__rule"></span>
     </div>
 
-    <p class="lead crew__lead">{typo(t.body)}</p>
+    <div class="crew__laczy">
+      <h3 class="crew__valuesTitle">{typo(t.valuesTitle)}</h3>
 
-    <h3 class="crew__valuesTitle">{typo(t.valuesTitle)}</h3>
+      <ul class="crew__values">
+        {
+          t.values.map((value) => (
+            <li class="crew__value">
+              <span class="znak crew__badge" aria-hidden="true">
+                <Mark size="1.1rem" />
+              </span>
+              <span class="crew__label">{value}</span>
+            </li>
+          ))
+        }
+      </ul>
 
-    <ul class="crew__values">
-      {
-        t.values.map((value) => (
-          <li class="crew__value">
-            <span class="znak crew__badge" aria-hidden="true">
-              <Mark size="1.1rem" />
-            </span>
-            <span class="crew__label">{value}</span>
-          </li>
-        ))
-      }
-    </ul>
-
-    <a class="crew__link" href={t.linkHref}>{t.linkLabel}</a>
-
-    <div class="crew__ornament" aria-hidden="true">
-      <span class="crew__rule"></span>
-      <Mark size="1.5rem" />
-      <span class="crew__rule"></span>
+      <a class="crew__link" href={t.linkHref}>{typo(t.linkLabel)}</a>
     </div>
   </div>
 </Section>
 
 <style>
+  /* Kontener węższy od pasa treści. Przy pełnej szerokości kadr i tekst
+     rozjeżdżały się na 1191 px i sekcja przestawała być kompozycją. */
   .crew {
+    max-inline-size: 70rem;
+    margin-inline: auto;
     display: grid;
+    gap: var(--space-xl);
     justify-items: center;
-    text-align: center;
-    gap: var(--space-md);
   }
 
-  /* Nadtytuł dostaje kreski po obu stronach — w makiecie krótkie, więc
-     stała szerokość, a nie `flex: 1`, które rozciągnęłoby je na sekcję. */
+  .crew__glowna {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+    inline-size: 100%;
+  }
+
   .crew__eyebrow {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
   }
 
-  .crew__eyebrow::before,
-  .crew__eyebrow::after {
+  .crew__eyebrow::before {
     content: '';
     inline-size: 1.75rem;
     block-size: 1px;
@@ -85,6 +122,7 @@ const t = pages.about.crew;
 
   .crew__title {
     font-size: var(--fs-h2);
+    margin-block: var(--space-2xs) var(--space-md);
   }
 
   .crew__ornament {
@@ -101,17 +139,44 @@ const t = pages.about.crew;
     background: var(--line-detail);
   }
 
-  .crew__lead {
-    max-width: 46ch;
-    margin-block-start: var(--space-2xs);
+  /* Kadr zespołu: jeden, klientka prosiła o ZDJĘCIE kadry, nie o galerię.
+     Proporcja natywna pliku (1536 × 2048, czyli pion 3:4) — bez `cover`
+     i bez wymuszonej proporcji kafel pokazuje cały kadr. */
+  /* Sufit 22 rem obowiązuje tylko w układzie pionowym, gdzie kadr stoi
+     nad tekstem i bez ograniczenia rozciągnąłby się na całą sekcję. */
+  .crew__figura {
+    margin: 0;
+    inline-size: 100%;
+    max-inline-size: 22rem;
+    border-radius: var(--radius-card);
+    overflow: hidden;
   }
 
-  /* Nagłówek nad pigułkami. Wchodzi w rytm wyśrodkowanej kompozycji sekcji,
-     więc bez własnego marginesu górnego — odstęp niesie `gap` kontenera.
-     Dolny zeruje odstęp pod nim, bo lista ma już swój margines. */
+  .crew__foto {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 3 / 4;
+  }
+
+  /* Dwa zdania jako osobne akapity, każde w wąskiej mierze. Jeden szeroki
+     blok na całą kolumnę czytał się jako ściana tekstu. */
+  .crew__lead {
+    max-inline-size: 36ch;
+  }
+
+  .crew__lead + .crew__lead {
+    margin-block-start: var(--space-sm);
+  }
+
+  .crew__laczy {
+    inline-size: 100%;
+    display: grid;
+    justify-items: center;
+  }
+
   .crew__valuesTitle {
     font-size: var(--fs-h4);
-    margin-block-end: calc(-1 * var(--space-2xs));
   }
 
   .crew__values {
@@ -120,42 +185,41 @@ const t = pages.about.crew;
     margin-block-start: var(--space-md);
     display: grid;
     gap: var(--space-md);
-    /* Węższa siatka łamała najdłuższą etykietę („Otwartość na drugiego
-       człowieka") na dwie linie i rozpychała dolny rząd o 6 px. */
-    inline-size: min(100%, 72rem);
+    /* Sufit szerokości: bez niego cztery pozycje rozjeżdżają się na całą
+       sekcję i karty ciągną się przez pół ekranu. */
+    inline-size: min(100%, 46rem);
   }
 
-  /* Pigułka: kropla w kółku, cienka pionowa kreska, etykieta. Tekst wraca
-     do lewej — wyśrodkowana jest kompozycja sekcji, nie zawartość kafla. */
+  /* DOMKNIĘTY BLOK: ta sama receptura co karty wartości wyżej na tej
+     podstronie — włoskowaty obrys i promień 14 px. Różni je wypełnienie:
+     tutaj `--surface`, bo sekcja stoi na tonie `alt` i bez niego karta nie
+     miałaby się na czym odciąć. */
   .crew__value {
     display: flex;
-    align-items: stretch;
-    gap: var(--space-md);
+    align-items: center;
+    gap: var(--space-sm);
     text-align: start;
     background: var(--surface);
     border: var(--hairline) solid var(--line);
-    border-radius: var(--radius-pill);
-    padding: var(--space-sm) var(--space-lg);
+    border-radius: 14px;
+    padding: var(--space-sm) var(--space-md);
   }
 
   .crew__badge {
-    --znak-size: 3rem;
+    --znak-size: 2.5rem;
+    flex: none;
   }
 
-  /* Kreska bierze wysokość z kółka, bo to najwyższy element w rzędzie —
-     stąd `align-items: stretch` na pigułce. */
   .crew__label {
-    display: flex;
-    align-items: center;
-    padding-inline-start: var(--space-md);
-    border-inline-start: var(--hairline) solid var(--line);
     font-family: var(--font-display);
     font-size: var(--fs-h4);
     line-height: 1.3;
   }
 
+  /* Oddech od kart powyżej: 16 px kleiło odsyłacz do dolnej krawędzi
+     ostatniego bloku i wyglądał jak dopisek, a nie jak wyjście z sekcji. */
   .crew__link {
-    margin-block-start: var(--space-sm);
+    margin-block-start: var(--space-lg);
     font-size: var(--fs-body);
     color: var(--text-accent);
     text-decoration: none;
@@ -170,10 +234,30 @@ const t = pages.about.crew;
   @media (min-width: 48rem) {
     .crew__values {
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-lg) var(--space-md);
-      /* Wszystkie cztery pigułki równej wysokości także wtedy, gdy przy
+      gap: var(--space-md);
+      /* Wszystkie cztery karty równej wysokości także wtedy, gdy przy
          węższym oknie któraś etykieta jednak się złamie. */
-      grid-auto-rows: 1fr;
+      align-items: stretch;
+    }
+  }
+
+  /* Kadr po lewej, treść po prawej. 0,8fr wobec 1fr daje kolumnie zdjęcia
+     ok. 43% szerokości — tyle, żeby kadr niósł swoją wagę i nie przejmował
+     sekcji. Poniżej progu wszystko schodzi w pion w kolejności:
+     kadr, nagłówek z opisem, separator, „Co nas łączy", karty. */
+  @media (min-width: 60rem) {
+    .crew__glowna {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+      gap: var(--space-2xl);
+      justify-items: start;
+    }
+
+    /* Sufit zdjęty: w dwóch kolumnach szerokość kadru wyznacza tor
+       siatki, nie sztywna wartość. Przy 22 rem kadr miał 352 px, czyli
+       31% kontenera — o jedną trzecią mniej, niż daje mu jego własna
+       kolumna. Teraz wypełnia ją i siedzi w zamówionym paśmie 40–45%. */
+    .crew__figura {
+      max-inline-size: none;
     }
   }
 </style>

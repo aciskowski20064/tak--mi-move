@@ -80,6 +80,25 @@ export const booking = {
  * jest gorszy niż jego brak.
  */
 
+/**
+ * Oferta eventowa — jedno miejsce, w którym żyje ścieżka do PDF-a.
+ *
+ * PENDING CLIENT ASSET — podpiąć PDF oferty eventowej.
+ *
+ * Dopóki `pdfUrl` jest puste, wezwanie „Poznaj nasze pakiety eventowe"
+ * NIE renderuje się w ogóle. Świadomie nie ma tu ani `href="#"`, ani
+ * podmiany na adres e-mail: martwy odsyłacz jest gorszy od jego braku,
+ * a sama sekcja eventowa działa bez niego.
+ *
+ * Po otrzymaniu pliku wystarczy:
+ *   1. wrzucić go do `public/`, np. `oferta-eventowa-tak-mi-move.pdf`,
+ *   2. wpisać tę ścieżkę niżej.
+ * Widok nie wymaga żadnej zmiany.
+ */
+export const eventOffer = {
+  pdfUrl: '',
+} as const;
+
 export const locations: StudioLocation[] = [
   {
     slug: 'pruszcz-gdanski',

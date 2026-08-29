@@ -25,7 +25,18 @@ import type { CtaSource } from '~/types';
  * analitykę (zdarzenie booking_cta_click, brief §47).
  */
 interface Props {
-  href: string;
+  /** Pominięty razem z `disabled` — przycisk bez celu nie ma adresu. */
+  href?: string;
+  /**
+   * Wezwanie przygotowane, ale bez celu — renderuje `<button disabled>`
+   * zamiast odsyłacza. Powstało dla oferty eventowej na /o-nas, gdzie
+   * układ ma być gotowy, zanim klientka przyśle PDF: przycisk widać,
+   * a martwego `href="#"` nie ma.
+   *
+   * Wygląd jest ten sam — te same klasy `.btn`, ten sam wariant — więc
+   * po podpięciu pliku geometria się nie zmienia.
+   */
+  disabled?: boolean;
   variant?: 'primary' | 'secondary' | 'quiet';
   size?: 'md' | 'lg';
   newTab?: boolean;
@@ -36,6 +47,7 @@ interface Props {
 
 const {
   href,
+  disabled = false,
   variant = 'primary',
   size = 'md',
   newTab = false,
@@ -44,24 +56,37 @@ const {
   class: className,
 } = Astro.props;
 
-const external = newTab || href.startsWith('http');
+const external = !disabled && (newTab || (href ?? '').startsWith('http'));
 ---
 
-<a
-  href={href}
-  class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
-  target={external ? '_blank' : undefined}
-  rel={external ? 'noopener' : undefined}
-  data-cta-source={source}
-  data-event={event}
->
-  <span class="btn__label"><slot /></span>
-  {
-    external && (
-      <span class="visually-hidden">(otwiera się w nowej karcie)</span>
-    )
-  }
-</a>
+{
+  disabled ? (
+    <button
+      type="button"
+      disabled
+      class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
+      data-cta-source={source}
+    >
+      <span class="btn__label">
+        <slot />
+      </span>
+    </button>
+  ) : (
+    <a
+      href={href}
+      class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener' : undefined}
+      data-cta-source={source}
+      data-event={event}
+    >
+      <span class="btn__label">
+        <slot />
+      </span>
+      {external && <span class="visually-hidden">(otwiera się w nowej karcie)</span>}
+    </a>
+  )
+}
 
 <style>
   .btn {
@@ -91,6 +116,24 @@ const external = newTab || href.startsWith('http');
   .btn--lg {
     font-size: var(--fs-body);
     padding-inline: 1.9em;
+  }
+
+  /* Stan bez celu — GOTOWY PRZYCISK MARKI, CHWILOWO NIEAKTYWNY.
+
+     Pierwsza wersja miała `opacity: 0.55` i terakota schodziła do bladego
+     różu na kremowym tle — wyglądało to jak systemowy, wyszarzony
+     placeholder, a nie jak przygotowane wezwanie marki. Zostaje pełne
+     tło `--accent`, a nieaktywność niesie sam kursor i brak reakcji na
+     najechanie: `disabled` na `<button>` wyłącza hover i fokus, więc
+     żadna reguła stanu nie ma jak zadziałać.
+
+     Zejście nasycenia zostaje, ale minimalne — etykieta `--on-accent`
+     na `--accent` daje 6.18:1, przy 0.9 nadal ponad 5:1. Geometria
+     identyczna z wersją aktywną, więc po podpięciu adresu nic
+     nie skacze. */
+  .btn:disabled {
+    opacity: 0.9;
+    cursor: default;
   }
 
   /* Tło --accent + tekst --on-accent = 6.2:1.

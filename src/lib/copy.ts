@@ -26,5 +26,12 @@ export const copyOrNull = (value?: string | null): string | null =>
   isPlaceholder(value) ? null : (value as string);
 
 /** Odfiltrowuje z listy pozycje bez realnej treści. */
-export const realOnly = <T>(items: T[], pick: (item: T) => string | undefined): T[] =>
+/**
+ * Tablice w `src/data/copy/` są `as const`, czyli `readonly`. Sygnatura
+ * przyjmuje więc `readonly T[]` — to poszerzenie typu wejścia, nie zmiana
+ * zachowania: `filter` i tak zwraca nową tablicę i niczego nie mutuje.
+ * Bez tego TypeScript odrzucał wywołanie na /o-nas, a element listy
+ * degradował się do `unknown` w trzech kolejnych miejscach.
+ */
+export const realOnly = <T>(items: readonly T[], pick: (item: T) => string | undefined): T[] =>
   items.filter((item) => !isPlaceholder(pick(item)));

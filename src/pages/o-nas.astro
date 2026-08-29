@@ -7,10 +7,15 @@ import Section from '~/components/ui/Section.astro';
 import Mark from '~/components/ui/Mark.astro';
 import Todo from '~/components/ui/Todo.astro';
 import Team from '~/components/sections/Team.astro';
+import Button from '~/components/ui/Button.astro';
 import { pages } from '~/data/copy/pages';
+import { eventOffer } from '~/data/site';
 import { copyOrNull, realOnly } from '~/lib/copy';
 import zespolPrzyLogo from '~/assets/photos/zespol-przy-logo.jpg';
 import zalozycielka from '~/assets/photos/zalozycielka-portret.jpg';
+// TEMP — final event photo pending approval.
+// Jedyne miejsce ze ścieżką kadru eventowego: podmiana to zmiana tej linii.
+import fotoEvent from '~/assets/photos/event-grupa.jpg';
 
 /**
  * Układ wg makiety zaakceptowanej 19.08.2026, przełożony na nasz system:
@@ -32,10 +37,9 @@ import zalozycielka from '~/assets/photos/zalozycielka-portret.jpg';
 const t = pages.about;
 const lead = copyOrNull(t.lead);
 const values = realOnly(t.values.items, (item) => item.body);
-// Kafel „Dwie przestrzenie" zdjęty na prośbę klientki (25.08.2026) — zostaje
-// sam blok o społeczności i wydarzeniach. Mocniejsze wyeksponowanie wydarzeń
-// przychodzi w Etapie 8, nie tutaj.
-const cards = [t.community];
+// Kafel „Dwie przestrzenie" zdjęty na prośbę klientki (25.08.2026), a blok
+// o społeczności wyszedł w Etapie 8 z sekcji wartości do własnej sekcji
+// eventowej niżej. Tablica `cards` nie ma już czego trzymać.
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
@@ -103,9 +107,9 @@ const cards = [t.community];
     </article>
   </Section>
 
-  <Section size="lg">
+  <Section size="lg" class="wartosciSekcja">
     <div class="values">
-      <p class="values__motto">{t.values.motto}</p>
+      <p class="values__motto">{typo(t.values.motto)}</p>
       <h2 class="values__title">{typo(t.values.title)}</h2>
       <ul class="values__list">
         {
@@ -124,29 +128,62 @@ const cards = [t.community];
       </ul>
     </div>
 
-    {/* Kafle długie siedzą w tej samej sekcji co wartości. Osobne sekcje
-        sumowały swoje paddingi (2xl + xl) i robiły między nimi kilkanaście
-        centymetrów pustki — rozdziela je teraz sama cienka linia. */}
-    <div class="cards">
-      {
-        cards.map((card) => {
-          const body = copyOrNull(card.body);
-          return (
-            <article class="card">
-              <span class="znak znak--pelny" aria-hidden="true">
-                <Mark size="1.35rem" />
-              </span>
-              <div>
-                <h2 class="card__title">{typo(card.title)}</h2>
-                {body ? <p class="card__body">{typo(body)}</p> : <Todo label={card.body} block />}
-              </div>
-            </article>
-          );
-        })
-      }
-    </div>
   </Section>
 
+  {/* SEKCJA EVENTOWA (Etap 8, 28.08.2026).
+
+      Wcześniej była to jedna mała karta „Społeczność i wydarzenia"
+      doklejona pod wartościami, w tej samej sekcji, z paddingiem 27 px
+      i bez żadnego wyjścia. Klientka poprosiła, żeby możliwość
+      zorganizowania własnego wydarzenia wybrzmiała mocniej — więc
+      dostaje własną sekcję, kadr o dużej wadze wizualnej i wezwanie.
+
+      Ton `default`, nie `alt`: niżej stoją Prowadzące na `alt`, a dwie
+      sąsiadujące sekcje w tym samym tonie zlałyby się w jeden pas.
+      Wydzielenie niesie tu kadr, nie kolor tła. */}
+  <Section size="lg" class="event eventSekcja">
+    <div class="event__grid">
+      <figure class="event__figura">
+        <Image
+          src={fotoEvent}
+          alt="Grupa ćwicząca w rzędzie na matach w studiu TAK MI MOVE"
+          widths={[520, 780, 1100]}
+          sizes="(min-width: 60rem) 46vw, 100vw"
+          loading="lazy"
+          class="event__foto"
+        />
+      </figure>
+
+      <div class="event__tresc">
+        <p class="eyebrow">{t.community.eyebrow}</p>
+        <h2 class="event__tytul">{typo(t.community.eventTitle)}</h2>
+        <span class="event__kreska" aria-hidden="true"></span>
+        <p class="event__opis">{typo(t.community.body)}</p>
+
+        {/* Wezwanie jest widoczne ZAWSZE — zmienia się tylko to, czy ma
+            dokąd prowadzić. Bez ścieżki w `eventOffer.pdfUrl` renderuje
+            się jako `<button disabled>` w tym samym wariancie wizualnym:
+            klientka widzi gotowy układ, a martwego `href="#"` nie ma.
+            Po wpisaniu ścieżki ten sam element staje się odsyłaczem —
+            bez zmiany szablonu, komponentu, treści ani stylu.
+            Konfiguracja: `eventOffer` w src/data/site.ts. */}
+        <p class="event__akcja">
+          {/* Wariant `primary` z systemu — wypełniona terakota, ciemna
+              etykieta, ten sam promień, wysokość i typografia co
+              pozostałe główne wezwania w serwisie. Bez osobnego stylu
+              dla tej sekcji. */}
+          <Button
+            href={eventOffer.pdfUrl || undefined}
+            disabled={!eventOffer.pdfUrl}
+            newTab
+            source="final"
+          >
+            {t.community.eventCta}
+          </Button>
+        </p>
+      </div>
+    </div>
+  </Section>
   {/* Sekcje „Gdzie nas znajdziesz" i „Przyjdź na pierwsze zajęcia" zdjęte
       świadomie — powtarzały to, co i tak stoi obok. Adres obu studiów jest
       w stopce na każdej podstronie, na /studia, na /kontakt oraz w kaflu
@@ -159,7 +196,102 @@ const cards = [t.community];
 </Base>
 
 <style>
+  /* ————————————————————————— rytm pionowy —————————————————————————
+
+     Sekcje wartości i wydarzeń stały obie na rytmie `lg`, czyli 124,8 px
+     góra i dół przy 1280 px. Na ich styku dawało to 250 px pustki między
+     ostatnią kartą wartości a kadrem eventowym — pas powietrza wyższy od
+     samej karty.
+
+     :global, bo klasa trafia na korzeń komponentu Section. */
+  :global(.section.wartosciSekcja),
+  :global(.section.eventSekcja) {
+    padding-block: var(--space-xl);
+  }
+
+  /* ————————————————————————— sekcja eventowa ————————————————————————— */
+
+
+  .event__grid {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .event__figura {
+    margin: 0;
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  /* Proporcja natywna kadru (1600 × 1068, czyli 3:2) — kafel niczego
+     nie obcina. `block-size: auto`, bo przy `100%` obrazek o większej
+     wysokości naturalnej po cichu ignoruje `aspect-ratio`. */
+  .event__foto {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+  }
+
+  .event__tytul {
+    font-size: var(--fs-h2);
+    margin-block-start: var(--space-2xs);
+    max-width: 20ch;
+  }
+
+  /* Ta sama kreska co w nagłówkach podstron — domyka tytuł przed treścią. */
+  .event__kreska {
+    display: block;
+    inline-size: 3.5rem;
+    block-size: 2px;
+    background: var(--accent);
+    margin-block: var(--space-md) var(--space-sm);
+  }
+
+  .event__opis {
+    color: var(--text-muted);
+    max-width: var(--measure);
+  }
+
+  .event__akcja {
+    margin-block-start: var(--space-md);
+  }
+
   /* ————————————————————————— nagłówek ————————————————————————— */
+
+  /* SKŁAD LEADU. Globalne `text-wrap: pretty` pilnuje tylko sierot
+     na ostatnim wierszu i przy tym zdaniu dawało na 1280 px:
+
+       Jesteśmy studiem zdrowego ruchu. Tworzymy
+       bezpieczną, inkluzywną i wspierającą
+       przestrzeń — miejsce treningu i praktyki, spotkań
+       oraz holistycznej troski o ciało i głowę.
+
+     Pierwsze słowo nowego zdania wisiało na końcu wiersza, a trzeci
+     wiersz był o jedną trzecią dłuższy od drugiego. `typo()` tego nie
+     naprawi: jego reguła początku zdania obejmuje wyrazy DWULITEROWE,
+     a „Tworzymy" ma osiem znaków — rozszerzanie jej ruszyłoby skład
+     na wszystkich podstronach.
+
+     `balance` wyrównuje długości wierszy i przy okazji przestawia
+     złamanie na kropkę. Miara zawężona do 40ch, żeby balans miał
+     z czego wybierać. */
+  :global(.page-header__lead) {
+    /* 48ch, nie 40. Przy 40ch balans dawał pięć krótkich wierszy
+       i lead rozciągał się w pionie. 48ch to cztery wiersze o długości
+       ok. 46 znaków — skład zwarty, a złamanie nadal wypada na kropce.
+       Interlinia zejściem z 1.85 na 1.65 domyka blok: przy pięciu
+       wierszach luźniejsza była potrzebna, przy czterech rozjeżdżała je.
+
+       Bez `balance`: balans wyrównuje długości wierszy, a tu potrzebny
+       jest kształt nierówny — krótki pierwszy wiersz zakończony kropką
+       i trzy pełne pod nim. Złamanie po zdaniu wymusza twarda spacja
+       w samym tekście (patrz `about.lead` w pages.ts). */
+    max-width: 48ch;
+    line-height: 1.65;
+  }
 
   .intro__grid {
     display: grid;
@@ -276,16 +408,23 @@ const cards = [t.community];
     margin-block-end: var(--space-md);
   }
 
-  /* Cytat wyjęty z toku tekstu: własne tło, pasek akcentu i prawdziwa
-     kursywa (font wczytany osobno — syntetyczna psuje polskie znaki). */
+  /* Cytat wyjęty z toku tekstu prawdziwą kursywą (font wczytany osobno —
+     syntetyczna psuje polskie znaki) i terakotowym paskiem po lewej.
+
+     BEZ RÓŻOWEJ POWIERZCHNI (28.08.2026). Stało tu `--surface-soft`,
+     czyli `--clay-wash` — terakota rozcieńczona w kremie, którego
+     finalnej wartości nie znamy. Ta sama para zniknęła już ze strony
+     głównej i z pasa CTA na /pierwsza-wizyta: pochodna placeholdera
+     jest placeholderem podwójnie.
+
+     Wyróżnienie niesie teraz typografia i jeden pasek akcentu. Razem
+     z tłem odpadły zaokrąglenia prawych narożników — bez wypełnienia
+     nie miały czego zaokrąglać. */
   .founder__quote {
     margin: 0 0 var(--space-md);
     max-width: var(--measure);
-    background: var(--surface-soft);
     border-inline-start: 3px solid var(--accent);
-    border-start-end-radius: var(--radius-md);
-    border-end-end-radius: var(--radius-md);
-    padding: var(--space-md) var(--space-md) var(--space-md) var(--space-lg);
+    padding: var(--space-2xs) 0 var(--space-2xs) var(--space-lg);
     position: relative;
   }
 
@@ -325,17 +464,30 @@ const cards = [t.community];
 
   /* ————————————————————————— wartości ————————————————————————— */
 
+  /* Sekcja siedzi w wyśrodkowanym kontenerze, węższym od pasa treści.
+     Wcześniej rozlewała się od krawędzi do krawędzi i przy czterech
+     kolumnach wyglądała jak siatka rozciągnięta na siłę. */
+  .values {
+    max-inline-size: 62rem;
+    margin-inline: auto;
+  }
+
+  /* Nadtytuł i tytuł wyśrodkowane — opisy pod nimi zostają do lewej,
+     bo wyśrodkowany akapit na kilka wierszy czyta się gorzej niż
+     wyrównany. Środkowana jest kompozycja, nie każdy element osobno. */
   .values__motto {
     font-family: var(--font-display);
     font-size: var(--fs-h4);
     color: var(--text-accent);
     letter-spacing: 0.08em;
     margin-block-end: var(--space-3xs);
+    text-align: center;
   }
 
   .values__title {
     font-size: var(--fs-h3);
     margin-block-end: var(--space-lg);
+    text-align: center;
   }
 
   .values__list {
@@ -346,15 +498,29 @@ const cards = [t.community];
     gap: var(--space-md);
   }
 
-  .value,
-  .card {
+  /* LEKKA KARTA (28.08.2026, trzecie podejście).
+
+     Najpierw był wypełniony kafel na `--surface-alt` — za ciężki.
+     Potem sama kreska u góry bez kontenera — treść rozlewała się
+     i bloki nie czytały się jako równe. Wraca ramka, ale w recepturze
+     zatwierdzonej na podstronach zajęć w Etapie 6: włoskowaty obrys,
+     promień 14 px, spokojny padding, zero wypełnienia i zero cienia.
+
+     Dzięki temu obie sekcje z kartami na tej stronie i cztery bloki
+     na /zajecia/[slug] są jednym systemem, a nie trzema pomysłami. */
+  .value {
     display: grid;
-    grid-template-columns: auto 1fr;
     gap: var(--space-sm);
     align-items: start;
-    background: var(--surface-alt);
-    border-radius: var(--radius-card);
-    padding: var(--space-md);
+    border: var(--hairline) solid var(--line);
+    border-radius: 14px;
+    padding: clamp(1.5rem, 1.4rem + 1.2vw, 2.25rem);
+    /* `start`, nie domyślne `stretch`. Jako element siatki wartość
+       rozciąga się do wysokości najwyższego sąsiada, a wolną przestrzeń
+       rozdzielają wtedy WIERSZE tej wartości — im krótszy opis, tym
+       niżej spadał tytuł. Zmierzone odstępy pod znakiem: 16, 28, 40
+       i 40 px zamiast jednej wartości. */
+    align-content: start;
   }
 
   /* Kółka wartości i kafli przeszły na wspólną klasę `.znak--pelny`
@@ -367,6 +533,12 @@ const cards = [t.community];
   .value__title {
     font-size: var(--fs-h4);
     margin-block-end: var(--space-3xs);
+  }
+
+  /* Sufit miary: przy torze 450 px wiersz bez ograniczenia dochodzi
+     do 70 znaków. 46ch trzyma go w paśmie wygodnego czytania. */
+  .value__body {
+    max-width: 46ch;
   }
 
   .value__body,
@@ -417,9 +589,12 @@ const cards = [t.community];
       margin-inline: 0;
     }
 
-    /* Dwie kolumny odpadły razem z kaflem „Dwie przestrzenie" (25.08.2026):
-       przy jednym kaflu zostawała pusta połowa rzędu. Tekst i tak ma sufit
-       na --measure, więc kafel na pełnej szerokości nie rozjeżdża wiersza. */
+    /* Wartości parami już od 40 rem. Jedna kolumna dawała na tablecie tor
+       712 px na blok tekstu, który ma 140 znaków — wiersz robił się
+       dwukrotnie dłuższy od wygodnego. */
+    .values__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   @media (min-width: 60rem) {
@@ -428,16 +603,32 @@ const cards = [t.community];
       gap: var(--space-2xl);
     }
 
-    /* Cztery kafle w rzędzie — wartości to krótkie bloki, a sekcja ma teraz
-       pełną szerokość, więc układ 2×2 zostawiałby połowę wiersza pustą. */
+    /* DWIE KOLUMNY, NIE CZTERY (28.08.2026). Przy czterech tor miał
+       264 px, opisy łamały się na pięć–siedem wierszy o różnej
+       długości i rząd czytał się jak cztery przypadkowe słupki.
+       Przy dwóch tor ma ok. 450 px — pasmo, w którym akapity
+       układają się równo.
+
+       Wysokości bloków w wierszu wyrównuje domyślny `stretch` siatki,
+       a `align-content: start` na samym bloku pilnuje, żeby nadmiar
+       wysokości nie rozpychał jego wierszy — bez tego tytuły
+       rozjeżdżały się o 24 px. */
     .values__list {
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-md);
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xl) var(--space-2xl);
     }
 
-    .value {
-      grid-template-columns: 1fr;
-      gap: var(--space-sm);
+
+  }
+  /* Kadr bierze mniej niż połowę: treść jest tu ważniejsza, a zdjęcie ma
+     dawać wadze wizualnej, nie przejmować sekcji. Poniżej progu wszystko
+     schodzi do jednej kolumny w kolejności kadr → treść. */
+  @media (min-width: 60rem) {
+    .event__grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+      gap: var(--space-2xl);
     }
   }
+
+
 </style>
