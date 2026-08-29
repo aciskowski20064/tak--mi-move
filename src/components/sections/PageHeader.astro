@@ -25,12 +25,35 @@ interface Props {
    */
   titleLines?: readonly string[];
   lead?: string;
+  /**
+   * Lead rozbity na OSOBNE AKAPITY, po jednym elemencie na zdanie.
+   *
+   * Jeden ciąg z dwoma zdaniami zostawia pierwsze słowo drugiego zdania
+   * doklejone do końca wiersza pierwszego — przeglądarka nie ma powodu
+   * łamać wiersza akurat po kropce, a wiązanie sierot obejmuje tylko wyrazy
+   * jedno- i dwuliterowe. Zgłoszone na `/kontakt` przy słowie „Wszystko".
+   *
+   * Osobne akapity rozstrzygają to strukturą, a nie sztucznym łamaniem:
+   * `<br>` w środku zdania psułby skład przy każdej innej szerokości.
+   *
+   * Pominięty — renderuje się `lead`, dokładnie jak dotąd.
+   */
+  leadLines?: readonly string[];
   crumbs?: NavItem[];
   tone?: 'default' | 'alt' | 'soft';
   size?: 'sm' | 'md';
 }
 
-const { eyebrow, title, titleLines, lead, crumbs, tone = 'default', size = 'md' } = Astro.props;
+const {
+  eyebrow,
+  title,
+  titleLines,
+  lead,
+  leadLines,
+  crumbs,
+  tone = 'default',
+  size = 'md',
+} = Astro.props;
 ---
 
 <Section as="div" size={size} tone={tone} class="page-header">
@@ -55,7 +78,9 @@ const { eyebrow, title, titleLines, lead, crumbs, tone = 'default', size = 'md' 
   {/* Kreska stoi też pod tytułem bez leadu (np. podstrony studiów, polityki) —
       domyka nagłówek, zamiast zostawiać go zawieszonym nad treścią. */}
   <span class="page-header__rule" aria-hidden="true"></span>
-  {lead && <p class="lead page-header__lead">{typo(lead)}</p>}
+  {leadLines
+    ? leadLines.map((akapit) => <p class="lead page-header__lead">{typo(akapit)}</p>)
+    : lead && <p class="lead page-header__lead">{typo(lead)}</p>}
 </Section>
 
 <style>

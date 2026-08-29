@@ -5,9 +5,10 @@ import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
 import Mark from '~/components/ui/Mark.astro';
 import MapEmbed from '~/components/ui/MapEmbed.astro';
-import SocialIcon from '~/components/ui/SocialIcon.astro';
 import { locations, formatAddress, site, booking } from '~/data/site';
 import { pages } from '~/data/copy/pages';
+import { home } from '~/data/copy/home';
+import { typo } from '~/lib/typografia';
 
 /**
  * Brief §19. Najważniejsze zadanie tej strony: rozdzielić sprawy, które
@@ -15,25 +16,39 @@ import { pages } from '~/data/copy/pages';
  * Formularz nie zastępuje rezerwacji.
  */
 const t = pages.contact;
+
+/**
+ * Etykiety wyjść do studiów bierzemy z tego samego miejsca, co strona główna
+ * i `/studia`. Klientka poprosiła 25.08.2026 o „Poznaj przestrzeń" w miejsce
+ * „Poznaj studio" i „Dojazd i szczegóły"; `/kontakt` trzymał trzecią wersję
+ * nazwy tego samego przejścia („Dojazd, wejście i parking") i to ona znika.
+ *
+ * Import danych, nie komponentu — strona główna nie wie o tym użyciu.
+ * Ta sama ścieżka co w `studia/index.astro`.
+ */
+const wyjscia = home.studios;
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
+  {/* `size="sm"` zamiast domyślnego `md` — ten sam prop, którym skrócone są
+      nagłówki podstron studiów. Przy tytule z jednego słowa domyślny rytm
+      dawał 475 px wysokości samego wejścia w treść. */}
   <PageHeader
-    eyebrow={t.eyebrow}
+    size="sm"
     title={t.title}
-    lead={t.lead}
+    leadLines={t.leadLines}
     crumbs={[{ label: 'Kontakt', href: '/kontakt' }]}
   />
 
-  <Section size="md">
+  <Section size="md" class="drogi-sekcja">
     <div class="routes">
       <section class="route">
         <div class="route__head">
           <Mark size="1.1rem" class="route__mark" />
-          <h2>{t.whenFitssey.title}</h2>
+          <h2>{typo(t.whenFitssey.title)}</h2>
         </div>
         <ul class="route__list">
-          {t.whenFitssey.items.map((item) => <li>{item}</li>)}
+          {t.whenFitssey.items.map((item) => <li>{typo(item)}</li>)}
         </ul>
         <div class="route__foot">
           <Button
@@ -43,7 +58,7 @@ const t = pages.contact;
             source="footer"
             event="booking_cta_click"
           >
-            Otwórz system rezerwacji
+            {typo(t.whenFitssey.cta)}
           </Button>
         </div>
       </section>
@@ -51,10 +66,10 @@ const t = pages.contact;
       <section class="route">
         <div class="route__head">
           <Mark size="1.1rem" class="route__mark" />
-          <h2>{t.whenDirect.title}</h2>
+          <h2>{typo(t.whenDirect.title)}</h2>
         </div>
         <ul class="route__list">
-          {t.whenDirect.items.map((item) => <li>{item}</li>)}
+          {t.whenDirect.items.map((item) => <li>{typo(item)}</li>)}
         </ul>
         <div class="route__foot route__direct">
           <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
@@ -64,48 +79,54 @@ const t = pages.contact;
     </div>
   </Section>
 
-  <Section size="lg" tone="alt">
-    <h2 class="contact__heading">Studia</h2>
+  {/* ————————————————— lokalizacje —————————————————
+
+      Karta lokalizacji pokazuje wyłącznie to, czego potrzeba, żeby wybrać
+      studio i do niego trafić: nazwę, adres, mapę i dwa wyjścia.
+
+      Telefon, e-mail, Instagram i Facebook stąd znikają. Nie dlatego, że są
+      niepotrzebne — dlatego, że komplet tych samych danych dla obu studiów
+      stoi w stopce, która na tej podstronie zaczynała się 128 px niżej.
+      Ta sama informacja dwa razy na jednym ekranie nie jest ułatwieniem,
+      tylko szumem. Telefon i mail zostają wyżej, w kafelku „Kiedy
+      bezpośrednio do nas", czyli tam, gdzie strona sama je poleca. */}
+  <Section size="md" tone="alt">
+    <h2 class="contact__heading">{typo(t.studiosTitle)}</h2>
     <div class="contact__studios">
       {
         locations.map((location) => (
-          <article class="contact-studio">
-            <div class="contact-studio__head">
-              <Mark size="0.85rem" class="contact-studio__mark" />
+          <article class="studio">
+            <div class="studio__head">
+              <Mark size="0.85rem" class="studio__mark" />
               <h3>{location.city}</h3>
             </div>
 
-            <address class="contact-studio__address">
-              {formatAddress(location)}
-              <br />
-              <a href={`tel:${site.phone}`} data-event="phone_click">{site.phoneDisplay}</a>
-              <br />
-              <a href={`mailto:${location.email}`} data-event="email_click">{location.email}</a>
-            </address>
+            <p class="studio__adres">{typo(formatAddress(location))}</p>
 
-            {/* Sam znak platformy zamiast nazwy profilu. Nazwa zostaje
-                w `aria-label`, żeby czytnik ekranu ogłosił, dokąd prowadzi
-                odsyłacz — bez tego mówiłby tylko „link". */}
-            <ul class="contact-studio__social">
-              {location.social.map((s) => (
-                <li>
-                  <a
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener me"
-                    aria-label={`${s.platform === 'instagram' ? 'Instagram' : 'Facebook'}: ${s.label}`}
-                    title={s.label}
-                  >
-                    <SocialIcon platform={s.platform} />
-                  </a>
-                </li>
-              ))}
-            </ul>
-
+            {/* Adres idzie do mapy SUROWY: `typo()` wstawiłoby twardą spację
+                do zapytania Google i do dostępnej nazwy ramki. */}
             <MapEmbed address={formatAddress(location)} label={`TAK MI MOVE ${location.city}`} />
 
-            <p class="contact-studio__more">
-              <a href={`/studia/${location.slug}`}>Dojazd, wejście i parking</a>
+            {/* Osobne nazwy dostępne, bo „Poznaj przestrzeń" powtórzone dwa
+                razy na jednej stronie nic nie mówi w liście odsyłaczy.
+                Bez `typo()` — to nazwa dla czytnika ekranu, nie skład. */}
+            <p class="studio__wyjscia">
+              <a
+                class="link-cta"
+                href={`/studia/${location.slug}`}
+                aria-label={`${wyjscia.linkLabel} — ${location.city}`}
+                data-event="studio_location_select"
+              >
+                {typo(wyjscia.linkLabel)}
+              </a>
+              <a
+                class="link-cta"
+                href={`/grafik?studio=${location.slug}`}
+                aria-label={`${wyjscia.scheduleLabel} — ${location.city}`}
+                data-event="schedule_page_view"
+              >
+                {typo(wyjscia.scheduleLabel)}
+              </a>
             </p>
           </article>
         ))
@@ -120,18 +141,56 @@ const t = pages.contact;
 </Base>
 
 <style>
+  /* Lead jako dwa akapity: miara węższa i wiersz ciaśniejszy niż globalne
+     46ch przy 1.85. Przy takim rozstrzale dwa krótkie zdania czytały się
+     jak cztery luźne wiersze bez związku; 40ch i 1.55 wiąże każde zdanie
+     w blok, a odstęp między nimi robi za interpunkcję.
+
+     Reguły są globalne, bo element nosi scope komponentu PageHeader — ale
+     arkusz tej strony linkuje wyłącznie /kontakt, więc leady pozostałych
+     podstron zostają na wartościach z base.css. Ta sama ścieżka co na
+     /studia, gdzie lead dostał 40ch. */
+  :global(.page-header__lead) {
+    max-width: 40ch;
+    line-height: 1.55;
+  }
+
+  /* Odstęp między zdaniami — mniejszy niż wysokość wiersza, żeby akapity
+     czytały się jako jedno wejście w treść, a nie dwa osobne bloki. */
+  :global(.page-header__lead + .page-header__lead) {
+    margin-block-start: var(--space-xs);
+  }
+
+  /* Nagłówek ma własny `padding-block-end` i nie przyjmuje klasy, więc górę
+     tej sekcji zerujemy i dokładamy ujemny margines — ten sam zabieg co na
+     podstronach studiów i zajęć. Bezpieczny wyłącznie dlatego, że nagłówek
+     i ta sekcja stoją na tonie `default`, czyli na tym samym `--surface`:
+     nie ma szwu do odsłonięcia. Przy tonie `alt` zostałby pasek.
+
+     :global, bo klasa przekazana propem trafia na korzeń komponentu Section
+     i nosi JEGO scope. */
+  :global(.section.drogi-sekcja) {
+    padding-block-start: 0;
+    margin-block-start: calc(var(--space-sm) * -1.5);
+  }
+
   .routes {
     display: grid;
     gap: var(--space-lg);
   }
 
-  /* Kafle zamiast dwóch kolumn oddzielonych kreską u góry. `align-content`
-     rozpycha zawartość tak, żeby stopka kafla — przycisk i dane kontaktowe —
-     siadała u dołu niezależnie od tego, że jedna lista ma cztery pozycje,
-     a druga pięć. Bez tego przycisk wisiał wyżej niż telefon obok. */
+  /* TRZY WIERSZE: nagłówek, lista, stopka. `1fr` na środkowym oddaje mu całą
+     nadwyżkę wysokości, więc stopka — przycisk w jednym kafelku, telefon
+     i mail w drugim — siada przy dolnej krawędzi obu kart.
+
+     Bez tego oba kafle i tak miały równą wysokość (siatka rozciąga je do
+     najwyższego), ale treść stała u góry i pod przyciskiem „Otwórz system
+     rezerwacji" zostawało 83 px pustki. Poprzedni komentarz w tym miejscu
+     przypisywał dosunięcie stopki regule `align-content: start`, która robi
+     dokładnie odwrotnie — dlatego reguła znika, a nie tylko jej opis. */
   .route {
     display: grid;
-    align-content: start;
+    grid-template-rows: auto 1fr auto;
     background: var(--surface);
     border: var(--hairline) solid var(--line);
     border-radius: var(--radius-card);
@@ -154,8 +213,12 @@ const t = pages.contact;
   }
 
   /* Kropla jako punktor — ten sam znak co przy nagłówku kafla, tylko mniejszy.
-     `list-style` zdjęty, bo domyślna kropka rysowałaby się obok. */
+     `list-style` zdjęty, bo domyślna kropka rysowałaby się obok.
+
+     `align-self: start` trzyma pozycje przy nagłówku: bez tego rozciągnięty
+     wiersz rozsunąłby odstępy między nimi. */
   .route__list {
+    align-self: start;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -181,6 +244,7 @@ const t = pages.contact;
     translate: 0 -0.15em;
   }
 
+  /* Minimalny odstęp od listy. Nadwyżkę rozdziela wiersz `1fr` wyżej. */
   .route__foot {
     margin-block-start: var(--space-lg);
   }
@@ -212,71 +276,32 @@ const t = pages.contact;
     gap: var(--space-xl);
   }
 
-  .contact-studio__head {
+  /* Bez obwódki i bez wypełnienia. Lokalizacji nie trzeba przed niczym
+     zamykać — rozdziela je mapa, największy element wizualny w tej sekcji,
+     i odstęp między kolumnami. Ten sam kierunek co panele studiów z Etapu 5:
+     kadr prowadzi, treść przy nim jest lekka. */
+  .studio__head {
     display: flex;
     align-items: center;
     gap: var(--space-2xs);
-    margin-block-end: var(--space-sm);
   }
 
-  .contact-studio__head :global(.contact-studio__mark) {
-    color: var(--accent);
-  }
-
-  .contact-studio__head h3 {
+  .studio__head h3 {
     font-size: var(--fs-h3);
   }
 
-  .contact-studio__address {
-    font-style: normal;
+  .studio__adres {
+    margin-block: var(--space-3xs) var(--space-sm);
     font-size: var(--fs-small);
-    line-height: var(--lh-loose);
+    color: var(--text-muted);
   }
 
-  .contact-studio__address a {
-    color: var(--text-accent);
-    display: inline-flex;
-    align-items: center;
-    min-block-size: 44px;
-  }
-
-  .contact-studio__social {
-    list-style: none;
-    padding: 0;
-    margin-block: var(--space-sm) var(--space-md);
+  .studio__wyjscia {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2xs);
-  }
-
-  /* Okrągły przycisk 44 px — sam znak platformy, nazwa profilu siedzi
-     w `aria-label` i w dymku. */
-  .contact-studio__social a {
-    display: grid;
-    place-items: center;
-    inline-size: 44px;
-    block-size: 44px;
-    border-radius: var(--radius-pill);
-    border: var(--hairline) solid var(--line-strong);
-    color: var(--text-accent);
-    transition:
-      background-color var(--dur) var(--ease),
-      color var(--dur) var(--ease);
-  }
-
-  .contact-studio__social a:hover {
-    background: var(--accent);
-    color: var(--on-accent);
-  }
-
-  .contact-studio__more {
+    gap: var(--space-xs) var(--space-lg);
     margin-block-start: var(--space-sm);
     font-size: var(--fs-small);
-  }
-
-  .contact-studio__more a {
-    color: var(--text-accent);
-    padding-block: 0.25rem;
   }
 
   @media (min-width: 48rem) {

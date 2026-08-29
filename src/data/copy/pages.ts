@@ -392,13 +392,45 @@ export const pages = {
      * dwa te same słowa jedno pod drugim.
      */
     title: 'Kontakt',
-    lead: 'W sprawach rezerwacji, karnetów i płatności najszybciej pomoże system Fitssey. Wszystko inne — pytania o zajęcia, wydarzenia, wynajem — kieruj bezpośrednio do nas.',
+    /**
+     * Dwa zdania, dwa akapity. Jednym ciągiem „Wszystko" — pierwsze słowo
+     * drugiego zdania — zostawało na końcu wiersza pierwszego; przeglądarka
+     * nie ma powodu łamać wiersza akurat po kropce.
+     *
+     * Drugie zdanie przeredagowane na polecenie (29.08.2026): wyliczanka
+     * w myślnikach ustąpiła pytaniu i wezwaniu. Sens bez zmian — te same
+     * trzy sprawy (zajęcia, wydarzenia, wynajem) i to samo skierowanie
+     * bezpośrednio do studia.
+     */
+    leadLines: [
+      'W sprawach rezerwacji, karnetów i płatności najszybciej pomoże system Fitssey.',
+      'Masz pytanie o zajęcia, wydarzenia lub wynajem? Skontaktuj się z nami bezpośrednio.',
+    ],
     whenFitssey: {
       title: 'Kiedy Fitssey',
       // FAKT — zakres systemu opisany w briefie §2.5.
       items: ['zapis na zajęcia', 'zakup i przedłużenie karnetu', 'płatności', 'odwołanie rezerwacji'],
+      /**
+       * Etykieta przeniesiona z szablonu do danych (Etap 9). Stała wpisana
+       * w `kontakt.astro` nie przechodziła przez `typo()`, bo przez wiązanie
+       * sierot idzie wyłącznie to, co renderujemy z treści.
+       *
+       * Brzmienie bez zmian — klientka nie zgłaszała uwagi do tego napisu,
+       * a `booking.label` znaczy tu co innego: ten przycisk otwiera cały
+       * system, nie konkretną rezerwację.
+       */
+      cta: 'Otwórz system rezerwacji',
     },
     whenDirect: {
+      /**
+       * PENDING CLIENT CONTENT — zakres/lista do potwierdzenia.
+       *
+       * W przeciwieństwie do listy obok te pięć pozycji nie ma pokrycia
+       * w żadnej odpowiedzi klientki ani w briefie: to nasza treść robocza
+       * z pierwszej wersji strony. Do czasu potwierdzenia nie zmieniamy ich
+       * sensu, nie dopisujemy nowych i żadnej nie usuwamy — wiązanie sierot
+       * i odstępy to jedyne, co wolno tu ruszyć.
+       */
       title: 'Kiedy bezpośrednio do nas',
       items: [
         'pytanie o dobór zajęć',
@@ -408,6 +440,16 @@ export const pages = {
         'współpraca',
       ],
     },
+    /**
+     * Nagłówek sekcji z lokalizacjami. Też przeniesiony z szablonu — patrz
+     * uzasadnienie przy `whenFitssey.cta`.
+     *
+     * Etykiet wyjść („Poznaj przestrzeń", „Grafik studia") tu świadomie NIE
+     * ma: obie żyją w `home.studios` i stamtąd bierze je zarówno strona
+     * główna, jak i `/studia`. Trzecia kopia oznaczałaby trzecią wersję
+     * nazwy tego samego przejścia przy pierwszej zmianie.
+     */
+    studiosTitle: 'Studia',
   },
 
   legal: {

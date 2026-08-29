@@ -15,6 +15,8 @@
  * Odsyłacze pod mapą działają zawsze — to zwykłe linki, nie osadzenia,
  * więc same z siebie niczego nie zapisują.
  */
+import { typo } from '~/lib/typografia';
+
 interface Props {
   address: string;
   label: string;
@@ -22,6 +24,12 @@ interface Props {
 
 const { address, label } = Astro.props;
 
+/**
+ * Adres wchodzi tu WYŁĄCZNIE do adresów URL i do `title` ramki, więc idzie
+ * surowy — twarda spacja z `typo()` trafiłaby do zapytania Google i do
+ * dostępnej nazwy ramki. Wiązanie sierot dostają tylko dwa widoczne napisy
+ * pod mapą; „Otwórz w Google Maps" zostawiało „w" na końcu wiersza.
+ */
 const query = encodeURIComponent(address);
 const embedUrl = `https://www.google.com/maps?q=${query}&output=embed`;
 const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${query}`;
@@ -39,10 +47,10 @@ const viewUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
 
   <figcaption class="map__actions">
     <a href={directionsUrl} target="_blank" rel="noopener" data-event="studio_map_click">
-      Wyznacz trasę
+      {typo('Wyznacz trasę')}
     </a>
     <a href={viewUrl} target="_blank" rel="noopener" data-event="studio_map_click">
-      Otwórz w Google Maps
+      {typo('Otwórz w Google Maps')}
     </a>
   </figcaption>
 </figure>
