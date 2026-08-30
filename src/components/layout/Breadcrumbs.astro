@@ -1,9 +1,13 @@
 ---
 import type { NavItem } from '~/data/nav';
+import { typo } from '~/lib/typografia';
 
 /**
  * Okruszki na głębszych podstronach (brief §34).
  * Ostatnia pozycja to bieżąca strona — nie jest linkiem.
+ *
+ * Etykiety idą przez `typo()`: „Grafik i zapisy" zostawiało „i" na końcu
+ * wiersza, gdy ścieżka łamała się na wąskim ekranie.
  */
 interface Props {
   items: NavItem[];
@@ -21,9 +25,9 @@ const trail: NavItem[] = [{ label: 'Start', href: '/' }, ...items];
         return (
           <li class="crumbs__item">
             {last ? (
-              <span aria-current="page">{item.label}</span>
+              <span aria-current="page">{typo(item.label)}</span>
             ) : (
-              <a href={item.href}>{item.label}</a>
+              <a href={item.href}>{typo(item.label)}</a>
             )}
           </li>
         );

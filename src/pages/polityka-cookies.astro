@@ -4,6 +4,7 @@ import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import Todo from '~/components/ui/Todo.astro';
 import { pages } from '~/data/copy/pages';
+import { typo } from '~/lib/typografia';
 
 /**
  * Patrz uwaga w polityka-prywatnosci.astro — ta sama zasada (brief §49).
@@ -17,8 +18,10 @@ const t = pages.legal.cookies;
   <PageHeader title={t.title} crumbs={[{ label: t.title, href: '/polityka-cookies' }]} />
 
   <Section size="md">
-    <p class="legal__notice">{pages.legal.notice}</p>
-    <Todo label={t.body} block />
+    <p class="legal__notice">{typo(pages.legal.notice)}</p>
+    {/* Jak na polityce prywatności: znacznik braku zostaje w trybie
+        deweloperskim, z wersji poglądowej znika. */}
+    {import.meta.env.DEV && <Todo label={t.body} block />}
   </Section>
 </Base>
 

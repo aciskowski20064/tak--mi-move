@@ -47,8 +47,11 @@ const values = realOnly(t.values.items, (item) => item.body);
     <div class="intro__grid">
       <div class="intro__text">
         <Breadcrumbs items={[{ label: 'O nas', href: '/o-nas' }]} />
-        <p class="eyebrow">{t.eyebrow}</p>
-        <h1 class="page-header__title">{t.title}</h1>
+        <p class="eyebrow">{typo(t.eyebrow)}</p>
+        {/* Ta podstrona ma własne wejście zamiast `PageHeader`, więc wiązanie
+            sierot trzeba wywołać tutaj — lead obok robił to od początku,
+            tytuł nie i „w kameralnej" łamało się z „w" na końcu wiersza. */}
+        <h1 class="page-header__title">{typo(t.title)}</h1>
         <span class="page-header__rule" aria-hidden="true"></span>
         {lead ? <p class="lead page-header__lead">{typo(lead)}</p> : <Todo label={t.lead} block />}
       </div>
@@ -78,7 +81,7 @@ const values = realOnly(t.values.items, (item) => item.body);
         />
         <figcaption class="founder__caption">
           <span class="founder__name">{t.founder.name}</span>
-          <span class="founder__role">{t.founder.caption}</span>
+          <span class="founder__role">{typo(t.founder.caption)}</span>
         </figcaption>
       </figure>
 

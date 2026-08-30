@@ -55,7 +55,7 @@ const year = new Date().getFullYear();
                         teraz w kółku, więc przy 17 px sama litera schodziła
                         poniżej progu czytelności. */}
                     <SocialIcon platform={s.platform} size="1.35rem" />
-                    <span>{s.label}</span>
+                    <span>{typo(s.label)}</span>
                   </a>
                 </li>
               ))}
@@ -77,8 +77,8 @@ const year = new Date().getFullYear();
 
   <div class="container footer__bar">
     <p class="footer__legalName">
-      <span>© {year} {site.name}</span>
-      {site.legalName && <span><span class="footer__sep" aria-hidden="true">·</span>{site.legalName}</span>}
+      <span>© {year} {typo(site.name)}</span>
+      {site.legalName && <span><span class="footer__sep" aria-hidden="true">·</span>{typo(site.legalName)}</span>}
       {site.vatId && <span><span class="footer__sep" aria-hidden="true">·</span>NIP {site.vatId}</span>}
     </p>
     <ul class="footer__legal">

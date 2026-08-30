@@ -44,18 +44,79 @@ const MYSLNIK = /[ \t]+—[ \t]+/gu;
 const SIEROTY = /(?<=^|[\s(„"'])([aiouwzAIOUWZ])[ \t]+/gu;
 
 /**
- * 4. Dwuliterowy wyraz na POCZĄTKU zdania też nie zostaje sam na końcu wiersza.
+ * 4. Dwuliterowy wyraz nie zostaje sam na końcu wiersza — GDZIEKOLWIEK stoi.
  *
- *    Zakres celowo wąski: tylko po kropce, wykrzykniku, pytajniku albo na
- *    starcie tekstu. Dwuliterowych w środku zdania świadomie nie wiążemy —
- *    przy 375 px każde dodatkowe wiązanie odbiera przeglądarce miejsce na
- *    złamanie wiersza. Zgłoszone przy leadzie na `/studia`: „…łatwiej Ci
- *    dotrzeć. Na" kończyło wiersz.
+ *    Wcześniej reguła obejmowała tylko początek zdania, z obawy o to, że przy
+ *    375 px każde dodatkowe wiązanie odbiera przeglądarce miejsce na złamanie
+ *    wiersza. Praktyka tego nie potwierdziła: na kartach wartości `/o-nas`
+ *    wiersze kończyły się na „nie", „na" i „to", a najdłuższy powstający
+ *    kawałek („na wyposażeniu") ma 14 znaków, czyli mniej niż jedno dłuższe
+ *    polskie słowo, które i tak musi się w tej kolumnie zmieścić.
+ *
+ *    Zakres: dwie litery, dowolna wielkość, także po nawiasie i cudzysłowie.
+ *
+ *    HAMULEC DŁUGOŚCI — patrz niżej.
  */
-const POCZATEK_ZDANIA = /(?<=^|[.!?][ \t])([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż])[ \t]+/gu;
+const DWULITEROWE = /(?<=^|[\s(„"'])(\p{L}\p{L})[ \t]+/gu;
 
 /**
- * 5. Oznaczenie karnetu („x4", „x8") nie zostaje samo na końcu wiersza.
+ * 5. „się" i „nie" nie zostają na końcu wiersza.
+ *
+ *    Trzy litery, więc reguła wyżej ich nie łapie, a to dwa najczęstsze
+ *    polskie wyrazy wiszące: żaden nic nie znaczy sam z siebie i czyta się
+ *    dopiero razem z tym, co po nim. Zgłoszone na kartach wartości `/o-nas`
+ *    („Tak samo liczy się" i „nikt nie" kończyły wiersze).
+ *
+ *    Lista jest ZAMKNIĘTA i celowo krótka. Pozostałych trzyliterowych
+ *    („lub", „czy", „dla") nie wiążemy: są samodzielne, a każdy kolejny
+ *    związany wyraz odbiera przeglądarce miejsce na złamanie wiersza.
+ *
+ *    HAMULEC DŁUGOŚCI — patrz niżej.
+ */
+const SIE_NIE = /(?<=^|[\s(„"'])([Ss]ię|[Nn]ie)[ \t]+/gu;
+
+/*
+ * HAMULEC DŁUGOŚCI — wspólny dla reguł 4 i 5.
+ *
+ * Krótki wyraz doklejony do POJEDYNCZEGO słowa niczego nie psuje: to słowo
+ * i tak musi się w kolumnie zmieścić, a dwie litery przed nim niczego nie
+ * przeważą. Problem zaczyna się, gdy doklejamy go do ciągu, który JUŻ jest
+ * nierozdzielny — wtedy kawałki się sumują.
+ *
+ * Nagłówek „Skąd wzięło się TAK MI MOVE" na `/o-nas`: reguła nazwy marki
+ * związała „TAK MI MOVE" (11 znaków), a reguła 5 dokleiła do tego „się"
+ * i zrobiła kawałek 15 znaków. W kolumnie 264 px przy 768 px potrzebował
+ * 304 px i wypychał stronę o 12 px poza kadr, czyli poziomy pasek
+ * przewijania na tablecie. Zmierzone, nie przewidziane — złapał to przegląd
+ * QA zaraz po wprowadzeniu reguł 4 i 5.
+ *
+ * Stąd warunek: doklejamy do gotowego ciągu tylko wtedy, gdy suma zmieści
+ * się w LIMICIE. „to" + „u nas" (8 znaków) przechodzi, „się" + „TAK MI MOVE"
+ * (15) nie. Pojedyncze słowa przechodzą zawsze.
+ *
+ * Wyrazów jednoliterowych hamulec NIE dotyczy: ich wiązanie jest w polskiej
+ * typografii obowiązkowe, działa od pierwszego etapu i stoi na stronach już
+ * zatwierdzonych.
+ */
+const LIMIT_CIAGU = 12;
+
+/** Ciąg od podanego miejsca do najbliższej ZWYKŁEJ spacji — twarde go nie kończą. */
+const ciagOd = (tekst: string, od: number): string => {
+  const koniec = tekst.slice(od).search(/[ \t\n]/);
+  return koniec === -1 ? tekst.slice(od) : tekst.slice(od, od + koniec);
+};
+
+/** Wiązanie z hamulcem długości — używane przez reguły 4 i 5. */
+const zwiazKrotkie = (tekst: string, regula: RegExp): string =>
+  tekst.replace(regula, (dopasowanie, slowo: string, offset: number) => {
+    const nastepny = ciagOd(tekst, offset + dopasowanie.length);
+    const juzZwiazany = nastepny.includes(TWARDA);
+    if (juzZwiazany && slowo.length + 1 + nastepny.length > LIMIT_CIAGU) return dopasowanie;
+    return slowo + TWARDA;
+  });
+
+/**
+ * 6. Oznaczenie karnetu („x4", „x8") nie zostaje samo na końcu wiersza.
  *
  *    Bez tego wyliczanka rozpadała się w kroku 3 na `/pierwsza-wizyta`:
  *    „…albo karnet — x4," kończyło wiersz, a „x8 lub Open" schodziło niżej.
@@ -69,7 +130,7 @@ const POCZATEK_ZDANIA = /(?<=^|[.!?][ \t])([A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłń
 const OZNACZENIE_PAKIETU = /\b(x\d+[,.;]?)[ \t]+/gu;
 
 /**
- * 6. Tylda w haśle „SIŁA ~ SPOKÓJ ~ RÓWNOWAGA" trzyma się słowa PRZED sobą.
+ * 7. Tylda w haśle „SIŁA ~ SPOKÓJ ~ RÓWNOWAGA" trzyma się słowa PRZED sobą.
  *
  *    Inaczej niż myślnik, który wiążemy z obu stron: tam chodzi o to, żeby
  *    nigdy nie stał sam na krawędzi wiersza, a tu o coś innego. Hasło musi
@@ -84,14 +145,18 @@ const OZNACZENIE_PAKIETU = /\b(x\d+[,.;]?)[ \t]+/gu;
 const TYLDA_SEPARATOR = /([^\s])[ \t]+~[ \t]+/gu;
 
 /** Wspólny przebieg reguł — używany i przez `typo()`, i przez wtyczkę rehype. */
-export const zastosujReguly = (tekst: string): string =>
-  tekst
+export const zastosujReguly = (tekst: string): string => {
+  const zeSpacjami = tekst
     .replace(MARKA, (m) => m.split(' ').join(TWARDA))
     .replace(MYSLNIK, `${TWARDA}—${TWARDA}`)
-    .replace(SIEROTY, `$1${TWARDA}`)
-    .replace(POCZATEK_ZDANIA, `$1${TWARDA}`)
+    .replace(SIEROTY, `$1${TWARDA}`);
+
+  const zKrotkimi = zwiazKrotkie(zwiazKrotkie(zeSpacjami, DWULITEROWE), SIE_NIE);
+
+  return zKrotkimi
     .replace(OZNACZENIE_PAKIETU, `$1${TWARDA}`)
     .replace(TYLDA_SEPARATOR, `$1${TWARDA}~ `);
+};
 
 /**
  * Stringi z prefiksem `TODO(` zostawiamy nietknięte: nigdy się nie renderują,

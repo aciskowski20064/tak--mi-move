@@ -40,10 +40,10 @@ const isDev = showPlaceholders;
     <Section size="lg" tone="alt" id="faq">
       <div class="faq">
         <header class="faq__head">
-          <p class="eyebrow">{t.eyebrow}</p>
+          <p class="eyebrow">{typo(t.eyebrow)}</p>
           <h2>{typo(t.title)}</h2>
           <p class="faq__more">
-            <a href="/kontakt">{t.moreLabel}</a>
+            <a href="/kontakt">{typo(t.moreLabel)}</a>
           </p>
         </header>
 
@@ -51,7 +51,10 @@ const isDev = showPlaceholders;
           <div class="faq__list">
             {items.map(({ entry, Content }) => (
               <details class="faq__item" name="faq">
-                <summary class="faq__question">{entry.data.question}</summary>
+                {/* Pytania idą z kolekcji treści, więc wiązanie sierot musi
+                    stać tutaj — `rehypeSieroty()` obsługuje ciało wpisu,
+                    nie jego frontmatter. */}
+                <summary class="faq__question">{typo(entry.data.question)}</summary>
                 <div class="faq__answer prose">
                   <Content />
                 </div>

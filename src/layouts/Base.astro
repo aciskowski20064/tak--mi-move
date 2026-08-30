@@ -17,6 +17,7 @@ import Meta from '~/components/seo/Meta.astro';
 import Header from '~/components/layout/Header.astro';
 import Footer from '~/components/layout/Footer.astro';
 import { site, DEMO_MODE } from '~/data/site';
+import { typo } from '~/lib/typografia';
 
 interface Props {
   title: string;
@@ -55,7 +56,7 @@ const rightsNotice = `<!--
   </head>
 
   <body>
-    <a href="#main" class="skip-link">Przejdź do treści</a>
+    <a href="#main" class="skip-link">{typo('Przejdź do treści')}</a>
     <Header />
     <main id="main" tabindex="-1">
       <slot />

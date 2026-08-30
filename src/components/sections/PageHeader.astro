@@ -58,7 +58,8 @@ const {
 
 <Section as="div" size={size} tone={tone} class="page-header">
   {crumbs && <Breadcrumbs items={crumbs} />}
-  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  {/* Nadtytuł też przez `typo()` — jest wersalikowany, ale nadal się łamie. */}
+  {eyebrow && <p class="eyebrow">{typo(eyebrow)}</p>}
   {/* Wiązanie sierot stoi tu, a nie na czternastu podstronach z osobna —
       to jedyne wejście w treść, przez które przechodzą wszystkie. */}
   {/* Spacja MIĘDZY wierszami jest konieczna, choć wizualnie nic nie robi.
@@ -70,7 +71,7 @@ const {
       ? titleLines.map((wiersz, i) => (
           <>
             {i > 0 && ' '}
-            <span class="page-header__titleWiersz">{wiersz}</span>
+            <span class="page-header__titleWiersz">{typo(wiersz)}</span>
           </>
         ))
       : typo(title)}

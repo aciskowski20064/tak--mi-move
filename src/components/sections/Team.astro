@@ -78,7 +78,7 @@ const zdania = t.body.split(/(?<=\.)\s+/).filter(Boolean);
               <span class="znak crew__badge" aria-hidden="true">
                 <Mark size="1.1rem" />
               </span>
-              <span class="crew__label">{value}</span>
+              <span class="crew__label">{typo(value)}</span>
             </li>
           ))
         }
@@ -186,8 +186,19 @@ const zdania = t.body.split(/(?<=\.)\s+/).filter(Boolean);
     display: grid;
     gap: var(--space-md);
     /* Sufit szerokości: bez niego cztery pozycje rozjeżdżają się na całą
-       sekcję i karty ciągną się przez pół ekranu. */
-    inline-size: min(100%, 46rem);
+       sekcję i karty ciągną się przez pół ekranu.
+
+       46rem → 62rem (30.08.2026). Przy 46rem karta miała 354 px, z czego na
+       tekst zostawało 243 px po odjęciu wypełnienia, znaku (2,5rem) i odstępu.
+       Najdłuższa nazwa — „Otwartość na drugiego człowieka" — potrzebuje przy
+       21 px pisma ok. 342 px, więc łamała się na dwa wiersze na KAŻDEJ
+       szerokości. „Fachowe przygotowanie" (241 px) mieściło się na styk
+       i pękało od 1440 px w górę, gdy wypełnienie karty urosło z 27,2 do 28 px.
+
+       Przy 62rem karta ma ok. 482 px i ok. 369 px na tekst: najdłuższa nazwa
+       stoi w jednym wierszu z zapasem, a nie na granicy. Sufit zostaje, bo bez
+       niego karty rozciągnęłyby się na całe 70rem kontenera. */
+    inline-size: min(100%, 62rem);
   }
 
   /* DOMKNIĘTY BLOK: ta sama receptura co karty wartości wyżej na tej

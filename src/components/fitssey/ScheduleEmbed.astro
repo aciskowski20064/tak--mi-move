@@ -1,6 +1,7 @@
 ---
 import { booking, site, locations } from '~/data/site';
 import type { Studio } from '~/types';
+import { typo } from '~/lib/typografia';
 
 /**
  * Osadzenie systemu Fitssey.
@@ -63,7 +64,7 @@ const canFilter = locations.every((l) => Boolean(l.fitsseyLocationId));
 
   <noscript>
     <p class="embed__fallback-text">
-      Grafik wymaga JavaScriptu.
+      {typo('Grafik wymaga JavaScriptu.')}
       <a href={booking.frontOfficeUrl} target="_blank" rel="noopener">
         Otwórz system rezerwacji Fitssey
       </a>.
@@ -72,9 +73,9 @@ const canFilter = locations.every((l) => Boolean(l.fitsseyLocationId));
 
   {/* Brief §15.4 — komunikat pojawia się dopiero, gdy ramka faktycznie zawiedzie. */}
   <div class="embed__fallback" data-embed-fallback hidden>
-    <p class="embed__fallback-title">Grafik nie załadował się poprawnie.</p>
+    <p class="embed__fallback-title">{typo('Grafik nie załadował się poprawnie.')}</p>
     <p class="embed__fallback-text">
-      System rezerwacji działa niezależnie od strony — otwórz go bezpośrednio.
+      {typo('System rezerwacji działa niezależnie od strony — otwórz go bezpośrednio.')}
     </p>
     <p class="embed__fallback-actions">
       <a

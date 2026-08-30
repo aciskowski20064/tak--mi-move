@@ -65,8 +65,8 @@ const choose = home.choose;
 
   <Section size="md" tone="alt" class="wybor">
     <header class="choose__head">
-      <p class="eyebrow">{choose.eyebrow}</p>
-      <h2>{choose.title}</h2>
+      <p class="eyebrow">{typo(choose.eyebrow)}</p>
+      <h2>{typo(choose.title)}</h2>
     </header>
 
     <ul class="choose__list">
@@ -100,7 +100,7 @@ const choose = home.choose;
 
     <p class="choose__contact">
       {choose.contactLead}{' '}
-      <a href="/kontakt" data-event="email_click">{choose.contactLabel}</a>
+      <a href="/kontakt" data-event="email_click">{typo(choose.contactLabel)}</a>
     </p>
   </Section>
 

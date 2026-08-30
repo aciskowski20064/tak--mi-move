@@ -4,6 +4,7 @@ import Section from '~/components/ui/Section.astro';
 import Button from '~/components/ui/Button.astro';
 import Mark from '~/components/ui/Mark.astro';
 import { booking } from '~/data/site';
+import { typo } from '~/lib/typografia';
 
 /**
  * Strona błędu 404.
@@ -27,9 +28,9 @@ const exits = [
   <Section size="lg" class="notfound">
     <Mark size="clamp(2.5rem, 8vw, 4rem)" class="notfound__mark" />
     <p class="eyebrow">Błąd 404</p>
-    <h1 class="notfound__title">Tej strony tu nie ma.</h1>
+    <h1 class="notfound__title">{typo('Tej strony tu nie ma.')}</h1>
     <p class="lead notfound__lead">
-      Adres mógł się zmienić albo zawierać literówkę. Poniżej najczęstsze kierunki.
+      {typo('Adres mógł się zmienić albo zawierać literówkę. Poniżej najczęstsze kierunki.')}
     </p>
 
     <ul class="notfound__exits">
@@ -37,8 +38,8 @@ const exits = [
         exits.map((exit) => (
           <li>
             <a href={exit.href}>
-              <span class="notfound__exit-label">{exit.label}</span>
-              <span class="notfound__exit-desc">{exit.desc}</span>
+              <span class="notfound__exit-label">{typo(exit.label)}</span>
+              <span class="notfound__exit-desc">{typo(exit.desc)}</span>
             </a>
           </li>
         ))

@@ -31,11 +31,11 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
   (reviews.length > 0 || isDev) && (
     <Section size="lg" class="reviews">
       <header class="reviews__head">
-        <p class="eyebrow">{t.eyebrow}</p>
+        <p class="eyebrow">{typo(t.eyebrow)}</p>
         <h2>{typo(t.title)}</h2>
         <p class="reviews__rating">
           <Mark size="0.7rem" />
-          {t.ratingLabel}
+          {typo(t.ratingLabel)}
         </p>
       </header>
 
@@ -70,9 +70,9 @@ const sourceLabel = { google: 'Opinia Google', facebook: 'Opinia z Facebooka', d
       {/* Zachęta do wystawienia opinii. Stoi także wtedy, gdy cytatów jeszcze
           nie ma — prośba o opinię nie wymaga posiadania opinii. */}
       <aside class="reviews__cta">
-        <p class="reviews__ctaLead">{t.ctaLead}</p>
+        <p class="reviews__ctaLead">{typo(t.ctaLead)}</p>
         <Button href={t.ctaUrl} newTab variant="secondary" source="reviews" event="review_click">
-          {t.ctaLabel}
+          {typo(t.ctaLabel)}
         </Button>
       </aside>
     </Section>

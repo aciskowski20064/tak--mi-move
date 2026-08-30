@@ -4,6 +4,7 @@ import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import Todo from '~/components/ui/Todo.astro';
 import { pages } from '~/data/copy/pages';
+import { typo } from '~/lib/typografia';
 
 /**
  * Brief §49: Claude Code nie może przedstawiać wygenerowanego tekstu
@@ -18,8 +19,14 @@ const t = pages.legal.privacy;
   <PageHeader title={t.title} crumbs={[{ label: t.title, href: '/polityka-prywatnosci' }]} />
 
   <Section size="md">
-    <p class="legal__notice">{pages.legal.notice}</p>
-    <Todo label={t.body} block />
+    <p class="legal__notice">{typo(pages.legal.notice)}</p>
+    {/* Znacznik braku tylko przy `npm run dev`. Reszta serwisu używa
+        `showPlaceholders`, czyli DEV **lub** DEMO_MODE — a tutaj oznaczałoby
+        to przerywaną ramkę z notatką dla nas („brief §49 zabrania…") na
+        stronie, którą ogląda klientka. Akapit wyżej mówi jej to samo jej
+        językiem, więc ramka nic nie wnosi. Ten sam zabieg co przy faktach
+        na podstronach studiów (Etap 5). */}
+    {import.meta.env.DEV && <Todo label={t.body} block />}
   </Section>
 </Base>
 
