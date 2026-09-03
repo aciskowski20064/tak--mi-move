@@ -153,6 +153,11 @@ const wyjscia = home.studios;
   :global(.page-header__lead) {
     max-width: 40ch;
     line-height: 1.55;
+    /* Wyrównanie długości wierszy — ten sam zabieg co w leadzie na /studia.
+       Przy trzech krótkich akapitach globalne `pretty` pilnuje tylko sieroty
+       na końcu i zostawiało „lub wynajem?" jako wiersz o jedną trzecią
+       krótszy od poprzedniego. `balance` rozkłada je równo. */
+    text-wrap: balance;
   }
 
   /* Odstęp między zdaniami — mniejszy niż wysokość wiersza, żeby akapity

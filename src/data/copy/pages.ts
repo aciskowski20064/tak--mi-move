@@ -401,10 +401,23 @@ export const pages = {
      * w myślnikach ustąpiła pytaniu i wezwaniu. Sens bez zmian — te same
      * trzy sprawy (zajęcia, wydarzenia, wynajem) i to samo skierowanie
      * bezpośrednio do studia.
+     *
+     * TRZECI AKAPIT (30.08.2026). Pytanie i wezwanie stały w jednym ciągu
+     * i łamały się jako „…lub wynajem? Skontaktuj" / „się z nami
+     * bezpośrednio." — wezwanie rozjeżdżało się na dwa wiersze, a „Skontaktuj"
+     * wisiało przy pytaniu. W mierze 40ch (433 px przy 1280) samo pytanie ma
+     * ok. 480 px, więc w jednym wierszu się nie mieści i przy jednym akapicie
+     * nie ma podziału, który zostawiłby wezwanie w całości.
+     *
+     * Rozdzielenie na osobne akapity daje to strukturą: „Skontaktuj się
+     * z nami bezpośrednio." (35 znaków, ok. 365 px) stoi w jednym wierszu na
+     * każdej szerokości, bo mieści się nawet w kolumnie 333 px przy 375 px.
+     * Słowa i ich kolejność bez zmian.
      */
     leadLines: [
       'W sprawach rezerwacji, karnetów i płatności najszybciej pomoże system Fitssey.',
-      'Masz pytanie o zajęcia, wydarzenia lub wynajem? Skontaktuj się z nami bezpośrednio.',
+      'Masz pytanie o zajęcia, wydarzenia lub wynajem?',
+      'Skontaktuj się z nami bezpośrednio.',
     ],
     whenFitssey: {
       title: 'Kiedy Fitssey',
