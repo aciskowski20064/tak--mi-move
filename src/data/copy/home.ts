@@ -201,6 +201,16 @@ export const home = {
         text: 'O kontuzji, ciąży czy innej szczególnej potrzebie napisz wcześniej na takmimove@gmail.com, a przed samymi zajęciami powiedz prowadzącej.',
       },
     ],
+    /**
+     * NAGŁÓWEK sekcji rezerwacji na /pierwsza-wizyta — już nie etykieta
+     * przycisku (03.09.2026).
+     *
+     * Do tej pory ten sam string stał w dwóch rolach: jako nagłówek tam
+     * i jako napis na przycisku do Fitssey w sekcji pierwszej wizyty na
+     * stronie głównej. Przycisk bierze teraz `booking.label`, żeby wezwanie
+     * do rezerwacji brzmiało w całym serwisie jednakowo. Tekst nagłówka
+     * zostaje, bo nazywa sekcję, a nie akcję.
+     */
     ctaLabel: 'Zarezerwuj pierwsze zajęcia',
     moreLabel: 'Więcej o pierwszej wizycie',
   },

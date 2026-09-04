@@ -16,7 +16,7 @@ import type { CtaSource } from '~/types';
  *               z base.css, który obsługuje odsyłacze poza tym komponentem.
  *
  * Zasady „jeden primary na ekran" świadomie NIE stosujemy. Dwa równorzędne
- * wyjścia obok siebie (umów wizytę i zobacz grafik) są uczciwe wobec
+ * wyjścia obok siebie (zapisz się na zajęcia i zobacz grafik) są uczciwe wobec
  * czytelnika, bo prowadzą do dwóch różnych rzeczy, których obu może chcieć.
  * Wymagamy natomiast, żeby nie stały obok siebie dwa przyciski WYPEŁNIONE
  * o różnej wadze — wtedy żaden nie jest pierwszy.
@@ -40,6 +40,15 @@ interface Props {
   variant?: 'primary' | 'secondary' | 'quiet';
   size?: 'md' | 'lg';
   newTab?: boolean;
+  /**
+   * Nadpisuje `rel` odsyłacza zewnętrznego. Pominięty — zostaje domyślne
+   * `noopener`, czyli dokładnie to, co komponent robił dotąd, więc żadne
+   * dotychczasowe użycie się nie zmienia.
+   *
+   * Dołożone dla odsyłacza do PDF-a z ofertą eventową na /o-nas, gdzie
+   * wymagane jest `noopener noreferrer`.
+   */
+  rel?: string;
   source?: CtaSource;
   event?: string;
   class?: string;
@@ -51,6 +60,7 @@ const {
   variant = 'primary',
   size = 'md',
   newTab = false,
+  rel,
   source,
   event,
   class: className,
@@ -76,7 +86,7 @@ const external = !disabled && (newTab || (href ?? '').startsWith('http'));
       href={href}
       class:list={['btn', `btn--${variant}`, `btn--${size}`, className]}
       target={external ? '_blank' : undefined}
-      rel={external ? 'noopener' : undefined}
+      rel={external ? (rel ?? 'noopener') : undefined}
       data-cta-source={source}
       data-event={event}
     >

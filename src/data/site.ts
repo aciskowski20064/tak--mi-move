@@ -50,7 +50,25 @@ export const DEMO_MODE = true;
  */
 export const booking = {
   frontOfficeUrl: 'https://app.fitssey.com/Takmimove/frontoffice',
-  label: 'Umów wizytę',
+  /**
+   * JEDYNA etykieta wezwania do rezerwacji w całym serwisie.
+   *
+   * „Zapisz się na zajęcia” w miejsce „Umów wizytę” — decyzja klientki
+   * (03.09.2026). Powód jest merytoryczny, nie stylistyczny: „wizyta”
+   * sugeruje spotkanie umawiane indywidualnie, a Fitssey zapisuje
+   * na zajęcia grupowe o stałych godzinach.
+   *
+   * Etykiety „Grafik”, „Zobacz grafik”, „Grafik studia” i „Otwórz system
+   * rezerwacji” celowo zostają bez zmian — prowadzą do widoku terminów,
+   * a nie do samego zapisu. Zlanie ich w jedno wezwanie zatarłoby różnicę
+   * między obejrzeniem grafiku a rezerwacją miejsca.
+   *
+   * Etykieta jest o dziesięć znaków DŁUŻSZA od poprzedniej i zawiera dwa
+   * wyrazy, które nie mogą wisieć na końcu wiersza („się”, „na”), dlatego
+   * w miejscach renderowania przechodzi przez `typo()` — Header, Footer,
+   * Hero, FinalCta, /pierwsza-wizyta i 404.
+   */
+  label: 'Zapisz się na zajęcia',
   /** Fitssey to osobna aplikacja z logowaniem — otwieramy w nowej karcie. */
   newTab: true,
   /**
@@ -83,20 +101,22 @@ export const booking = {
 /**
  * Oferta eventowa — jedno miejsce, w którym żyje ścieżka do PDF-a.
  *
- * PENDING CLIENT ASSET — podpiąć PDF oferty eventowej.
+ * PLIK DOSTARCZONY. Do `public/documents/` trafił dokument klientki
+ * „Twoje wyjątkowe wydarzenie w Gdańsku_Tak Mi Move.pdf", przekopiowany
+ * bajt w bajt — zmieniła się wyłącznie nazwa, na bezpieczną dla adresu.
+ * Treści PDF-a nie ruszaliśmy i nie kompresowaliśmy.
  *
- * Dopóki `pdfUrl` jest puste, wezwanie „Poznaj nasze pakiety eventowe"
- * NIE renderuje się w ogóle. Świadomie nie ma tu ani `href="#"`, ani
- * podmiany na adres e-mail: martwy odsyłacz jest gorszy od jego braku,
- * a sama sekcja eventowa działa bez niego.
+ * Dopóki `pdfUrl` było puste, wezwanie „Poznaj nasze pakiety eventowe"
+ * renderowało się jako `<button disabled>` — martwy odsyłacz jest gorszy
+ * od jego braku. Po wpisaniu ścieżki ten sam element stał się odsyłaczem,
+ * bez zmiany szablonu, komponentu, treści ani stylu.
  *
- * Po otrzymaniu pliku wystarczy:
- *   1. wrzucić go do `public/`, np. `oferta-eventowa-tak-mi-move.pdf`,
- *   2. wpisać tę ścieżkę niżej.
- * Widok nie wymaga żadnej zmiany.
+ * Wersja polska i tylko ona. Angielskiego dokumentu ani przełącznika
+ * języka tu nie ma — sufiks `-pl` zostawia miejsce na `-en`, gdyby kiedyś
+ * doszedł.
  */
 export const eventOffer = {
-  pdfUrl: '',
+  pdfUrl: '/documents/tak-mi-move-pakiety-eventowe-pl.pdf',
 } as const;
 
 export const locations: StudioLocation[] = [

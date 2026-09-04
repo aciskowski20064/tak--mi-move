@@ -3,32 +3,73 @@ import { getCollection, render } from 'astro:content';
 import { typo } from '~/lib/typografia';
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
+import Breadcrumbs from '~/components/layout/Breadcrumbs.astro';
 import Section from '~/components/ui/Section.astro';
+import Button from '~/components/ui/Button.astro';
 import Todo from '~/components/ui/Todo.astro';
 import FactIcon from '~/components/ui/FactIcon.astro';
+import Mark from '~/components/ui/Mark.astro';
 import { locations } from '~/data/site';
 import { copyOrNull, isPlaceholder } from '~/lib/copy';
 
 /**
  * Szablon podstrony zajęć.
  *
- * UKŁAD PO ETAPIE 6 (28.08.2026): nagłówek → cztery bloki → „Grafik" →
- * pas domykający. Lista bloków jest ZAMKNIĘTA i liczy dokładnie cztery
+ * UKŁAD (dopracowany 03.09.2026): nagłówek → bloki treści → pas domykający
+ * z grafikiem i zapisem.
+ *
+ * NAGŁÓWEK MA DWIE POSTACIE, wybierane z DANYCH, nigdy ze sluga:
+ *
+ *   dwie kolumny   gdy kategoria ma własne `sections` i osobne wprowadzenie
+ *                  w ciele pliku (`jestWstep`). Po lewej okruszki, nadtytuł,
+ *                  nazwa zajęć i kreska; po prawej całe wprowadzenie.
+ *                  Wcześniej wstęp stał POD nagłówkiem w jednej wąskiej
+ *                  kolumnie i przy 1280 px zostawiał pustą prawą połowę.
+ *   jedna kolumna  gdy wprowadzenia nie ma — czyli kategorie na układzie
+ *                  domyślnym. Idą przez wspólny `PageHeader`, bez zmian.
+ *
+ * Dwukolumnowy nagłówek jest zbudowany TUTAJ, a nie w `PageHeader`: ten
+ * komponent obsługuje dziesięć innych podstron, z których żadna drugiej
+ * kolumny nie potrzebuje. Ryzyko regresji na nich przewyższałoby zysk
+ * ze wspólnego miejsca, a klasy typografii wejścia (`page-header__title`,
+ * `page-header__rule`) i tak są globalne w `base.css`, więc rytm zostaje
+ * ten sam w obu postaciach.
+ *
+ * ZESTAW BLOKÓW NIE JEST JUŻ ZAMKNIĘTY (03.09.2026).
+ *
+ * Do tej pory każda z pięciu kategorii dostawała dokładnie te same cztery
  * pozycje: Czego się spodziewać, Dla kogo, Efekty, Jak się przygotować.
+ * Miało to sens, dopóki jedynym materiałem były odpowiedzi 40–47, które
+ * opisywały wszystkie formy ruchu łącznie. Najnowsze teksty klientki mają
+ * różną budowę w zależności od kategorii, więc szablon musi się do nich
+ * dopasować, a nie odwrotnie.
+ *
+ * Skąd bierze się lista bloków — dwie ścieżki, wykluczające się:
+ *
+ *   1. `sections` we frontmatterze pliku kategorii (patrz `content.config.ts`)
+ *      — wtedy WYŁĄCZNIE ona decyduje o liczbie, kolejności, nagłówkach
+ *      i kształcie treści. Tu jest miejsce na nowe teksty klientki.
+ *   2. brak `sections` — układ dotychczasowy, złożony z pól `audience`,
+ *      `goals`, `preparation` i z ciała pliku. Pięć obecnych plików idzie
+ *      tą ścieżką i renderuje się bajt w bajt tak jak przed zmianą.
+ *
+ * Wspólne dla obu: blok bez treści NIE renderuje się wcale, razem
+ * z nagłówkiem i piktogramem (brief §50 — zero placeholderów w produkcji).
  *
  * Co z tej strony zniknęło i dlaczego:
  *
  *   opis wprowadzający  klientka: po wejściu w konkretne zajęcia ma nie być
  *                       opisu przed właściwymi blokami. Zdjęty jest zarówno
  *                       lead w nagłówku, jak i akapit otwierający w treści.
- *   Tempo               poza listą czterech. Pola `duration`, `intensity`
+ *   Tempo               poza układem domyślnym. Pola `duration`, `intensity`
  *                       i `level` zostają w modelu — nie renderujemy ich.
- *   Co zabrać           poza listą. `equipment` i tak nie było renderowane.
+ *   Co zabrać           poza układem domyślnym. `equipment` i tak nie było
+ *                       renderowane.
  *   lokalizacje         klientka: przy zajęciach lokalizacji nie podajemy.
- *   para przycisków     stała między nagłówkiem a treścią i była trzecim
- *                       wezwaniem na stronie. Wyjście do grafiku jest teraz
- *                       jedno, lekkie, pod blokami.
- *   Zanim zaczniesz     poza listą czterech. TO JEST TREŚĆ ZDROWOTNA —
+ *   para przycisków     stała MIĘDZY nagłówkiem a treścią i była trzecim
+ *                       wezwaniem na stronie. Wyjście do grafiku i zapisu
+ *                       jest teraz jedno, na samym końcu strony.
+ *   Zanim zaczniesz     poza układem domyślnym. TO JEST TREŚĆ ZDROWOTNA —
  *                       przeciwwskazania, przy aerial yodze konkretne
  *                       (jaskra, nadciśnienie, kardiologia, ciąża, błędnik).
  *                       Dane zostają w kolekcji, rolę tej sekcji przejmuje
@@ -73,34 +114,159 @@ const shortDescription = copyOrNull(d.shortDescription);
  */
 const przygotowanieBrakuje = isPlaceholder(d.preparation);
 
+/** Nazwa piktogramu — te same, które rysuje `FactIcon`. */
+type IkonaBloku = NonNullable<NonNullable<typeof d.sections>[number]['icon']>;
+
+/** Wiersz modułu rekomendacji — patrz `pairs` w `content.config.ts`. */
+type Para = { label: string; recommendation: string };
+
 type Blok = {
-  ikona: 'sun' | 'users' | 'heart' | 'check';
+  /** Pominięta — blok renderuje się bez znaku. */
+  ikona?: IkonaBloku;
   label: string;
-  /** Lista punktów albo pojedynczy akapit — bloki mają różny kształt treści. */
+  /** Postać bloku — patrz `variant` w `content.config.ts`. */
+  postac: 'plain' | 'card' | 'note' | 'pairs';
+  /** Czy blok bierze cały wiersz siatki na szerokich ekranach. */
+  pelnaSzerokosc: boolean;
+  /**
+   * Udział w wierszu liczony w kolumnach z dwunastu — czytany wyłącznie
+   * przez siatkę kategorii z własnymi `sections`. Bez znaczenia, gdy
+   * `pelnaSzerokosc`, i nieustawiany w układzie domyślnym (tam siatka ma
+   * dwa równe tory i nie zna tej wartości).
+   */
+  szerokoscKolumn?: number;
+  /** Wyliczanka; każda pozycja stoi sama. */
   punkty?: readonly string[];
-  tekst?: string;
+  /** Proza rozbita na akapity — jeden `<p>` na pozycję. */
+  akapity?: readonly string[];
+  /** Wiersze „potrzeba → polecane zajęcia". */
+  pary?: readonly Para[];
   /** Treść bierze się z ciała pliku Markdown, nie z pola. */
   zTresci?: boolean;
+  /**
+   * Treść czeka na klientkę. Blok idzie wtedy do <Todo> i wyłącznie w `dev`;
+   * w każdym buildzie znika w całości — patrz uwaga o `przygotowanieBrakuje`.
+   */
   brakuje?: boolean;
+  /** Tekst znacznika `TODO(` — pokazywany tylko przez <Todo>. */
+  znacznik?: string;
 };
 
-const blokiWszystkie: Blok[] = [
-  { ikona: 'sun', label: 'Czego się spodziewać', zTresci: true },
-  { ikona: 'users', label: 'Dla kogo', punkty: d.audience },
+/**
+ * Akapity z pojedynczego pola tekstowego.
+ *
+ * Rozdzielnikiem jest PUSTY WIERSZ, tak jak w Markdownie — w YAML-u zapisuje
+ * się to blokiem `|`. Pojedyncze złamanie wiersza nie tworzy akapitu: w YAML-u
+ * służy do zawijania długiego zdania w pliku i nie jest decyzją redakcyjną.
+ */
+const naAkapity = (tekst: string): string[] =>
+  tekst
+    .split(/\n[ \t]*\n/)
+    .map((akapit) => akapit.replace(/\s*\n\s*/g, ' ').trim())
+    .filter(Boolean);
+
+/**
+ * UKŁAD DOMYŚLNY — cztery bloki złożone z osobnych pól.
+ *
+ * Obowiązuje kategorie bez własnego `sections`, czyli na dziś wszystkie pięć.
+ * Zostaje bez zmian celowo: te podstrony są zatwierdzone przez klientkę
+ * i nie mają powodu się ruszyć, dopóki nie dostaną nowych tekstów.
+ */
+const blokiDomyslne: Blok[] = [
+  { ikona: 'sun', label: 'Czego się spodziewać', postac: 'card', pelnaSzerokosc: false, zTresci: true },
+  { ikona: 'users', label: 'Dla kogo', postac: 'card', pelnaSzerokosc: false, punkty: d.audience },
   // Etykieta „Efekty" w miejsce „Co daje" — wskazana przez klientkę (25.08.2026).
-  { ikona: 'heart', label: 'Efekty', punkty: d.goals },
+  { ikona: 'heart', label: 'Efekty', postac: 'card', pelnaSzerokosc: false, punkty: d.goals },
   {
     ikona: 'check',
     label: 'Jak się przygotować',
-    tekst: d.preparation,
+    postac: 'card',
+    pelnaSzerokosc: false,
+    akapity: przygotowanieBrakuje || !d.preparation ? undefined : naAkapity(d.preparation),
     brakuje: przygotowanieBrakuje,
+    znacznik: d.preparation,
   },
 ];
 
+/**
+ * SZEROKOŚĆ SEKCJI W KOLUMNACH — słownik dla wartości pola `width`.
+ *
+ * Dwanaście kolumn, a nie dwa tory, istnieje z jednego powodu: żeby dwie
+ * sąsiadujące sekcje mogły dzielić wiersz inaczej niż pół na pół. Para
+ * `narrow` + `wide` musi się sumować do dwunastu, inaczej druga sekcja
+ * nie zmieści się obok pierwszej i siatka zsunie ją do nowego wiersza.
+ */
+const KOLUMNY_WG_SZEROKOSCI = { narrow: 5, auto: 6, wide: 7, full: 12 } as const;
+
+/**
+ * UKŁAD WŁASNY — kolejność, nagłówki, postać i szerokość z frontmatteru.
+ *
+ * `TODO(` działa tu tak samo jak wszędzie indziej: pozycja wyliczanki z takim
+ * prefiksem wypada z listy, a akapit z takim prefiksem zamienia blok
+ * w znacznik widoczny wyłącznie w `dev`. Dzięki temu klientka może przysłać
+ * strukturę sekcji wcześniej niż ich treść, a produkcja i tak zostaje czysta.
+ */
+const blokiWlasne = (): Blok[] =>
+  (d.sections ?? []).map((s) => {
+    const tekstBrakuje = s.text !== undefined && isPlaceholder(s.text);
+    // Brak `width` w danych — szerokość wynika z postaci: karta staje
+    // w połowie wiersza, proza, blok zdrowotny i moduł rekomendacji
+    // biorą go w całości.
+    const szerokosc = s.width ?? (s.variant === 'card' ? 'auto' : 'full');
+    return {
+      ikona: s.icon,
+      label: s.label,
+      postac: s.variant,
+      pelnaSzerokosc: szerokosc === 'full',
+      szerokoscKolumn: KOLUMNY_WG_SZEROKOSCI[szerokosc],
+      punkty: s.items?.filter((p) => !isPlaceholder(p)),
+      akapity: s.text && !tekstBrakuje ? naAkapity(s.text) : undefined,
+      // Para bez którejkolwiek połowy nie jest rekomendacją, tylko połową
+      // zdania — wypada w całości, tak jak pozycja wyliczanki z `TODO(`.
+      pary: s.pairs?.filter((p) => !isPlaceholder(p.label) && !isPlaceholder(p.recommendation)),
+      zTresci: s.fromBody,
+      brakuje: tekstBrakuje,
+      znacznik: s.text,
+    };
+  });
+
+const blokiWszystkie = d.sections ? blokiWlasne() : blokiDomyslne;
+
 const bloki = blokiWszystkie.filter((b) => {
-  if (b.brakuje) return import.meta.env.DEV;
-  return b.zTresci || b.punkty?.length || b.tekst;
+  if (b.zTresci || b.punkty?.length || b.akapity?.length || b.pary?.length) return true;
+  // Blok bez treści zostaje wyłącznie jako znacznik dla nas, przy `npm run dev`.
+  return Boolean(b.brakuje) && import.meta.env.DEV;
 });
+
+/**
+ * Uwagi zdrowotne schodzą z toku treści do pasa domykającego, obok wyjścia
+ * do grafiku. Podział idzie po WARIANCIE, nie po slugu ani po nagłówku:
+ * `note` to z definicji zastrzeżenie do przeczytania na koniec, a nie
+ * kolejna sekcja opisowa.
+ */
+const blokiTresci = bloki.filter((b) => b.postac !== 'note');
+const blokiUwag = bloki.filter((b) => b.postac === 'note');
+
+/**
+ * Czy uwagi stoją OBOK modułu grafiku, czy nad nim.
+ *
+ * Decyduje o tym szerokość zadeklarowana przy sekcji `note`: pełna (czyli
+ * domyślna) znaczy „weź cały wiersz", więc moduł grafiku schodzi pod spód.
+ * Węższa znaczy, że uwagi dzielą wiersz — wtedy moduł staje obok.
+ */
+const uwagiObokGrafiku = blokiUwag.length > 0 && blokiUwag.every((b) => !b.pelnaSzerokosc);
+
+/**
+ * WPROWADZENIE POD TYTUŁEM.
+ *
+ * Ciało pliku Markdown, ale tylko wtedy, gdy żadna sekcja po nie nie sięga.
+ * Renderuje się bez nagłówka i bez ramki — to ma być tekst do przeczytania
+ * zaraz po tytule, a nie pierwsza karta z brzegu.
+ *
+ * Kategorie bez `sections` wchodzą tu z `false`: tam ciało pliku należy
+ * do bloku „Czego się spodziewać" i wstępu nie ma.
+ */
+const jestWstep = Boolean(d.sections) && !blokiWszystkie.some((b) => b.zTresci);
 
 const title = d.seoTitle ?? `${d.name} — ${citiesLabel}`;
 const description =
@@ -110,26 +276,64 @@ const description =
 ---
 
 <Base title={title} description={description}>
-  {/* Bez leadu: opis wprowadzający zdjęty na prośbę klientki. Po nagłówku
-      strona przechodzi od razu do uporządkowanej informacji. */}
-  <PageHeader
-    size="sm"
-    eyebrow="Zajęcia"
-    title={d.name}
-    crumbs={[
-      { label: 'Zajęcia', href: '/zajecia' },
-      { label: d.name, href: `/zajecia/${entry.id}` },
-    ]}
-  />
+  {
+    jestWstep ? (
+      /* Nagłówek i wprowadzenie w jednym wierszu. Okruszki, nadtytuł, nazwa
+         zajęć i kreska po lewej; całe wprowadzenie po prawej. Bez ramki
+         i bez tła — wydzielenie niesie sam podział na kolumny. */
+      <Section as="div" size="sm" class="zajecia-naglowek">
+        <Breadcrumbs
+          items={[
+            { label: 'Zajęcia', href: '/zajecia' },
+            { label: d.name, href: `/zajecia/${entry.id}` },
+          ]}
+        />
+        <p class="eyebrow">{typo('Zajęcia')}</p>
+        <h1 class="page-header__title">{typo(d.name)}</h1>
+        {d.subtitle && <p class="podtytul">{typo(d.subtitle)}</p>}
+        <span class="page-header__rule" aria-hidden="true" />
+
+        <div class:list={['wstep', d.introColumns && 'wstep--kolumny']}>
+          <Content />
+        </div>
+      </Section>
+    ) : (
+      /* Kategorie bez własnego wprowadzenia — wspólny nagłówek serwisu,
+         dokładnie jak dotąd. */
+      <PageHeader
+        size="sm"
+        eyebrow="Zajęcia"
+        title={d.name}
+        crumbs={[
+          { label: 'Zajęcia', href: '/zajecia' },
+          { label: d.name, href: `/zajecia/${entry.id}` },
+        ]}
+      />
+    )
+  }
 
   <Section as="div" size="sm" class="bloki-sekcja">
-    <ul class="bloki">
+    {/* Siatka dwunastu kolumn tylko dla kategorii z własnymi `sections` —
+        tylko one mogą zadeklarować udział inny niż połowa wiersza.
+        Układ domyślny zostaje na dwóch równych torach. */}
+    <ul class:list={['bloki', d.sections && 'bloki--sekcje']}>
       {
-        bloki.map((b) => (
-          <li class="blok">
-            <span class="znak blok__ikona" aria-hidden="true">
-              <FactIcon name={b.ikona} />
-            </span>
+        blokiTresci.map((b) => (
+          <li
+            class:list={['blok', `blok--${b.postac}`, b.pelnaSzerokosc && 'blok--pelny']}
+            style={
+              b.pelnaSzerokosc || !b.szerokoscKolumn
+                ? undefined
+                : `--kolumny:${b.szerokoscKolumn}`
+            }
+          >
+            {/* Znak jest opcjonalny: sekcja własna może go nie mieć,
+                a wtedy blok zaczyna się od nagłówka. */}
+            {b.ikona && (
+              <span class="znak blok__ikona" aria-hidden="true">
+                <FactIcon name={b.ikona} />
+              </span>
+            )}
             <div class="blok__tresc">
               <h2 class="blok__label">{typo(b.label)}</h2>
 
@@ -139,43 +343,133 @@ const description =
                 </div>
               )}
 
-              {b.punkty && (
-                <ul class="blok__punkty">
+              {/* Proza przed wyliczanką: gdy sekcja ma jedno i drugie,
+                  akapit jest wprowadzeniem do punktów, nie dopiskiem.
+
+                  `prose-grid` dostaje opakowanie, bo akapity układają się
+                  w siatkę. Pozostałe warianty renderują się jak dotąd, bez
+                  dodatkowego elementu — stąd rozgałęzienie zamiast jednego
+                  wspólnego kontenera. */}
+              {!b.brakuje && b.akapity && b.akapity.length > 0 && (
+                b.postac === 'prose-grid' ? (
+                  <div
+                    class:list={[
+                      'proza-siatka',
+                      /* Nieparzysta liczba akapitów — pierwszy prowadzi
+                         na pełnej szerokości, reszta układa się parami. */
+                      b.akapity.length % 2 === 1 && 'proza-siatka--wiodacy',
+                    ]}
+                  >
+                    {b.akapity.map((akapit) => (
+                      <p class="blok__tekst">{typo(akapit)}</p>
+                    ))}
+                  </div>
+                ) : (
+                  b.akapity.map((akapit) => <p class="blok__tekst">{typo(akapit)}</p>)
+                )
+              )}
+
+              {b.punkty && b.punkty.length > 0 && (
+                <ul
+                  class:list={[
+                    'blok__punkty',
+                    b.postac === 'features' && 'cechy',
+                    /* Cztery pozycje w rzędzie mają własny rytm łamania:
+                       na tablecie 2 × 2, dopiero na szerokim ekranie
+                       pełny rząd. Trzy pozycje zostają na dotychczasowym. */
+                    b.postac === 'features' && b.punkty.length === 4 && 'cechy--cztery',
+                    b.postac === 'audience-grid' && 'grupy',
+                  ]}
+                >
                   {b.punkty.map((p) => (
-                    <li>{typo(p)}</li>
+                    <li>
+                      {/* Symbol marki nad pozycją albo terakotowy okrąg przy
+                          niej — obie postacie są dekoracją, więc czytnik
+                          ekranu ich nie widzi. Pozostałe warianty zostają
+                          na samym tekście, bez dodatkowych elementów. */}
+                      {b.postac === 'features' && (
+                        <span class="punkt__znak" aria-hidden="true">
+                          <Mark size="1.75rem" />
+                        </span>
+                      )}
+                      {b.postac === 'audience-grid' && (
+                        <span class="punkt__kropla" aria-hidden="true">
+                          <Mark size="1.2rem" />
+                        </span>
+                      )}
+                      {b.postac === 'features' || b.postac === 'audience-grid' ? (
+                        <span class="punkt__tekst">{typo(p)}</span>
+                      ) : (
+                        typo(p)
+                      )}
+                    </li>
                   ))}
                 </ul>
               )}
 
-              {b.tekst && !b.brakuje && <p class="blok__tekst">{typo(b.tekst)}</p>}
-              {b.brakuje && <Todo label={b.tekst!} block />}
+              {/* Moduł rekomendacji: wiersz na pozycję, potrzeba i polecane
+                  zajęcia jako dwie osobne części. Lista jest zwykłym `ul`,
+                  a nie `dl` — czytnik ekranu dostaje wtedy jednoznaczną
+                  granicę między pozycjami, a obie części czyta po kolei
+                  w tym samym elemencie. */}
+              {b.pary && b.pary.length > 0 && (
+                <ul class="blok__pary">
+                  {b.pary.map((p) => (
+                    <li class="para">
+                      {/* Kropla z logotypu jako znacznik pozycji — ten sam
+                          symbol, którym serwis oznacza fakty i lokalizacje.
+                          Dekoracja, więc poza zasięgiem czytnika ekranu. */}
+                      <span class="para__znak" aria-hidden="true">
+                        <Mark size="1.4rem" />
+                      </span>
+                      <span class="para__potrzeba">{typo(p.label)}</span>
+                      <span class="para__polecane">{typo(p.recommendation)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {b.brakuje && b.znacznik && <Todo label={b.znacznik} block />}
             </div>
           </li>
         ))
       }
     </ul>
 
-    {/* Przejście bloki → grafik → rezerwacja. Trzeci poziom wezwania
-        (`.link-cta` z base.css), ten sam, który zamyka pas faktów na
-        podstronach studiów. Lokalizacji w tym miejscu nie ma. */}
-    <p class="grafik">
-      <a
-        class="link-cta"
-        href="/grafik"
-        aria-label={`Grafik — ${d.name}`}
-        data-event="schedule_page_view"
-        data-source="class"
-      >
-        <FactIcon name="calendar" size="1.1rem" />
-        Grafik
-      </a>
-    </p>
-  </Section>
+    {/* PAS DOMYKAJĄCY: uwagi zdrowotne i wyjście do grafiku w jednym wierszu.
+        Wcześniej stał tu sam odsyłacz „Grafik" jako trzeci poziom wezwania —
+        po dwóch ekranach treści kończył stronę zbyt cicho. */}
+    <div class:list={['stopka-strony', uwagiObokGrafiku && 'stopka-strony--obok']}>
+      {
+        blokiUwag.length > 0 && (
+          <ul class="uwagi">
+            {blokiUwag.map((b) => (
+              <li class="blok blok--note">
+                <div class="blok__tresc">
+                  <h2 class="blok__label">{typo(b.label)}</h2>
+                  {!b.brakuje && b.akapity?.map((akapit) => <p class="blok__tekst">{typo(akapit)}</p>)}
+                  {b.brakuje && b.znacznik && <Todo label={b.znacznik} block />}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+      }
 
-  {/* Pas domykający „Sprawdź, kiedy odbywają się zajęcia" USUNIĘTY
-      (28.08.2026). Dublował funkcję wyjścia „Grafik", które stoi tuż nad
-      nim — na jednym ekranie były dwa wezwania do tej samej rzeczy.
-      Rezerwacja ma własny, stały przycisk w nagłówku serwisu. */}
+      <div class="grafik-modul">
+        <span class="znak grafik-modul__ikona" aria-hidden="true">
+          <FactIcon name="calendar" size="1.5rem" />
+        </span>
+        <div class="grafik-modul__tresc">
+          <h2 class="grafik-modul__tytul">{typo('Grafik')}</h2>
+          <p class="grafik-modul__lead">{typo('Wybierz termin i zarezerwuj swoje miejsce.')}</p>
+        </div>
+        <Button href="/grafik" source="class" event="schedule_page_view">
+          {typo('Zobacz grafik')}
+        </Button>
+      </div>
+    </div>
+  </Section>
 </Base>
 
 <style>
@@ -193,7 +487,7 @@ const description =
     margin-block-start: calc(var(--space-sm) * -1.5);
   }
 
-  /* ————————————————— cztery karty ——————————————————
+  /* ————————————————— karty bloków ——————————————————
 
      LEKKO, NIE KARTAMI — ten sam wzorzec, który został zatwierdzony na
      podstronach studiów w Etapie 5: znak w kółku, nagłówek, tekst, odstęp
@@ -204,11 +498,16 @@ const description =
      Etap 5 jest zatwierdzony commitem 739e965, a wspólny komponent oznaczałby
      ruch w jego stylach. Ryzyko regresji przewyższa zysk z odchudzenia kodu.
 
-     UKŁAD 2 × 2 dobrany pod REALNE długości: „Czego się spodziewać" to
-     245–348 znaków, „Dla kogo" ok. 150, „Efekty" ok. 120, „Jak się
-     przygotować" 170. Najdłuższy blok jest ok. dwa razy dłuższy od
-     najkrótszego — przy dwóch szerokich torach różnica jest do zniesienia,
-     przy czterech wąskich zrobiłaby z jednego bloku pionową wstążkę. */
+     DWA TORY, NIE CZTERY — dobrane pod REALNE długości układu domyślnego:
+     „Czego się spodziewać" to 245–348 znaków, „Dla kogo" ok. 150, „Efekty"
+     ok. 120, „Jak się przygotować" 170. Najdłuższy blok jest ok. dwa razy
+     dłuższy od najkrótszego — przy dwóch szerokich torach różnica jest
+     do zniesienia, przy czterech wąskich zrobiłaby z jednego bloku pionową
+     wstążkę.
+
+     Dwa tory znoszą też DOWOLNĄ liczbę bloków, odkąd zestaw sekcji jest
+     częścią danych kategorii: siatka rośnie wierszami, a nieparzysta liczba
+     domyka się regułą `:last-child:nth-child(odd)` niżej. */
   .bloki {
     list-style: none;
     padding: 0;
@@ -217,17 +516,329 @@ const description =
     gap: var(--space-md);
   }
 
-  /* Karta lekka: włoskowata obwódka, promień większy niż w kaflach zajęć
+  /* Włoskowata terakotowa linia oddzielająca wprowadzenie od sekcji
+     opisowych. Rysowana kolorem akcentu rozcieńczonym do 45% — tak samo
+     jak `--line` powstaje z dębu, więc nie dokłada koloru do palety. */
+  .bloki--sekcje {
+    padding-block-start: var(--space-lg);
+    border-block-start: var(--hairline) solid
+      color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  /* ————————————————— wprowadzenie pod tytułem —————————————————
+
+     Tytuł i wstęp to jeden blok: okruszki, nadtytuł, nazwa zajęć, kreska,
+     a zaraz pod nią proza. Bez ramki, bez tła.
+
+     Odstęp liczony marginesem DOLNYM akapitu, nie górnym. To nie jest
+     drobiazg: przy dwóch kolumnach akapit otwierający prawą kolumnę jest
+     w DOM-ie kolejnym `p`, więc margines górny zepchnąłby go niżej niż
+     pierwszy akapit lewej i kolumny zaczynałyby się na różnej wysokości. */
+  .wstep :global(p) {
+    margin: 0 0 var(--space-sm);
+    font-size: var(--fs-body);
+    line-height: var(--lh-loose);
+  }
+
+  .wstep :global(p:last-child) {
+    margin-block-end: 0;
+  }
+
+  /* Podtytuł pod nazwą zajęć: mniejszy od tytułu, tym samym krojem
+     wyświetlaniowym, w kolorze tekstu akcentowanego (5.85:1 na kremowym
+     tle). Bez ramki i bez własnego tła — to dopisek do tytułu, nie sekcja. */
+  .podtytul {
+    margin-block-start: var(--space-2xs);
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    line-height: var(--lh-heading);
+    color: var(--text-accent);
+  }
+
+  /* Wstęp jednokolumnowy dostaje sufit szerokości — bez niego krótkie
+     wprowadzenie rozciągałoby się na całą szerokość kontenera i wiersz
+     robił się nie do przeczytania jednym ruchem oka. Wstępu dzielonego
+     na kolumny to nie dotyczy: tam długość wiersza ogranicza sam podział. */
+  .wstep:not(.wstep--kolumny) {
+    max-width: 53rem;
+  }
+
+  /* Wspólny szkielet — postać nadaje dopiero wariant. Ramka NIE jest już
+     domyślna: klientka prosiła o mniej pudełek na podstronach, więc obwódkę
+     dostaje tylko to, co realnie zyskuje na wydzieleniu. */
+  .blok {
+    display: block;
+  }
+
+  /* KARTA: włoskowata obwódka, promień większy niż w kaflach zajęć
      (14 px wobec 10), spokojny wewnętrzny margines. Bez cienia, bez
      wypełnienia, bez stanu najechania — to nie jest element klikalny,
      tylko pudełko na informację. Promień i padding stoją tu wartościami,
      nie tokenami: `--radius-card` to 10 px, a między `--space-md` (27 px)
-     a `--space-lg` (46 px) nie ma stopnia, który trafiłby w zamówione 28–32. */
-  .blok {
-    display: block;
+     a `--space-lg` (46 px) nie ma stopnia, który trafiłby w zamówione 28–32.
+
+     Zostaje dla WYLICZANEK. Dwie listy stojące obok siebie potrzebują
+     krawędzi, żeby było widać, gdzie kończy się jedna, a zaczyna druga;
+     akapit prozy tego nie potrzebuje i w pudełku wygląda jak wpis
+     w panelu, a nie jak tekst do przeczytania. */
+  .blok--card {
     border: var(--hairline) solid var(--line);
     border-radius: 14px;
     padding: clamp(1.5rem, 1.1rem + 1vw, 2rem);
+  }
+
+  /* PROZA: nagłówek i tekst, zero obudowy.
+
+     Stopień i kolor jak w tekście bieżącym, nie jak w karcie. Karta jest
+     zwięzłą informacją i dlatego ma `--fs-small` w `--text-muted`; sekcja
+     prozy na pełnej szerokości jest dalszym ciągiem wprowadzenia i przy tych
+     samych ustawieniach czytała się jak podpis pod czymś, czego nie ma.
+
+     Bez sufitu miary: sekcje prozy na tej podstronie to jedno–dwa zdania
+     pod nagłówkiem, a nie akapity do czytania ciągiem. Miara zostawiała
+     przy nich pas pustki po prawej. */
+  .blok--plain .blok__tekst,
+  .blok--plain .blok__punkty {
+    font-size: var(--fs-body);
+    color: var(--text);
+    line-height: var(--lh-loose);
+  }
+
+  /* PROZA ZE ZNAKIEM: otwarty blok na kremowym tle strony — bez tła, bez
+     ramki, bez paska. Wyróżnienie niesie sam znak i oddech wokół sekcji,
+     więc informacja jest widoczna, a nie zamknięta w karcie.
+
+     Warunek `:has()` celuje w sekcje prozy, które zadeklarowały ikonę.
+     Proza bez ikony (np. „Czego się spodziewać" na /zajecia/joga) zostaje
+     na dotychczasowej skali nagłówka i bez sufitu miary. */
+  .blok--plain:has(> .blok__ikona) {
+    margin-block: var(--space-sm);
+  }
+
+  .blok--plain:has(> .blok__ikona) .blok__label {
+    font-size: var(--fs-h2);
+    margin-block-end: var(--space-sm);
+  }
+
+  .blok--plain:has(> .blok__ikona) .blok__tekst {
+    max-width: 60rem;
+  }
+
+  /* PANEL: wyróżnienie jasnym tłem marki i terakotowym paskiem po lewej.
+     Bez obwódki — ciężar niesie samo tło, więc panel odcina się od toku
+     strony, a nie zamyka się w pudełku. Narożniki miękkie, patrz wspólna
+     reguła promienia niżej. */
+  .blok--panel {
+    background: var(--surface-soft);
+    border-inline-start: 3px solid var(--accent);
+    padding: var(--space-md) clamp(1.25rem, 1rem + 1.2vw, 2rem);
+  }
+
+  /* ————————————————— promień kolorowych powierzchni —————————————————
+
+     Jedna reguła dla WSZYSTKICH wariantów z wypełnieniem, zamiast promienia
+     dopisywanego przy każdym z osobna — dzięki temu panel i siatka mają ten
+     sam narożnik na każdej z sześciu podstron.
+
+     Wartości literałami, nie tokenem: `--radius-card` to 10 px (kafel
+     zajęć), a `--radius-arch` liczy się w `vw` i służy kadrom zdjęć. Między
+     nimi nie ma stopnia, który trafiłby w zamówione 16–20 px.
+
+     `overflow` świadomie NIE jest ustawiony: promień na elemencie i tak
+     przycina jego własne tło oraz obwódkę, a nic tu poza tło nie wychodzi.
+
+     Blok zdrowotny (`note`) tej reguły NIE łapie — nie ma wypełnienia,
+     tylko pionową kreskę, więc nie ma czego zaokrąglać. */
+  .blok--panel,
+  .blok--audience-grid {
+    border-radius: 16px;
+  }
+
+  .blok--panel .blok__tekst {
+    font-size: var(--fs-body);
+    color: var(--text);
+    line-height: var(--lh-loose);
+  }
+
+  /* ————————————————— PROZA W SIATCE (variant: prose-grid) —————————————————
+
+     Kilka równorzędnych akapitów rozłożonych na dwie kolumny i rozdzielonych
+     włoskowatymi kreskami. Bez ramki, bez znaków — w jednym słupku te same
+     zdania czytały się jak jeden długi blok bez hierarchii.
+
+     Odstęp niosą tu paddingi komórek, nie marginesy akapitów, więc globalna
+     reguła `.blok__tekst + .blok__tekst` jest niżej wyzerowana. */
+  .proza-siatka {
+    display: grid;
+    gap: 0;
+  }
+
+  .proza-siatka > .blok__tekst {
+    padding-block: var(--space-md);
+    font-size: var(--fs-body);
+    color: var(--text);
+    line-height: var(--lh-loose);
+  }
+
+  .proza-siatka > .blok__tekst + .blok__tekst {
+    margin-block-start: 0;
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  /* ————————————————— CECHY (variant: features) —————————————————
+
+     Rząd równych kolumn: symbol marki nad pozycją, tekst pod nim, kolumny
+     rozdzielone włoskowatą kreską. Bez ramki i bez zaokrągleń — wydzielenie
+     niosą same kreski, tak jak przy dwóch lokalizacjach w hero.
+
+     Reguły stoją PO `.blok__punkty`, bo obie klasy siedzą na tym samym
+     elemencie i mają tę samą szczegółowość — decyduje kolejność. */
+  .cechy {
+    gap: 0;
+    font-size: var(--fs-body);
+    color: var(--text);
+    line-height: var(--lh-body);
+  }
+
+  .cechy > li {
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-sm);
+    text-align: center;
+  }
+
+  .cechy > li + li {
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  .punkt__znak {
+    color: var(--accent);
+    line-height: 0;
+  }
+
+  /* ————————————————— GRUPY (variant: audience-grid) —————————————————
+
+     Jedna wyróżniona powierzchnia na całą sekcję i siatka w środku, a nie
+     cztery osobne karty. Powierzchnia sięga krawędzi kontenera przez ujemny
+     margines równy rynnie — bez `100vw`, które doliczyłoby pasek przewijania
+     i zrobiło poziome przewijanie. */
+  .grupy {
+    gap: 0;
+    font-size: var(--fs-body);
+    color: var(--text);
+    line-height: var(--lh-body);
+  }
+
+  .grupy > li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-sm);
+  }
+
+  .grupy > li + li {
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  /* Symbol marki zamiast pustego okręgu — ta sama kropla, którą serwis
+     ma w logotypie i w znacznikach sekcji. Wyrównana do PIERWSZEGO wiersza
+     tekstu, nie do środka bloku: przy pozycji łamiącej się na dwa lub trzy
+     wiersze kropla odjeżdżałaby w dół. */
+  .punkt__kropla {
+    color: var(--accent);
+    line-height: 0;
+    margin-block-start: 0.3em;
+  }
+
+  .blok--audience-grid {
+    background: var(--surface-soft);
+    margin-inline: calc(var(--gutter) * -1);
+    padding: var(--space-lg) var(--gutter);
+  }
+
+  /* Nagłówki obu nowych wariantów są wejściem w osobną część strony,
+     a nie etykietą kafla — stąd skala nagłówka sekcji zamiast karty. */
+  .blok--features .blok__label,
+  .blok--audience-grid .blok__label,
+  .blok--prose-grid .blok__label {
+    font-size: var(--fs-h2);
+    margin-block-end: var(--space-md);
+  }
+
+  /* MODUŁ REKOMENDACJI: wiersze „potrzeba → polecane zajęcia".
+
+     Bez ramki wokół całości — wcześniej te same treści stały jako pięć
+     akapitów w jednej dużej karcie i czytały się jak ściana tekstu, w której
+     nie widać, gdzie kończy się jedna rekomendacja. Wydzielenie niosą teraz
+     włoskowate linie MIĘDZY wierszami: ten sam wzorzec, który porządkuje
+     listę pytań w komponencie `Faq` (mocniejsza kreska otwiera listę,
+     delikatniejsze rozdzielają pozycje). */
+  .blok__pary {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    margin-block-start: var(--space-md);
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  /* Pozycja to nie wiersz tabeli, tylko mały blok redakcyjny: kropla marki,
+     pod nią potrzeba, pod nią rekomendacja.
+
+     Poprzedni układ — dwie kolumny przez całą szerokość, kreska pod każdym
+     wierszem i strzałka na końcu — czytał się jak cennik albo panel
+     administracyjny, a nie jak podpowiedź. Strzałka dodatkowo obiecywała
+     przejście, którego nie ma: wiersze nie są odsyłaczami.
+
+     Rytm niosą teraz same znaki i odstępy, więc w module nie ma ani jednej
+     kreski i ani jednej ramki. */
+  .para {
+    display: grid;
+    gap: var(--space-3xs);
+    justify-items: start;
+  }
+
+  .para__znak {
+    color: var(--accent);
+    line-height: 0;
+    margin-block-end: var(--space-2xs);
+  }
+
+  .para__potrzeba {
+    font-size: var(--fs-body);
+    line-height: 1.5;
+  }
+
+  /* Nazwy zajęć w kolorze tekstu akcentowanego (`--clay-deep`, 5.85:1
+     na kremowym tle). Terakota kanoniczna odpada — daje 2.18:1 i w tokenach
+     stoi przy niej wprost, że nie wolno jej użyć na tekst. Żadnego nowego
+     koloru tu nie ma. */
+  .para__polecane {
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--text-accent);
+  }
+
+  /* BLOK ZDROWOTNY: ma być widoczny, ale nie ma krzyczeć ani udawać
+     ostrzeżenia. Wyróżnienie niesie terakotowy pasek po lewej i nic poza
+     nim — dokładnie ten sam zabieg co przy cytacie założycielki na /o-nas.
+
+     Świadomie BEZ wypełnienia `--surface-soft`: ta bladoróżowa powierzchnia
+     została z serwisu usunięta 28.08.2026 (pochodna koloru, którego wartości
+     jeszcze nie znamy) i nie wraca tylnymi drzwiami. */
+  .blok--note {
+    border-inline-start: 3px solid var(--accent);
+    padding: var(--space-2xs) 0 var(--space-2xs) var(--space-md);
+    /* Ponad rynnę siatki: blok zdrowotny zamyka stronę i ma być widocznie
+       osobny, a nie kolejną pozycją tej samej listy. */
+    margin-block-start: var(--space-xs);
+  }
+
+  .blok--note .blok__tekst {
+    max-width: var(--measure);
   }
 
   /* Znak NAD tytułem, nie obok. W karcie z własnym marginesem układ
@@ -255,6 +866,14 @@ const description =
     margin-block-start: var(--space-2xs);
   }
 
+  /* Sekcja własna może mieć kilka akapitów, a także akapit i wyliczankę
+     naraz — ten sam odstęp co między akapitami prozy, żeby blok złożony
+     z dwóch rodzajów treści miał jeden rytm, a nie dwa. */
+  .blok__tekst + .blok__tekst,
+  .blok__tekst + .blok__punkty {
+    margin-block-start: var(--space-2xs);
+  }
+
   /* Punkty bez kropek — to nie jest wyliczanka do przeczytania po kolei,
      tylko trzy fakty, z których każdy stoi sam. */
   .blok__punkty {
@@ -267,44 +886,228 @@ const description =
     color: var(--text-muted);
     line-height: 1.55;
   }
-  /* ————————————————— wyjście do grafiku ————————————————— */
+  /* ————————————————— pas domykający —————————————————
 
-  .grafik {
-    margin-block-start: var(--space-lg);
+     Uwagi zdrowotne po lewej, wyjście do grafiku po prawej. Na telefonie
+     jedna pod drugą, w tej samej kolejności. */
+  .stopka-strony {
+    display: grid;
+    gap: var(--space-md);
+    margin-block-start: var(--space-xl);
   }
 
-  /* ————————————————— pas domykający ————————————————— */
-
-  .domkniecie {
+  .uwagi {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: grid;
     gap: var(--space-md);
   }
 
-  .domkniecie__tytul {
-    font-size: var(--fs-h3);
-  }
-
-  .domkniecie__lead {
-    margin-block-start: var(--space-2xs);
-    color: var(--text-muted);
-    max-width: var(--measure);
-  }
-
-  .domkniecie__akcje {
+  /* Moduł grafiku: delikatna terakotowa ramka, znak kalendarza, nagłówek
+     i przycisk w jednym wierszu. Adres ten sam co dotąd — `/grafik`. */
+  .grafik-modul {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-xs);
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+    border: var(--hairline) solid color-mix(in srgb, var(--accent) 60%, transparent);
+    border-radius: var(--radius-card);
+    padding: var(--space-md) clamp(1.25rem, 1rem + 1.2vw, 2rem);
   }
 
-  @media (min-width: 52rem) {
-    .domkniecie {
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: var(--space-xl);
+  /* Kafelek ze znakiem kalendarza: jasne tło marki, terakotowy rysunek,
+     miękki narożnik. Dekoracja, więc kontrast nie jest tu kryterium. */
+  /* Znak kalendarza w pierścieniu z systemu `.znak` — ta sama obwódka,
+     której serwis używa przy faktach i lokalizacjach. */
+  .grafik-modul__ikona {
+    --znak-size: 3.25rem;
+    flex: none;
+  }
+
+  /* Tekst zabiera resztę wiersza, więc przycisk siada przy prawej krawędzi
+     modułu, a przy zawinięciu schodzi pod spód. */
+  .grafik-modul__tresc {
+    flex: 1 1 12rem;
+  }
+
+  .grafik-modul__tytul {
+    font-size: var(--fs-h4);
+    font-weight: 400;
+  }
+
+  .grafik-modul__lead {
+    margin-block-start: var(--space-3xs);
+    font-size: var(--fs-small);
+    color: var(--text-muted);
+  }
+
+  /* Rekomendacje stają w dwóch kolumnach wcześniej niż reszta strony:
+     to krótkie bloki, więc nie potrzebują tak szerokiego kadru jak sekcja
+     z ikoną i nagłówkiem. Poniżej tego progu idą w jednym słupku. */
+  @media (min-width: 40rem) {
+    /* Na większym kadrze narożnik odrobinę większy — 16 px przy szerokiej
+       powierzchni robi się prawie niewidoczny. */
+    .blok--panel,
+    .blok--audience-grid {
+      border-radius: 20px;
+    }
+
+    .blok__pary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-2xl);
+    }
+
+    /* Rząd trzech kolumn i siatki dwukolumnowe. Kreski przechodzą
+       z poziomych na pionowe: między kolumnami stoi pionowa, między
+       rzędami pozioma. */
+    .proza-siatka {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-lg);
+    }
+
+    .proza-siatka > .blok__tekst + .blok__tekst {
+      border-block-start: none;
+    }
+
+    .proza-siatka > .blok__tekst:nth-child(2n) {
+      border-inline-start: var(--hairline) solid var(--line);
+      padding-inline-start: var(--space-lg);
+    }
+
+    .proza-siatka > .blok__tekst:nth-child(n + 3) {
+      border-block-start: var(--hairline) solid var(--line);
+    }
+
+    /* Sekcja z JEDNYM akapitem: siatka zwija się do pojedynczej kolumny na
+       pełnej szerokości, zamiast zostawiać pustą prawą połowę. */
+    .proza-siatka > .blok__tekst:only-child {
+      grid-column: 1 / -1;
+    }
+
+    /* NIEPARZYSTA LICZBA AKAPITÓW: pierwszy bierze cały wiersz i wprowadza
+       w temat, dopiero pod nim idą pary. Przesuwa to parzystość o jeden,
+       więc kreski trzeba przeliczyć od nowa: pionowa siada na akapitach
+       3, 5, 7…, a pozioma na wszystkich poza pierwszym. */
+    .proza-siatka--wiodacy > .blok__tekst:first-child {
+      grid-column: 1 / -1;
+    }
+
+    .proza-siatka--wiodacy > .blok__tekst:nth-child(2n) {
+      border-inline-start: none;
+      padding-inline-start: 0;
+    }
+
+    .proza-siatka--wiodacy > .blok__tekst:nth-child(2n + 3) {
+      border-inline-start: var(--hairline) solid var(--line);
+      padding-inline-start: var(--space-lg);
+    }
+
+    .proza-siatka--wiodacy > .blok__tekst:not(:first-child) {
+      border-block-start: var(--hairline) solid var(--line);
+    }
+
+    .cechy {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .cechy > li + li {
+      border-block-start: none;
+      border-inline-start: var(--hairline) solid var(--line);
+    }
+
+    /* Cztery pozycje na tablecie: 2 × 2. Pierwsza w rzędzie nie ma kreski
+       po lewej, drugi rząd dostaje kreskę u góry. */
+    .cechy--cztery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cechy--cztery > li:nth-child(2n + 1) {
+      border-inline-start: none;
+    }
+
+    .cechy--cztery > li:nth-child(n + 3) {
+      border-block-start: var(--hairline) solid var(--line);
+    }
+
+    .grupy {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-lg);
+    }
+
+    .grupy > li + li {
+      border-block-start: none;
+    }
+
+    .grupy > li:nth-child(2n) {
+      border-inline-start: var(--hairline) solid var(--line);
+      padding-inline-start: var(--space-lg);
+    }
+
+    .grupy > li:nth-child(n + 3) {
+      border-block-start: var(--hairline) solid var(--line);
     }
   }
 
   @media (min-width: 64rem) {
+    /* WPROWADZENIE W DWÓCH KOLUMNACH.
+
+       Wielokolumnowość CSS, nie siatka: akapity przychodzą z markdowna jako
+       płaski ciąg `p` i nie da się im przypisać kolumn z góry. `break-inside:
+       avoid` pilnuje, żeby żaden akapit nie rozpadł się między kolumnami —
+       bez tego przeglądarka tnie go w połowie zdania. Przy czterech akapitach
+       Jogi daje to podział po dwa. */
+    /* Kreska między kolumnami wprowadzenia — ta sama włoskowata linia
+       w `--line`, którą rozdzielone są kolumny w `prose-grid` i w rzędzie
+       `features`. `column-rule` jest tu właściwym narzędziem: rysuje się
+       dokładnie w połowie rynny (więc odstępy po obu stronach są równe),
+       sięga tylko na wysokość treści i znika sam, kiedy `columns` przestaje
+       obowiązywać — czyli poniżej tego progu, gdzie akapity idą w słupku. */
+    .wstep--kolumny {
+      columns: 2;
+      column-gap: var(--space-2xl);
+      column-rule: var(--hairline) solid var(--line);
+    }
+
+    .wstep--kolumny :global(p) {
+      break-inside: avoid;
+    }
+
+    /* Ostatni akapit lewej kolumny nie jest ostatnim w DOM-ie, więc regułę
+       zdejmującą dolny margines trzeba tu cofnąć — inaczej kolumny kończą
+       się na różnej wysokości bez powodu. */
+    .wstep--kolumny :global(p:last-child) {
+      margin-block-end: 0;
+    }
+
+    /* Uwagi obok modułu grafiku — tylko gdy sekcja `note` zadeklarowała
+       węższą szerokość. Domyślnie uwagi biorą cały wiersz, a moduł grafiku
+       stoi pod nimi. */
+    .stopka-strony--obok {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+      align-items: start;
+      gap: var(--space-lg);
+    }
+
+    /* Cztery pozycje na szerokim ekranie: pełny rząd, trzy kreski pionowe
+       i żadnej poziomej. Reguły z progu tabletowego trzeba tu cofnąć —
+       nadal pasują, a mają wyższą szczegółowość niż `li + li`. */
+    .cechy--cztery {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .cechy--cztery > li:nth-child(2n + 1) {
+      border-inline-start: var(--hairline) solid var(--line);
+    }
+
+    .cechy--cztery > li:first-child {
+      border-inline-start: none;
+    }
+
+    .cechy--cztery > li:nth-child(n + 3) {
+      border-block-start: none;
+    }
+
     .bloki {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       /* Odstęp jednakowy w obu osiach: karty mają własne krawędzie,
@@ -312,10 +1115,52 @@ const description =
       gap: var(--space-md);
     }
 
-    /* Nieparzysta liczba bloków — dziś aerial yoga, dopóki klientka nie
-       przyśle opisu przygotowania. Ostatni blok bierze wtedy oba tory,
-       zamiast zostawiać w drugim rzędzie dziurę na pół szerokości. */
-    .blok:last-child:nth-child(odd) {
+    /* Blok na pełnej szerokości — proza, blok zdrowotny i każda sekcja
+       z jawnym `width: full`. Kolejność zostaje ta z danych: siatka układa
+       elementy po kolei, a element biorący cały wiersz sam go zaczyna. */
+    .blok--pelny {
+      grid-column: 1 / -1;
+    }
+
+    /* Nieparzysta liczba KART — dziś aerial yoga, dopóki klientka nie
+       przyśle opisu przygotowania. Ostatnia karta bierze wtedy oba tory,
+       zamiast zostawiać w ostatnim rzędzie dziurę na pół szerokości.
+
+       Zawężone do `.blok--card`, odkąd bloki mają warianty: dla prozy
+       i bloku zdrowotnego pełną szerokość ustala już `.blok--pelny`,
+       a `:last-child` trafiałby w nie przypadkiem. */
+    .blok--card:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+
+    /* ————— siatka kategorii z własnymi `sections` —————
+
+       Dwanaście kolumn zamiast dwóch torów. Dwa równe tory nie potrafią
+       oddać wiersza w proporcji innej niż pół na pół, a `width: narrow`
+       i `wide` właśnie o to prosi.
+
+       Rachunek wychodzi identycznie jak przy dwóch torach, więc bloki
+       z domyślnym udziałem (6 z 12) nie drgną ani o piksel: dwanaście
+       torów zabiera jedenaście rynien, ale blok na sześciu z nich sześć
+       z tych rynien odzyskuje wewnątrz siebie.
+
+       `align-items: start` — wysokość każdego bloku wynika z jego własnej
+       treści, a nie z sąsiada. Domyślne rozciąganie dawało krótszej liście
+       pas pustki na dole i to ona sprawiała, że karty czytały się
+       jak ciężkie. Układ domyślny (`.bloki` bez modyfikatora) zostaje
+       na rozciąganiu — tamte podstrony są zatwierdzone i nie ruszamy ich. */
+    .bloki--sekcje {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    .bloki--sekcje > .blok {
+      grid-column: span var(--kolumny, 6);
+    }
+
+    /* Po regule wyżej, nie przed nią: obie mają tę samą szczegółowość,
+       więc o pełnej szerokości decyduje kolejność. */
+    .bloki--sekcje > .blok--pelny {
       grid-column: 1 / -1;
     }
   }

@@ -5,6 +5,7 @@ import Todo from '~/components/ui/Todo.astro';
 import { booking } from '~/data/site';
 import { home } from '~/data/copy/home';
 import { isPlaceholder, showPlaceholders } from '~/lib/copy';
+import { typo } from '~/lib/typografia';
 
 /**
  * Brief §12.7 i §18. To najwyżej konwertująca treść dla początkujących —
@@ -12,6 +13,12 @@ import { isPlaceholder, showPlaceholders } from '~/lib/copy';
  *
  * Kroki bez potwierdzonej treści nie renderują się w produkcji, a numeracja
  * przelicza się sama, więc lista nigdy nie ma dziury.
+ *
+ * Przycisk bierze etykietę z `booking.label`, nie z `t.ctaLabel` (03.09.2026).
+ * Ten sam string służył wcześniej dwóm rolom: TUTAJ był etykietą przycisku
+ * do Fitssey, a na /pierwsza-wizyta jest nagłówkiem sekcji. Wezwania do
+ * rezerwacji mają brzmieć wszędzie tak samo, nagłówek zostaje swoim tekstem —
+ * dlatego rozdzielone, mimo że pole w danych jest jedno.
  */
 const t = home.firstVisit;
 const steps = t.steps.filter((step) => !isPlaceholder(step.text));
@@ -33,7 +40,7 @@ const missing = showPlaceholders ? t.steps.filter((step) => isPlaceholder(step.t
           source="first-visit"
           event="first_visit_cta_click"
         >
-          {t.ctaLabel}
+          {typo(booking.label)}
         </Button>
         <a class="visit__more" href="/pierwsza-wizyta">{t.moreLabel}</a>
       </div>

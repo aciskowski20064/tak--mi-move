@@ -113,7 +113,8 @@ wybranych kombinacji na kartce. Oba tokeny zostały przyciemnione o kilka procen
 **Wniosek na przyszłość:** paletę trzeba walidować przeciw *każdemu* tłu sekcji,
 a nie tylko przeciw domyślnemu.
 
-**Decyzja:** przycisk „Umów wizytę" = tło `--clay`, tekst `--espresso`.
+**Decyzja:** przycisk rezerwacji (od 03.09.2026 „Zapisz się na zajęcia", wcześniej
+„Umów wizytę") = tło `--clay`, tekst `--espresso`.
 Nietypowe (wszyscy robią białe na kolorze), zgodne z ciepłym charakterem marki i przechodzi AA.
 Wariant na ciemnym tle: `--clay-deep` + `--bone`.
 

@@ -3,11 +3,17 @@ import Logo from '~/components/ui/Logo.astro';
 import Button from '~/components/ui/Button.astro';
 import SiteNav from '~/components/layout/SiteNav.astro';
 import { booking, site } from '~/data/site';
+import { typo } from '~/lib/typografia';
 
 /**
  * Brief §12.1: header nie może być wysoki ani zapchany małymi linkami,
  * a CTA rezerwacji musi być dostępne bez szukania — także na mobile,
  * dlatego przycisk zostaje widoczny obok hamburgera, a nie chowa się w menu.
+ *
+ * Etykieta przez `typo()`: „Zapisz się na zajęcia” mieści się w przycisku
+ * w jednym wierszu dopiero od ok. 400 px, a niżej musi się złamać. Wiązanie
+ * zostawia „na zajęcia” razem, więc łamanie wypada po „się”, a nie przed
+ * samotnym przyimkiem.
  */
 const currentPath = Astro.url.pathname;
 ---
@@ -26,7 +32,7 @@ const currentPath = Astro.url.pathname;
 
     <div class="header__actions">
       <Button href={booking.frontOfficeUrl} newTab={booking.newTab} source="header" event="booking_cta_click">
-        {booking.label}
+        {typo(booking.label)}
       </Button>
 
       <button

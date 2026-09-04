@@ -5,8 +5,10 @@ import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
 import ClassCard from '~/components/ui/ClassCard.astro';
+import Button from '~/components/ui/Button.astro';
+import Mark from '~/components/ui/Mark.astro';
 import { pages } from '~/data/copy/pages';
-import { home } from '~/data/copy/home';
+import { booking } from '~/data/site';
 import { copyOrNull } from '~/lib/copy';
 
 /**
@@ -22,9 +24,57 @@ import { copyOrNull } from '~/lib/copy';
 const entries = await getCollection('classes', ({ data }) => import.meta.env.DEV || !data.draft);
 const classes = entries.sort((a, b) => a.data.order - b.data.order);
 
-
 const t = pages.classes;
-const choose = home.choose;
+
+/**
+ * TREŚĆ DWÓCH SEKCJI STOI TUTAJ, NIE W `src/data/copy/pages.ts`.
+ *
+ * To odstępstwo od zasady „komponenty nie zawierają tekstów" i wymaga
+ * przeniesienia przy najbliższej okazji, kiedy `pages.ts` będzie i tak
+ * otwierany. Zapisane świadomie, żeby ta zmiana nie ruszała pliku
+ * obsługującego czternaście innych podstron.
+ *
+ * Oba bloki to treść klientki, przepisana bez skracania i bez parafrazy.
+ */
+const mamy = {
+  title: 'Ćwiczenia w ciąży i z dziećmi',
+  paragraphs: [
+    'W Tak Mi Move przygotowałyśmy kilka praktyk z myślą o mamach.',
+    'Pilates i joga dla mam szukających kontaktu z innymi kobietami nie rezygnując z czasu z dzieckiem.',
+    'Joga i zajęcia „aktywna w ciąży” dla pań, które chcą zadbać o zdrowy ruch w ciąży i aktywnie przygotować się do porodu.',
+    'Sprawdź dostępne praktyki w grafiku.',
+  ],
+  ctaLabel: 'Sprawdź grafik',
+};
+
+/**
+ * Potrzeba i podpowiedź jako dwa osobne pola, a nie jedno zdanie dzielone
+ * po myślniku w czasie renderowania — ten sam powód co przy rekomendacjach
+ * na /zajecia/joga: myślnik bywa też wewnątrz zdania. Widoczne słowa są
+ * dokładnie te, które przysłała klientka.
+ */
+const potrzeby: {
+  title: string;
+  /**
+   * `needLines` — te same słowa co w `need`, tylko rozpisane na wiersze.
+   * Renderują się jako elementy blokowe DOPIERO na szerokim ekranie; niżej
+   * wracają do jednego ciągu i łamią się naturalnie. Potrzebne tam, gdzie
+   * hasło samo z siebie rozpada się brzydko na trzy wiersze.
+   */
+  items: { need: string; needLines?: readonly string[]; hint: string }[];
+} = {
+  title: 'Zacznij od tego, czego potrzebujesz',
+  items: [
+    { need: 'Chcę zacząć spokojnie', hint: 'Wybierz jogę dla początkujących, jogę yin lub relaksacyjną' },
+    { need: 'Chcę wzmocnić ciało', hint: 'Wybierz yogilates lub pilates' },
+    {
+      need: 'Chcę poprawić mobilność i rozciągnięcie',
+      needLines: ['Chcę poprawić mobilność', 'i rozciągnięcie'],
+      hint: 'Wybierz smart move, aerial jogę lub jogę dla początkujących',
+    },
+    { need: 'Chcę pogłębić swoją praktykę jogi', hint: 'Wybierz jogę open lub vinyasa yogę' },
+  ],
+};
 ---
 
 <Base title={t.meta.title} description={t.meta.description}>
@@ -63,45 +113,84 @@ const choose = home.choose;
     </ul>
   </Section>
 
-  <Section size="md" tone="alt" class="wybor">
-    <header class="choose__head">
-      <p class="eyebrow">{typo(choose.eyebrow)}</p>
-      <h2>{typo(choose.title)}</h2>
-    </header>
+  {/* Osobna sekcja redakcyjna, świadomie NIE siódmy kafel zajęć: to nie jest
+      jedna forma ruchu, tylko zbiór praktyk rozsianych po grafiku. Kremowe
+      tło strony, akcent niesie sama kropla przy nagłówku. */}
+  <Section size="md" class="mamy">
+    <div class="mamy__uklad">
+      <h2 class="mamy__tytul">{typo(mamy.title)}</h2>
 
-    <ul class="choose__list">
+      <div class="mamy__tresc">
+        {mamy.paragraphs.map((akapit) => <p class="mamy__akapit">{typo(akapit)}</p>)}
+
+        <p class="mamy__cta">
+          <Button
+            href={booking.frontOfficeUrl}
+            newTab={booking.newTab}
+            source="class"
+            event="schedule_page_view"
+          >
+            {typo(mamy.ctaLabel)}
+          </Button>
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  {/* Wybór po potrzebie. Wcześniej stały tu trzy scenariusze z pigułkami
+      prowadzącymi do podstron — klientka przysłała cztery nowe pozycje,
+      w których polecane praktyki nie mają jeszcze własnych podstron
+      (smart move, joga yin). Dlatego bez odsyłaczy i bez strzałek:
+      pozycja nigdzie nie prowadzi, więc nie może tego udawać. */}
+  <Section size="md" class="potrzeby">
+    <h2 class="potrzeby__tytul">{typo(potrzeby.title)}</h2>
+
+    <ul class="potrzeby__lista">
       {
-        /* Podpowiedzi pod hasłami zdjęte (28.08.2026). Sekcja ma mocny
-           nagłówek, a cała logika siedzi w samym haśle i w pigułkach obok
-           — dwa dodatkowe wiersze pod każdym z trzech haseł rozciągały
-           blok w pionie i robiły z niego opis zamiast wyboru.
-           Pole `hint` zostaje w danych: nie renderujemy go, nie kasujemy. */
-        choose.scenarios.map((scenario) => {
-          return (
-            <li class="scenariusz">
-              <div class="scenariusz__tresc">
-                <h3 class="scenariusz__label">{typo(scenario.label)}</h3>
-              </div>
+        potrzeby.items.map((pozycja) => (
+          <li class="potrzeba">
+            {/* Głowka pozycji: kropla marki i włoskowata kreska dobiegająca
+                do końca kolumny. Cała dekoracyjna. */}
+            <span class="potrzeba__glowka" aria-hidden="true">
+              <span class="potrzeba__znak">
+                <Mark size="1.5rem" />
+              </span>
+              <span class="potrzeba__kreska" />
+            </span>
 
-              <ul class="scenariusz__zajecia">
-                {scenario.zajecia.map((z) => (
-                  <li>
-                    <a href={`/zajecia/${z.slug}`} data-event="class_detail_view">
-                      {z.nazwa}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          );
-        })
+            {/* Spacja MIĘDZY wierszami jest konieczna, choć na szerokim
+                ekranie nic nie robi: wiersze są wtedy blokowe, więc odstęp
+                się nie renderuje, ale bez niego czytnik ekranu odczytałby
+                zbite „mobilnośći rozciągnięcie". Ta sama uwaga stoi
+                w `PageHeader` przy `titleLines`. */}
+            <span class="potrzeba__haslo">
+              {pozycja.needLines
+                ? pozycja.needLines.map((wiersz, k) => (
+                    <>
+                      {k > 0 && ' '}
+                      <span class="potrzeba__wiersz">{typo(wiersz)}</span>
+                    </>
+                  ))
+                : typo(pozycja.need)}
+            </span>
+
+            <span class="potrzeba__podpowiedz">{typo(pozycja.hint)}</span>
+          </li>
+        ))
       }
     </ul>
+  </Section>
 
-    <p class="choose__contact">
-      {choose.contactLead}{' '}
-      <a href="/kontakt" data-event="email_click">{typo(choose.contactLabel)}</a>
-    </p>
+  <Section size="md" class="domkniecie">
+    <Button
+      href={booking.frontOfficeUrl}
+      newTab={booking.newTab}
+      variant="secondary"
+      source="class"
+      event="booking_cta_click"
+    >
+      {typo('Poznaj wszystkie praktyki w aplikacji')}
+    </Button>
   </Section>
 
   {/* Sekcja „Pierwszy raz?" zdjęta 22.08.2026. Powtarzała wyjście, które
@@ -173,137 +262,216 @@ const choose = home.choose;
     gap: var(--space-md);
   }
 
-  /* ————————————————— rytm sekcji wyboru —————————————————
-
-     Pomiar przed zmianą na 1280 px: sekcja 940 px wysokości, z czego
-     153 px to jej własny padding, 278 px to padding trzech wierszy
-     (46,4 px na każdą stronę), a treść zajmowała resztę. Struktura
-     zostaje bez zmian — ścinamy wyłącznie odstępy.
-
-     :global, bo klasa trafia na korzeń komponentu Section i nosi JEGO
-     scope (ta sama pułapka co przy siatce kafli wyżej). */
-  :global(.section.wybor) {
-    padding-block: var(--space-lg) var(--space-md);
+  /* Kafel wypełnia całą komórkę, więc sąsiedzi w rzędzie mają równą
+     wysokość, a stopka z wyjściem do grafiku stoi u wszystkich na tej samej
+     linii. Sam kafel ma wewnątrz `grid-template-rows` z torem `1fr`
+     na opisie, więc rozciąga się bez psucia rytmu. */
+  .classes > li {
+    display: grid;
   }
 
-  .choose__head {
-    max-width: var(--container-text);
-    margin-block-end: var(--space-md);
+  /* ————————————————— ćwiczenia w ciąży i z dziećmi —————————————————
+
+     Lekki blok redakcyjny na kremowym tle strony: nagłówek z kroplą,
+     akapity i jedno wyjście. Bez tła `alt`, bez ramki i bez kafla —
+     to sekcja do przeczytania, a nie kolejna pozycja do wyboru. */
+  :global(.section.mamy) {
+    padding-block: var(--space-lg);
   }
 
-  .choose__head h2 {
-    margin-block-start: var(--space-2xs);
+  .mamy__uklad {
+    display: grid;
+    gap: var(--space-md);
   }
 
-  .choose__list {
+  /* Stopień z tokenu `--fs-h1` (36–60 px), krój wyświetlaniowy i waga 400
+     przychodzą z globalnej reguły dla `h2`. Bez własnego rozstrzelenia
+     i bez ciasnej interlinii — nagłówek ma się składać jak reszta strony,
+     a nie jak hero. Łamanie zostawione szerokości kolumny; „i" nie zawiśnie
+     na końcu wiersza, bo `typo()` wiąże jednoliterowe wyrazy. */
+  .mamy__tytul {
+    font-size: var(--fs-h1);
+  }
+
+  .mamy__tresc {
+    max-width: 38rem;
+  }
+
+  .mamy__akapit + .mamy__akapit {
+    margin-block-start: var(--space-sm);
+  }
+
+  .mamy__cta {
+    margin-block-start: var(--space-md);
+  }
+
+  /* ————————————————— wybór po potrzebie —————————————————
+
+     Otwarty rząd bez ramek i bez tła: kropla marki, hasło, pod nim
+     podpowiedź. Rozdzielają je włoskowate kreski — pionowe, kiedy
+     pozycje stoją obok siebie, poziome, kiedy jedna pod drugą. */
+  :global(.section.potrzeby) {
+    padding-block: var(--space-lg);
+  }
+
+  .potrzeby__tytul {
+    font-size: var(--fs-h2);
+    margin-block-end: var(--space-lg);
+  }
+
+  .potrzeby__lista {
     list-style: none;
     padding: 0;
     margin: 0;
     display: grid;
+    gap: 0;
   }
 
-  /* Wiersz na pełną szerokość zamiast trzech wąskich kolumn. Poprzedni układ
-     dawał 28 znaków w wierszu, więc „Chcę poprawić mobilność i rozciągnięcie"
-     łamało się na trzy linie. */
-  .scenariusz {
+  /* Trzy wspólne rzędy: głowka, hasło i podpowiedź. Wysokość drugiego rzędu
+     jest ZAREZERWOWANA na dwa wiersze (patrz `.potrzeba__haslo`), więc
+     podpowiedzi we wszystkich czterech pozycjach zaczynają się na tej samej
+     wysokości — także wtedy, gdy hasło zajmuje tylko jeden wiersz.
+
+     Odstępy wewnętrzne są identyczne dla każdej pozycji: kreska rozdzielająca
+     kolumny nie siedzi na krawędzi elementu, tylko w rynnie (pseudoelement
+     niżej), więc żadna pozycja nie potrzebuje własnego wcięcia. */
+  .potrzeba {
+    position: relative;
     display: grid;
-    gap: var(--space-sm);
-    padding-block: var(--space-sm);
-  }
-
-  .scenariusz + .scenariusz {
-    border-block-start: var(--hairline) solid var(--line);
-  }
-
-  .scenariusz__label {
-    font-family: var(--font-display);
-    font-size: var(--fs-h3);
-    line-height: var(--lh-heading);
-  }
-
-
-  /* Nazwy zajęć jako pigułki — ten sam element, co przy specjalizacjach
-     na /o-nas. Wcześniej nazwy tkwiły w środku szarego zdania i tylko
-     jedna z dwóch wymienionych miała dokąd prowadzić. */
-  .scenariusz__zajecia {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
+    grid-template-rows: auto auto 1fr;
     gap: var(--space-2xs);
+    padding-block: var(--space-md);
     align-content: start;
   }
 
-  .scenariusz__zajecia a {
-    display: inline-flex;
+  .potrzeba + .potrzeba {
+    border-block-start: var(--hairline) solid var(--line);
+  }
+
+  /* Kropla i kreska dobiegająca do końca kolumny — jeden wiersz, w którym
+     kreska bierze całą resztę miejsca. */
+  .potrzeba__glowka {
+    display: flex;
     align-items: center;
-    min-block-size: 44px;
-    padding-inline: var(--space-md);
-    border: var(--hairline) solid var(--line-detail);
-    border-radius: var(--radius-pill);
-    background: var(--surface);
-    color: var(--text-accent);
-    font-size: var(--fs-small);
-    text-decoration: none;
-    transition:
-      background-color var(--dur) var(--ease),
-      color var(--dur) var(--ease);
+    gap: var(--space-2xs);
+    margin-block-end: var(--space-xs);
   }
 
-  .scenariusz__zajecia a:hover {
+  .potrzeba__znak {
+    color: var(--accent);
+    line-height: 0;
+    flex: none;
+  }
+
+  .potrzeba__kreska {
+    flex: 1 1 auto;
+    block-size: var(--hairline);
     background: var(--accent);
-    color: var(--on-accent);
-    border-color: transparent;
   }
 
-  .choose__contact {
-    margin-block-start: var(--space-md);
+  .potrzeba__haslo {
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    line-height: var(--lh-heading);
+    /* Dwa wiersze pisma, nawet gdy tekst zajmuje jeden. */
+    min-block-size: calc(var(--lh-heading) * 2em);
+  }
+
+  /* Na telefonie hasło jest jednym ciągiem i łamie się naturalnie —
+     wiersze robią się blokowe dopiero na szerokim ekranie. */
+  .potrzeba__wiersz {
+    display: inline;
+  }
+
+  .potrzeba__podpowiedz {
     font-size: var(--fs-small);
-    color: var(--text-muted);
-  }
-
-  .choose__contact a {
+    line-height: 1.5;
     color: var(--text-accent);
   }
 
+  /* ————————————————— domknięcie ————————————————— */
 
+  :global(.section.domkniecie) {
+    padding-block: 0 var(--space-xl);
+  }
 
   @media (min-width: 48rem) {
     .classes {
       grid-template-columns: repeat(2, 1fr);
     }
-  }
 
-  /* Pięć kolumn dopiero tam, gdzie kafel ma sensowną szerokość — ten sam
-     próg co na stronie głównej. */
-  @media (min-width: 64rem) {
-    .classes {
-      grid-template-columns: repeat(5, 1fr);
-      gap: var(--space-sm);
+    /* Cztery pozycje w dwóch kolumnach: kreska pionowa między nimi,
+       pozioma między rzędami. */
+    .potrzeby__lista {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: var(--space-lg);
+    }
+
+    .potrzeba + .potrzeba {
+      border-block-start: none;
+    }
+
+    .potrzeba:nth-child(n + 3) {
+      border-block-start: var(--hairline) solid var(--line);
+    }
+
+    /* Separator W RYNNIE, nie na krawędzi elementu — dzięki temu wszystkie
+       pozycje mają zerowe wcięcie poziome i tę samą szerokość tekstu,
+       a kreska i tak stoi dokładnie w połowie odstępu między kolumnami. */
+    .potrzeba::before {
+      content: '';
+      position: absolute;
+      inset-block: var(--space-md);
+      inset-inline-start: calc(var(--space-lg) / -2);
+      inline-size: var(--hairline);
+      background: var(--line);
+    }
+
+    /* Pierwsza pozycja w rzędzie nie ma sąsiada po lewej. */
+    .potrzeba:nth-child(2n + 1)::before {
+      content: none;
     }
   }
 
-  @media (min-width: 52rem) {
-    /* Stała szerokość toru tekstu zamiast `1fr`. Przy `1fr` kolumna
-       zabierała całą wolną szerokość i pigułki lądowały dosunięte do
-       prawej krawędzi kontenera — potrzeba stała po lewej, a jej
-       rekomendacja 300 px dalej, bez wizualnego związku między nimi.
+  /* Trzy kolumny zamiast pięciu: sześć kafli układa się wtedy w pełne
+     dwa rzędy po trzy, a nie w rząd pięciu i jeden osierocony. */
+  @media (min-width: 64rem) {
+    .classes {
+      grid-template-columns: repeat(3, 1fr);
+    }
 
-       `max-content` rozwiązywał odległość, ale psuł porządek: każde
-       hasło ma inną długość, więc pigułki startowały w trzech różnych
-       miejscach. 38 rem to szerokość, w której najdłuższe hasło
-       („Chcę poprawić mobilność i rozciągnięcie", 597 px) nadal mieści
-       się w jednym wierszu — pigułki stoją blisko treści I w równej
-       kolumnie.
+    /* Nagłówek bierze węższy tor, treść szerszy — 45/55. Wyrównanie
+       do góry, żeby oba tory zaczynały się na tej samej wysokości. */
+    .mamy__uklad {
+      grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
 
-       `justify-content: start` jest konieczne, bo bez niego siatka
-       rozepchnęłaby oba tory po całej szerokości. */
-    .scenariusz {
-      grid-template-columns: minmax(0, 38rem) auto;
-      justify-content: start;
-      gap: var(--space-lg);
-      align-items: center;
+    /* Cztery równe kolumny w jednym rzędzie — trzy kreski pionowe
+       i żadnej poziomej. */
+    .potrzeby__lista {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .potrzeba:nth-child(n + 3) {
+      border-block-start: none;
+    }
+
+    /* W jednym rzędzie kreskę ma każda pozycja poza pierwszą — reguła
+       parzystości z progu tabletowego trzeba tu cofnąć. */
+    .potrzeba:nth-child(2n + 1)::before {
+      content: '';
+    }
+
+    .potrzeba:first-child::before {
+      content: none;
+    }
+
+    /* Wymuszone łamanie hasła dopiero tutaj: w wąskiej kolumnie sztywny
+       podział wyglądałby gorzej niż naturalny. */
+    .potrzeba__wiersz {
+      display: block;
     }
   }
 </style>

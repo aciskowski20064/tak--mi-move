@@ -5,9 +5,9 @@ scope: all
 approved: true
 ---
 
-Przez system rezerwacji Fitssey — przycisk **Umów wizytę** w nagłówku prowadzi
-prosto do niego. Wybierz termin, załóż konto (albo zaloguj się, jeśli już
-je masz) i zarezerwuj miejsce.
+Przez system rezerwacji Fitssey — przycisk **Zapisz się na zajęcia** w nagłówku
+prowadzi prosto do niego. Wybierz termin, załóż konto (albo zaloguj się, jeśli
+już je masz) i zarezerwuj miejsce.
 
 Grafik obu studiów widać także na [podstronie z grafikiem](/grafik), bez
 wychodzenia ze strony.
@@ -18,4 +18,7 @@ wychodzenia ze strony.
   25.08.2026: tryb oznajmujący („wybierasz, zakładasz") zamieniony na
   rozkazujący — klientka prosi o jedną formę zwracania się do odbiorcy
   w całym serwisie.
+  03.09.2026: nazwa przycisku przepisana za `booking.label`. Ta odpowiedź
+  cytuje etykietę wprost, więc musi iść za nią przy każdej jej zmianie —
+  inaczej odsyła czytelnika do przycisku, którego w nagłówku nie ma.
 -->

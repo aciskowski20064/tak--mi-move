@@ -31,7 +31,7 @@ dokładałby warstwę konfiguracji bez zysku przy 2 fontach i 8 kolorach).
 /polityka-cookies
 ```
 
-Nawigacja główna: Zajęcia · Grafik i zapisy · Studia · O nas · Kontakt + wyróżnione **Umów wizytę**.
+Nawigacja główna: Zajęcia · Grafik i zapisy · Studia · O nas · Kontakt + wyróżnione **Zapisz się na zajęcia** (etykieta z `booking.label`; do 03.09.2026 „Umów wizytę").
 
 ---
 

@@ -18,7 +18,7 @@ const year = new Date().getFullYear();
       <p class="footer__claim">{typo(`${site.tagline} w Gdańsku i Pruszczu Gdańskim.`)}</p>
       <a class="footer__booking" href={booking.frontOfficeUrl} target="_blank" rel="noopener" data-cta-source="footer" data-event="booking_cta_click">
         <Mark size="0.85em" />
-        {booking.label}
+        {typo(booking.label)}
       </a>
     </div>
 

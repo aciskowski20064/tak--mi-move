@@ -31,8 +31,9 @@ import fotoEvent from '~/assets/photos/event-grupa.jpg';
  *
  * Strona kończy się na Prowadzących. Sekcje „Gdzie nas znajdziesz"
  * i „Przyjdź na pierwsze zajęcia" zdjęte 20.08.2026: adres studiów stoi
- * w stopce każdej podstrony i w kaflu „Dwie przestrzenie" wyżej, a „Umów
- * wizytę" padało na tej jednej stronie trzy razy.
+ * w stopce każdej podstrony i w kaflu „Dwie przestrzenie" wyżej, a wezwanie
+ * do rezerwacji (dziś „Zapisz się na zajęcia") padało na tej jednej stronie
+ * trzy razy.
  */
 const t = pages.about;
 const lead = copyOrNull(t.lead);
@@ -179,6 +180,7 @@ const values = realOnly(t.values.items, (item) => item.body);
             href={eventOffer.pdfUrl || undefined}
             disabled={!eventOffer.pdfUrl}
             newTab
+            rel="noopener noreferrer"
             source="final"
           >
             {t.community.eventCta}
@@ -190,8 +192,9 @@ const values = realOnly(t.values.items, (item) => item.body);
   {/* Sekcje „Gdzie nas znajdziesz" i „Przyjdź na pierwsze zajęcia" zdjęte
       świadomie — powtarzały to, co i tak stoi obok. Adres obu studiów jest
       w stopce na każdej podstronie, na /studia, na /kontakt oraz w kaflu
-      „Dwie przestrzenie" dwie sekcje wyżej. „Umów wizytę" padało na samym
-      /o-nas trzy razy: przycisk w nagłówku, ta sekcja i stopka.
+      „Dwie przestrzenie" dwie sekcje wyżej. Wezwanie do rezerwacji (dziś
+      „Zapisz się na zajęcia") padało na samym /o-nas trzy razy: przycisk
+      w nagłówku, ta sekcja i stopka.
 
       Strona kończy się teraz na Prowadzących z odsyłaczem do grafiku —
       to jedno wyjście zamiast trzech powtórzonych. */}
