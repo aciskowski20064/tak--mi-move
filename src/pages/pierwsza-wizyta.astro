@@ -62,12 +62,11 @@ const blocks = [
       {
         steps.map((step, index) => (
           <li class="step">
-            {/* Znak marki z numerem w środku — ten sam komponent Mark
-                (wariant pierścieniowy), którego używa reszta serwisu.
-                Całość dekoracyjna: kolejność niesie znacznik `ol`, więc
-                czytnik ekranu dostaje ją z HTML-a, a nie z liczby. */}
+            {/* Sam numer, bez sygnetu (09.09.2026, na polecenie klientki —
+                znak marki pojawiał się w serwisie zbyt często). Całość
+                dekoracyjna: kolejność niesie znacznik `ol`, więc czytnik
+                ekranu dostaje ją z HTML-a, a nie z liczby. */}
             <span class="step__marker" aria-hidden="true">
-              <Mark size="2.6rem" />
               <span class="step__num">{String(index + 1).padStart(2, '0')}</span>
             </span>
             <div class="step__body">
@@ -244,25 +243,22 @@ const blocks = [
      do wnętrza SVG. Całość jest dekoracyjna i siedzi w `aria-hidden`,
      a kolejność niesie znacznik `ol` — więc obowiązuje ją wymóg
      rozpoznawalności kształtu, nie kontrastu tekstowego. */
+  /* Po zdjęciu sygnetu marker to sam numer. Pudełko nie ma już czego
+     centrować, a ujemny margines był korektą pod znak, nie pod cyfrę —
+     numer siada wprost na linii pierwszego wiersza tytułu. */
   .step__marker {
-    display: grid;
-    place-items: center;
-    inline-size: 3.05rem;
-    block-size: 3.05rem;
+    display: block;
     color: var(--accent);
-    position: relative;
-    /* Wyrównanie do PIERWSZEGO WIERSZA tytułu, nie do góry pudełka.
-       Środek znaku ma trafić w środek wersaliki tytułu; bez tego znak
-       zaczyna się równo z tytułem i optycznie wisi nad nim.
-       Wartość dobrana pomiarem — patrz raport. */
-    margin-block-start: -0.7rem;
   }
 
   /* `tabular-nums` wyrównuje cyfry — bez tego „01" i „06" mają różną
-     szerokość i numer skacze w środku znaku. */
+     szerokość i numery nie stoją w jednym pionie. Skala tytułu, bo bez
+     obwódki mała cyfra ginęła w torze o szerokości 3,5 rem. */
   .step__num {
-    position: absolute;
-    font-size: var(--fs-small);
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--fs-h4);
+    line-height: 1.2;
     letter-spacing: 0.02em;
     font-variant-numeric: tabular-nums;
     color: var(--accent);
@@ -361,15 +357,44 @@ const blocks = [
     max-width: var(--measure);
   }
 
+  /* JEDEN WIERSZ (04.09.2026, na polecenie). Wcześniej to był flex ze
+     zawijaniem i cztery pozycje łamały się jako 3 + 1 — „Kosmetyki"
+     spadały same pod spód.
+
+     Siatka zamiast zawijania, bo tu potrzebna jest decyzja, a nie
+     przypadek: `max-content` daje kolumny o szerokości etykiet, a liczba
+     kolumn jest wprost powiedziana i nie zależy od tego, o ile piksele
+     nie wyszły. Dwa kroki, bo cała czwórka potrzebuje ok. 490 px:
+
+       2 kolumny  domyślnie — na telefonie i w paśmie, gdzie karty stoją
+                  po dwie w rzędzie (od 48 rem) i wiersz karty ma tam
+                  400–480 px;
+       3 kolumny  od 80 rem, gdzie kontener dobija do sufitu i wiersz karty
+                  ma 518 px — sześć pozycji siada wtedy w dwóch równych
+                  wierszach po trzy.
+
+     Równy blok zamiast zawijania także dlatego, że nierówne łamanie
+     wyglądało na błąd, a pełne wiersze czytają się jak wybór. */
   .amenities {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-md);
+    display: grid;
+    /* minmax(0, …) zamiast samego max-content: przy 375 px dwie kolumny
+       o pełnej szerokości etykiet potrzebują 312 px, a wiersz karty ma tam
+       292 — kolumna musi móc się ścisnąć, inaczej lista wychodzi poza kartę.
+       Najdłuższa etykieta łamie się wtedy na dwa wiersze zamiast wystawać. */
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    justify-content: start;
+    gap: var(--space-2xs) var(--space-sm);
     list-style: none;
     padding: 0;
     margin-block-start: var(--space-md);
     padding-block-start: var(--space-sm);
     border-block-start: var(--hairline) solid var(--line);
+  }
+
+  @media (min-width: 80rem) {
+    .amenities {
+      grid-template-columns: repeat(3, minmax(0, max-content));
+    }
   }
 
   .amenities__item {

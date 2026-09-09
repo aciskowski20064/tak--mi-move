@@ -164,12 +164,18 @@ const { href, name, description, index, scheduleHref } = Astro.props;
     block-size: 1.1rem;
   }
 
-  /* Najechanie pogłębia wypełnienie — dokładnie ten sam gest, co w przycisku
-     głównym (Button.astro, wariant primary). Krem na przyciemnionej terakocie
-     daje 5.85:1, więc strzałka zostaje czytelna także w tym stanie. */
-  .karta:hover .karta__strzalka {
-    background: var(--accent-strong);
-    color: var(--text-invert);
+  /* Najechanie NIE zmienia barwy znaku — kółko zostaje w różu marki
+     `#DA9788`, a glif w czerni (6,2:1). Wcześniej stało tu wypełnienie
+     `--accent-strong`, które po przejściu na paletę brandbooka znaczy
+     czerń: kółko przewracało się na czarne z białą strzałką i robiło
+     z kafla najmocniejszy kontrast na całej sekcji.
+
+     Zostaje sam gest: strzałka przesuwa się o 2 px w prawo. Obwódkę
+     kafla nadal muska terakota (`.karta:hover`), więc stan jest czytelny
+     bez podnoszenia kontrastu. */
+  .karta:hover .karta__strzalka svg,
+  .karta--zGrafikiem:hover .karta__strzalka svg {
+    translate: 2px 0;
   }
 
   /* ————————————————— wariant z wyjściem do grafiku —————————————————
@@ -251,8 +257,10 @@ const { href, name, description, index, scheduleHref } = Astro.props;
     margin-block-start: 0;
   }
 
-  .karta--zGrafikiem:hover .karta__strzalka {
-    background: var(--accent-strong);
-    color: var(--text-invert);
+  @media (prefers-reduced-motion: reduce) {
+    .karta:hover .karta__strzalka svg,
+    .karta--zGrafikiem:hover .karta__strzalka svg {
+      translate: none;
+    }
   }
 </style>

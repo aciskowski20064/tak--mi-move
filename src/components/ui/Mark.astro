@@ -1,30 +1,47 @@
 ---
 /**
- * Symbol marki — organiczna kropla z litery „O” w słowie MOVE.
+ * SYGNET i MOTYW — dwa różne elementy, które brandbook trzyma osobno.
  *
- * Ścieżki obrysowane programowo z logo (Moore-neighbor tracing + RDP + Catmull-Rom),
- * zgodność z oryginałem 93,5% IoU. To jedyny element dekoracyjny w całym serwisie —
- * zastępuje bibliotekę ikon (brief §8, §50).
+ *   `sygnet`  oficjalna część znaku: litera „O" ze słowa MOVE, pierścień
+ *             z prześwitem (arkusz 15). Ma pole ochronne `1/2 y`, minimum
+ *             4 mm / 20 px (§3.3–3.4) i WYŁĄCZNIE dwa kolory: czerń albo
+ *             biel. Przebarwianie znaku zakazuje arkusz 31.
  *
- * `ring`  — pierścień z licznikiem, do znaczników i akcentów.
- * `solid` — pełna sylwetka, do masek kadrów fotograficznych.
+ *   `motyw`   dekoracyjna pochodna sygnetu: ta sama sylwetka jako pełna,
+ *             zamknięta plama (arkusz 27). Brandbook §6 przewiduje ją jako
+ *             aplę kolorystyczną i jako maskę zdjęcia, więc TU kolor jest
+ *             dozwolony — róż, szałwia, szarość.
+ *
+ * ŹRÓDŁO obu ścieżek: wektory wyciągnięte wprost z brandbooka (arkusz 27,
+ * gdzie sygnet i motyw stoją obok siebie). Poprzednia wersja komponentu
+ * używała kształtu obrysowanego programowo z rastra, ze zgodnością 93,5%
+ * IoU deklarowaną w komentarzu — czyli rekonstrukcji, nie oryginału.
+ *
+ * Nazwy `ring` i `solid` z poprzedniej wersji zostają jako aliasy, żeby nie
+ * przepisywać kilkudziesięciu wywołań w serwisie.
  */
-import ringSvg from '~/assets/brand/mark.svg?raw';
-import solidSvg from '~/assets/brand/mark-solid.svg?raw';
+import sygnetSvg from '~/assets/brand/sygnet.svg?raw';
+import motywSvg from '~/assets/brand/motyw.svg?raw';
 
 interface Props {
-  variant?: 'ring' | 'solid';
+  /** `ring`/`sygnet` — znak oficjalny. `solid`/`motyw` — pochodna dekoracyjna. */
+  variant?: 'ring' | 'solid' | 'sygnet' | 'motyw';
   size?: string;
   class?: string;
 }
 
 const { variant = 'ring', size = '1em', class: className } = Astro.props;
 
-const svg = (variant === 'ring' ? ringSvg : solidSvg)
+const toMotyw = variant === 'solid' || variant === 'motyw';
+
+/* Minimum 20 px dotyczy SYGNETU (§3.3). Motyw jest dekoracją bez progu,
+   ale zostawiamy tę samą podłogę — poniżej 20 px żadna z tych sylwetek
+   nie jest już czytelna. */
+const svg = (toMotyw ? motywSvg : sygnetSvg)
   .trim()
   .replace(
     '<svg',
-    `<svg class="${className ?? ''}" style="inline-size:${size};block-size:${size};flex:none" aria-hidden="true" focusable="false"`,
+    `<svg class="${className ?? ''}" style="inline-size:${size};block-size:${size};min-inline-size:20px;min-block-size:20px;flex:none;color:var(--sygnet-kolor)" aria-hidden="true" focusable="false"`,
   );
 ---
 

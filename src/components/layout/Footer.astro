@@ -14,7 +14,10 @@ const year = new Date().getFullYear();
     <div class="footer__brand">
       {/* Ciemna wersja znaku, bo stopka przestała być ciemna. Jasny wordmark
           dawał na szałwii 2.24:1 i po prostu by na niej zniknął. */}
-      <Logo tone="dark" width={96} />
+      {/* Stopka ma miejsce na wariant podstawowy z dopiskiem STUDIO,
+          w minimum 130 px z brandbooka §1.4. Na szałwiowej apli znak
+          czarny — brandbook §4.2 punkt 2. */}
+      <Logo variant="pionowy" tone="dark" width={130} />
       <p class="footer__claim">{typo(`${site.tagline} w Gdańsku i Pruszczu Gdańskim.`)}</p>
       <a class="footer__booking" href={booking.frontOfficeUrl} target="_blank" rel="noopener" data-cta-source="footer" data-event="booking_cta_click">
         <Mark size="0.85em" />
@@ -169,7 +172,7 @@ const year = new Date().getFullYear();
   .footer__heading {
     font-family: var(--font-text);
     font-size: var(--fs-caption);
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: var(--ls-eyebrow);
     text-transform: uppercase;
     color: var(--text-on-sage-muted);

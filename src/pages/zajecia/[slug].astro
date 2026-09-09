@@ -117,6 +117,19 @@ const przygotowanieBrakuje = isPlaceholder(d.preparation);
 /** Nazwa piktogramu — te same, które rysuje `FactIcon`. */
 type IkonaBloku = NonNullable<NonNullable<typeof d.sections>[number]['icon']>;
 
+/**
+ * Postać bloku czytana WPROST ZE SCHEMATU, tak samo jak nazwa piktogramu
+ * wyżej. Wcześniej stała tu przepisana ręcznie czwórka `plain | card | note |
+ * pairs`, a `variant` w `content.config.ts` urósł tymczasem do ośmiu wartości
+ * (doszły `panel`, `features`, `audience-grid`, `prose-grid`). Rozjazd nie był
+ * teoretyczny: szablon niżej rozpoznaje `features`, `audience-grid`
+ * i `prose-grid`, więc TypeScript zgłaszał dziewięć błędów naraz — jeden przy
+ * mapowaniu sekcji z pliku i osiem przy porównaniach, których „nigdy nie da
+ * się spełnić". Wyprowadzenie typu ze schematu domyka to u źródła: dopisanie
+ * kolejnej postaci w schemacie nie wymaga już ruszania tego pliku.
+ */
+type PostacBloku = NonNullable<typeof d.sections>[number]['variant'];
+
 /** Wiersz modułu rekomendacji — patrz `pairs` w `content.config.ts`. */
 type Para = { label: string; recommendation: string };
 
@@ -125,7 +138,7 @@ type Blok = {
   ikona?: IkonaBloku;
   label: string;
   /** Postać bloku — patrz `variant` w `content.config.ts`. */
-  postac: 'plain' | 'card' | 'note' | 'pairs';
+  postac: PostacBloku;
   /** Czy blok bierze cały wiersz siatki na szerokich ekranach. */
   pelnaSzerokosc: boolean;
   /**

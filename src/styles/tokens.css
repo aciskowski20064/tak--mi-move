@@ -20,139 +20,130 @@
 */
 
 :root {
-  /* ——————————————————————————— kolory marki ——————————————————————————— */
+  /* ——————————————————————— kolory marki (brandbook §4) ———————————————————————
 
-  /* POTWIERDZONY. Plansza logo i wypełnienia w szablonach. */
-  --clay: #da9787;
+     Trzy kolory z brandbooka plus czerń. Wartości wprost z arkusza 21 —
+     w warstwie wektorowej PDF-a wychodzą o jedną jednostkę niżej
+     (`#D99687`, `#8EAAA0`), bo operator `rg` zapisuje je ułamkiem; wiążąca
+     jest wartość szesnastkowa podana w brandbooku.
 
-  /* POCHODNA, uzasadniona wyłącznie kontrastem.
-     Terakota o tym samym odcieniu (12°), przyciemniona z 69% do 40%
-     jasności, bo kanoniczna daje na jasnym tle 2.18:1 i nie nadaje się
-     na tekst. Przy tej jasności odcień 12° czyta się jak brąz i to jest
-     powód, dla którego klientka zgłosiła „brązowawy symbol".
+     Poza tą czwórką interfejs nie ma ANI JEDNEGO własnego koloru. Wszystko,
+     co niżej, jest albo jednym z nich, albo tą samą czernią rozcieńczoną
+     w tle. Brązy ze zdjęć wnętrz (--oak, --stone, --brass), beż --sand,
+     przyciemniona terakota --clay-deep i rozcieńczona --clay-wash zostały
+     usunięte: żaden z nich nie pochodził z brandbooka, a razem nosiły
+     wszystkie linie i cały tekst drugorzędny w serwisie. */
 
-     WOLNO jej używać: tekst akcentowany, obrys skupienia.
-     NIE WOLNO: jako wypełnienia, jako koloru symbolu, jako tła. */
-  --clay-deep: #8f4c3b;
+  --roz: #da9788;
+  --szalwia: #8faba1;
+  --szarosc: #dadada;
+  --czern: #000000;
 
-  /* POCHODNA — PENDING. Terakota rozcieńczona w jasnym tle. Ponieważ to
-     tło jest dziś placeholderem (patrz --bone), ten odcień też nie jest
-     zatwierdzony i trzeba go przeliczyć, gdy przyjdzie właściwy krem. */
-  --clay-wash: #f1ded7;
+  /* KREM USUNIĘTY (09.09.2026, na polecenie klientki: „budyniowy" kolor ma
+     zniknąć z interfejsu). Token --krem: #f7f4eb nie istnieje i nie wraca
+     tylnymi drzwiami — nie ma go też w żadnej mieszance. Serwis wraca tym
+     samym do neutrali z brandbooka: biel plus --szarosc.
 
-  /* POTWIERDZONA. Plansza logo i wypełnienie liścia w szablonie posta.
-     Od 25.08.2026 to jest tło stopki — wcześniej stała tam --sage-darkest,
-     czyli szałwia przyciemniona do 21% jasności i podbita nasyceniem.
-     Klientka odrzuciła tamtą zieleń („do niczego u nas nie pasuje"),
-     a że nie była kolorem z żadnego materiału, została usunięta zamiast
-     poprawiona. Razem z nią odpadły --sage-deep i --sage-wash: obie
-     pochodne, obie bez ani jednego użycia w kodzie.
+     Wszystkie pochodne, które stały wcześniej NA KREMIE (tło alternatywne,
+     tło miękkie, tekst drugorzędny), liczą się teraz na bieli. Kontrasty
+     przeliczone i podane przy każdej roli niżej. */
 
-     UWAGA, KTÓRA NIE ZNIKNĘŁA: szałwia i terakota mają niemal identyczną
-     jasność — kontrast między nimi to 1.03, a przy daltonizmie
-     czerwono-zielonym 1.09. Na szałwiowym tle terakota jest NIEWIDOCZNA
-     i nie wolno jej tam stawiać. Dotyczy to przede wszystkim stopki. */
-  --sage: #90aba2;
+  /* Biel do negatywu znaku i tekstu na ciemnym tle (brandbook §1.3, §4.2). */
+  --biel: #ffffff;
 
-  /* POTWIERDZONA (Design Gate 25.08.2026) — trzeci kolor marki, zmierzony
-     w dwóch plikach: planszy logo i tle szablonu posta.
+  /* ——————————————————————————— role semantyczne ———————————————————————————
+     W komponentach używamy WYŁĄCZNIE tych zmiennych, nigdy bazowych powyżej. */
 
-     Świadomie NIE jest ustawiony jako tło strony. To tło posta w mediach
-     społecznościowych, gdzie zajmuje mały kadr; na całej stronie byłby
-     ciężki, a tekst przygaszony schodziłby na 4.61 przy progu 4.5.
-     Do dyspozycji przyszłych etapów, na razie bez użycia. */
-  --grey: #dadada;
+  --surface: var(--biel);
+  /* Powierzchnia alternatywna z szarości marki. Na kremie wystarczało 40%,
+     na bieli to samo wydzielenie wymaga więcej: 50% daje #ececec, czyli pas
+     widoczny obok bieli, a wciąż spokojniejszy niż pełne --szarosc.
+     Czerń na nim 18,1:1, tekst drugorzędny 5,7:1. */
+  --surface-alt: color-mix(in srgb, var(--szarosc) 50%, var(--biel));
+  /* Powierzchnia miękka to róż marki rozcieńczony w tle, a nie osobny odcień
+     do zatwierdzenia. Przy 14% na bieli tekst czarny daje na niej 19,3:1. */
+  --surface-soft: color-mix(in srgb, var(--roz) 14%, var(--biel));
+  --surface-invert: var(--czern);
+  --surface-footer: var(--szalwia);
 
-  /* PENDING — FINAL BRAND SURFACE NOT CONFIRMED.
+  /* Czerń marki zamiast dawnej przyciemnionej zieleni #232927. Na bieli
+     daje 21:1. */
+  --text: var(--czern);
+  /* Tekst drugorzędny to ta sama czerń rozcieńczona w tle, nie brązowa
+     szarość #665d54. 62% na bieli daje #616161, czyli 6,2:1 na białym tle
+     i 5,7:1 na tle alternatywnym — w obu przypadkach ponad AA. */
+  --text-muted: color-mix(in srgb, var(--czern) 62%, var(--biel));
+  --text-invert: var(--biel);
+  /* Szałwiowa stopka: czerń daje 6,7:1, biel 2,2:1 — brandbook §4.2 dopuszcza
+     na apli zielonej obie wersje znaku, ale tekst użytkowy musi być czytelny. */
+  --text-on-sage: var(--czern);
+  --text-on-sage-muted: color-mix(in srgb, var(--czern) 78%, var(--szalwia));
+  --line-on-sage: color-mix(in srgb, var(--czern) 30%, transparent);
 
-     To NIE jest kolor marki. Wzięty ze zdjęć (kremowe bluzy zespołu)
-     w czasach, gdy paleta powstawała z fotografii wnętrz. W ŻADNYM
-     z materiałów przysłanych przez klientkę nie ma kremu ani beżu —
-     jej neutralem jest szarość --grey. Klientka pyta wprost, czy krem na
-     stronie jest jej; nie jest.
+  /* TEKST AKCENTOWANY = CZERŃ, nie róż.
+     Róż na bieli daje 2,4:1 i na tekst się nie nadaje, a brandbook nie ma
+     przyciemnionej odmiany różu — dorobienie jej byłoby kolorem udającym
+     oficjalną paletę. Odsyłacze wyróżnia więc podkreślenie, a hierarchię
+     niesie rozmiar i ton. Róż zostaje kolorem POWIERZCHNI i wypełnień CTA. */
+  --text-accent: var(--czern);
 
-     Zostaje wyłącznie jako techniczny placeholder, żeby strona miała tło,
-     dopóki nie dostaniemy właściwego beżu z księgi znaków. Nie traktować
-     jako zatwierdzonego. To samo dotyczy --sand i --clay-wash, które są
-     z nim spokrewnione. */
-  --bone: #f7f4eb;
-  --sand: #e8ded0; /* PENDING — jak wyżej */
+  /* Linie z szarości marki. Mocniejsza to ta sama czerń na 22% — jeden ton
+     z tekstem, zero domieszki brązu. */
+  --line: var(--szarosc);
+  --line-strong: color-mix(in srgb, var(--czern) 22%, transparent);
+  --line-detail: var(--szarosc);
 
-  /* Kolory ze zdjęć wnętrz, nie z materiałów marki. Zostają, bo niosą
-     detale, których paleta marki nie opisuje: linie, tekst drugorzędny.
-     Do przeglądu razem z kremem, kiedy przyjdzie księga znaków. */
-  --oak: #c2a98f; /* podłoga jodełka */
-  --stone: #665d54;
-  /* Najciemniejszy ton — kolor tekstu i tło sekcji odwróconych.
-     Szałwia przyciemniona do 15% jasności, odcień zachowany (160°).
-     Klientka go nie kwestionowała, a materiały nie podają koloru tekstu
-     inaczej niż jako czerń rysunku (#000000), która na ekranie jest zbyt
-     twarda. Kontrasty: krem 13.48, terakota 6.18, szałwia 6.02. */
-  --ink: #232927;
-  --brass: #a8875c; /* ramy luster ze zdjęć — tylko cienkie linie */
+  --accent: var(--roz);
+  /* Stan najechania nie przyciemnia różu (to byłby kolejny odcień spoza
+     palety) — przechodzi na czerń z białą etykietą. Zmiana jest wyraźna
+     i cała mieści się w kolorach brandbooka. */
+  --accent-strong: var(--czern);
+  /* Etykieta na różowej apli: czerń daje 6,2:1, biel 2,4:1. Brandbook §4.2
+     każe stawiać na różu ZNAK w negatywie i tak też robi komponent logo —
+     ale tekst przycisku musi przejść WCAG AA, więc zostaje czarny.
+     Rozstrzygnięcie opisane w docs/brandbook-audit.md §4 pkt 5. */
+  --on-accent: var(--czern);
 
-  /* ——————————————————————————— role semantyczne ——————————————————————————
-     W komponentach używamy WYŁĄCZNIE tych zmiennych, nigdy bazowych powyżej.  */
-  --surface: var(--bone); /* PENDING — patrz --bone */
-  --surface-alt: var(--sand); /* PENDING */
-  --surface-soft: var(--clay-wash); /* PENDING */
-  --surface-invert: var(--ink);
-  /* Stopka na szałwii marki. Stopka nie jest komponentem Section, więc
-     bierze ten token bezpośrednio, zamiast tonu sekcji. */
-  --surface-footer: var(--sage);
-
-  --text: var(--ink);
-  --text-muted: var(--stone);
-  --text-invert: var(--bone);
-  /* Tekst na szałwiowej stopce. Jasny odpada (krem 2.24, biel 2.46),
-     więc stopka jest jedynym miejscem, gdzie tekst jest ciemny na kolorze:
-     --ink daje 6.02. Przygaszony to ten sam --ink z przezroczystością,
-     nie osobny kolor — mieszanie z tłem trzyma odcień szałwii. */
-  --text-on-sage: var(--ink);
-  /* 85%, nie mniej: przy 80% kontrast spada do 4.16 i wypada pod próg.
-     Szałwiowa stopka daje bardzo wąskie pasmo — od 6.02 dla pełnego --ink
-     do 4.57 przy tej wartości. Hierarchię w stopce buduje więc wielkość
-     i waga pisma, nie różnica tonu. */
-  --text-on-sage-muted: color-mix(in srgb, var(--ink) 85%, var(--sage));
-  --line-on-sage: color-mix(in srgb, var(--ink) 30%, transparent);
-  --text-accent: var(--clay-deep); /* 5.85:1 na --bone — tylko tekst */
-
-  --line: color-mix(in srgb, var(--oak) 45%, transparent);
-  --line-strong: var(--oak);
-  --line-detail: var(--brass);
-
-  --accent: var(--clay);
-  --accent-strong: var(--clay-deep);
-  /* CTA: tło --accent + tekst --ink = 6.18:1.
-     Biel na --clay daje 2.4:1 i jest zakazana. */
-  --on-accent: var(--ink);
-
-  --focus-ring: var(--clay-deep);
+  --focus-ring: var(--czern);
 
   /* ————————————————— znak w kółku (system z Etapu 3) —————————————————
 
-     Wzorzec „kropla albo piktogram w okrągłym kółku" powtarzał się w siedmiu
-     plikach w dziewięciu wariantach, z dwoma różnymi kolorami znaku. Klientka
-     zgłosiła to wprost: kółka wyglądają „niby terakotowo", a symbol na nich
-     jest brązowy. Brąz to była --clay-deep, czyli terakota przyciemniona do
-     progu kontrastu dla TEKSTU — użyta tam, gdzie tekstu nie ma.
+     Wzorzec „sygnet albo piktogram w okrągłym kółku" zostaje, ale kolor
+     znaku schodzi do czerni. Arkusz 31 brandbooka wprost zakazuje
+     przebarwiania znaku — sygnet występuje wyłącznie w czerni albo bieli.
+     Kolorować wolno MOTYW, czyli wypełnioną pochodną sygnetu, i to jego
+     dotyczy `--motyw-*` niżej. */
+  /* SYGNET (komponent `Mark`) — jeden kolor w całym serwisie, terakota
+     marki. Decyzja klientki nadrzędna wobec arkusza 31 brandbooka, który
+     dopuszcza znak wyłącznie w czerni albo bieli: sygnet ma nigdzie nie
+     być czarny. Kolor wchodzi stylem liniowym w `Mark.astro`, więc żaden
+     stan `hover` ani `focus` go nie przewróci; nadpisać da się wyłącznie
+     świadomie, ustawiając ten token na przodku. */
+  --sygnet-kolor: var(--roz);
 
-     Dwie rodziny, obie wyłącznie na kolorach kanonicznych:
-
-       .znak            obrys, znak w terakocie --accent
-       .znak--pelny     tło --accent, znak --on-accent (6.18:1)
-
-     Rozmiar steruje zmienną --znak-size, więc uzasadnione różnice
-     (2.5 / 2.75 / 3 rem) zostają, a kolor jest jeden dla wszystkich. */
   --znak-size: 2.75rem;
-  --znak-obrys: color-mix(in srgb, var(--accent) 55%, transparent);
-  --znak-kolor: var(--accent);
-  --znak-tlo-pelny: var(--accent);
-  --znak-kolor-pelny: var(--on-accent);
+  --znak-obrys: color-mix(in srgb, var(--czern) 30%, transparent);
+  --znak-kolor: var(--czern);
+  --znak-tlo-pelny: var(--roz);
+  --znak-kolor-pelny: var(--czern);
+
+  /* Motyw graficzny (brandbook §6) — dekoracyjna plama wyprowadzona
+     z sygnetu. W odróżnieniu od sygnetu WOLNO ją kolorować. */
+  --motyw-roz: var(--roz);
+  --motyw-szalwia: var(--szalwia);
+  --motyw-szarosc: var(--szarosc);
 
   /* ——————————————————————————— typografia ——————————————————————————— */
-  --font-display: 'Tenor Sans', 'Optima', 'Palatino Linotype', serif;
-  --font-text: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* TYPOGRAFIA PODSTAWOWA (brandbook §5.1): Tenor Sans dla CAŁEGO serwisu —
+     nagłówków i tekstu bieżącego. Georgia (§5.2) jest jedynym dopuszczonym
+     zastępnikiem i stoi wyłącznie w fallbacku. Figtree, dawny krój tekstowy,
+     został usunięty razem z odmianą 500: brandbook go nie zna, a Tenor Sans
+     nie ma pogrubienia, więc hierarchia idzie rozmiarem, tonem i światłem.
+
+     Dwie zmienne zostają, choć wskazują to samo — komponenty rozróżniają
+     rolę tekstu, a nie krój, i nie chcemy ich wszystkich przepisywać. */
+  --font-display: 'Tenor Sans', Georgia, 'Times New Roman', serif;
+  --font-text: 'Tenor Sans', Georgia, 'Times New Roman', serif;
 
   --fs-caption: clamp(0.75rem, 0.73rem + 0.1vw, 0.8125rem);
   --fs-small: clamp(0.875rem, 0.855rem + 0.1vw, 0.9375rem);
@@ -169,7 +160,9 @@
   --lh-body: 1.6;
   --lh-loose: 1.7;
 
-  --ls-display: 0.06em; /* logo ma mocno rozstrzelone wersaliki */
+  /* Bez sztucznego rozstrzelenia — Tenor Sans jest szeroki sam z siebie.
+     Mocna spacja w logotypie należy do znaku, nie do składu strony. */
+  --ls-display: 0.02em;
   --ls-eyebrow: 0.18em;
   --ls-body: 0;
 

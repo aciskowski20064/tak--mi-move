@@ -5,7 +5,7 @@ order: 2
 # Nie renderuje się na tej podstronie: idzie na kafel na /zajecia, na kafel
 # na stronie głównej i do opisu dla wyszukiwarek. Przy każdej zmianie wstępu
 # trzeba je tu przenieść ręcznie — kolekcja nie czyta ciała pliku do pola.
-shortDescription: 'Pilates to system ćwiczeń stworzony przez Josepha Pilatesa.'
+shortDescription: 'System ćwiczeń stworzony przez Josepha Pilatesa, oparty na kontroli ruchu, oddechu i pracy z mięśniami głębokimi.'
 # FAKT: poziom i czas trwania odczytane z grafiku Fitssey 21.08.2026.
 # Żadne z tych trzech pól nie jest renderowane — zostają jako dane.
 level: 'Wszystkie poziomy'
@@ -37,10 +37,22 @@ introColumns: true
 # klientki, słowo w słowo. Komentarze stoją tutaj, a nie pod frontmatterem:
 # YAML-owe zostają w źródle, a `<!-- -->` w ciele pliku jedzie do przeglądarki.
 sections:
-  # Rząd trzech równych kolumn: symbol marki nad pozycją, włoskowate kreski
-  # między nimi, bez ramki. Na telefonie jedna pod drugą.
-  - label: 'Czego się spodziewać'
-    variant: features
+  # NAGŁÓWEK zmieniony 09.09.2026 na polecenie klientki: „Czego się
+  # spodziewać" → „Efekty".
+  #
+  # WARIANT zmieniony razem z nim (09.09.2026, druga uwaga: sekcja ma
+  # wyglądać tak samo jak wszędzie). Stało tu `features`, czyli rząd trzech
+  # kolumn ze znakiem NAD pozycją i włoskowatymi kreskami między nimi —
+  # układ z dawnego nagłówka „Czego się spodziewać". Sekcje „Efekty" na
+  # pozostałych pięciu podstronach zajęć stoją na `audience-grid`: pozycje
+  # jedna pod drugą, znak marki PRZY tekście, dwie kolumny na szerokim
+  # ekranie. Teraz pilates ma dokładnie to samo.
+  #
+  # Treść pozycji bez zmian — jest ich trzy, więc na desktopie ostatnia
+  # stoi sama w drugim wierszu (tam, gdzie pozycji są cztery, siatka
+  # domyka się jako 2 × 2).
+  - label: 'Efekty'
+    variant: audience-grid
     items:
       - 'wzmacnianie mięśni głębokich'
       - 'poprawa postawy i elastyczności ciała'

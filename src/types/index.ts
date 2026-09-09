@@ -113,6 +113,15 @@ export type Review = {
   locationSlug?: Studio;
 };
 
+/**
+ * Miejsce, z którego wyszło wezwanie — trafia wyłącznie do `data-cta-source`.
+ * Lista jest zamknięta świadomie: pilnuje, żeby w pomiarach nie pojawiły się
+ * dwa różne zapisy tej samej sekcji.
+ *
+ * `reviews` dopisane 09.09.2026. Ta wartość stała w `Reviews.astro` od czasu
+ * powstania sekcji opinii, ale nie było jej w unii — przycisk renderował się
+ * poprawnie, a kontrola typów zgłaszała błąd przy każdym uruchomieniu.
+ */
 export type CtaSource =
   | 'header'
   | 'hero'
@@ -120,6 +129,7 @@ export type CtaSource =
   | 'location'
   | 'class'
   | 'first-visit'
+  | 'reviews'
   | 'footer'
   | 'final'
   | 'not-found';

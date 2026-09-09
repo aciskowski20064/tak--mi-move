@@ -1,14 +1,6 @@
 ---
 import '@fontsource/tenor-sans/latin-400.css';
 import '@fontsource/tenor-sans/latin-ext-400.css';
-import '@fontsource/figtree/latin-400.css';
-import '@fontsource/figtree/latin-ext-400.css';
-import '@fontsource/figtree/latin-500.css';
-import '@fontsource/figtree/latin-ext-500.css';
-/* Kursywa do cytatów. Bez tego pliku przeglądarka pochyla krój sama,
-   a syntetyczna kursywa psuje najbardziej właśnie polskie znaki. */
-import '@fontsource/figtree/latin-400-italic.css';
-import '@fontsource/figtree/latin-ext-400-italic.css';
 
 import '~/styles/tokens.css';
 import '~/styles/base.css';
@@ -16,6 +8,7 @@ import '~/styles/base.css';
 import Meta from '~/components/seo/Meta.astro';
 import Header from '~/components/layout/Header.astro';
 import Footer from '~/components/layout/Footer.astro';
+import Loader from '~/components/ui/Loader.astro';
 import { site, DEMO_MODE } from '~/data/site';
 import { typo } from '~/lib/typografia';
 
@@ -51,17 +44,106 @@ const rightsNotice = `<!--
     <Fragment set:html={rightsNotice} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <meta name="theme-color" content="#f7f4eb" />
+    <meta name="theme-color" content="#ffffff" />
     <Meta title={title} description={description} ogImage={ogImage} noindex={noindex} />
+
+    {/* EKRAN POWITALNY — decyzja przed pierwszym rysowaniem.
+
+        Skrypt musi stać w `<head>` i być blokujący: gdyby czekał na koniec
+        dokumentu, przy drugim wejściu w tej samej sesji ekran zdążyłby
+        mignąć, zanim ktokolwiek by go zdjął. Tutaj przeglądarka najpierw
+        wykonuje ten kod, a dopiero potem maluje cokolwiek.
+
+        Sam znacznik ekranu jest w HTML zawsze — o pokazaniu decyduje klasa
+        `loader-aktywny` na `<html>`, bez niej element ma `display: none`.
+
+        `sessionStorage`, nie cookie i nie localStorage: wpis ma żyć tyle,
+        co karta przeglądarki. `try` na wypadek okna prywatnego albo
+        zablokowanej pamięci — wtedy po prostu nie pokazujemy ekranu,
+        zamiast wywracać stronę błędem. */}
+    <script is:inline>
+      try {
+        if (!sessionStorage.getItem('takmimove_loader_seen')) {
+          sessionStorage.setItem('takmimove_loader_seen', '1');
+          document.documentElement.classList.add('loader-aktywny');
+        }
+      } catch (e) {}
+    </script>
   </head>
 
   <body>
+    <Loader />
     <a href="#main" class="skip-link">{typo('Przejdź do treści')}</a>
     <Header />
     <main id="main" tabindex="-1">
       <slot />
     </main>
     <Footer />
+
+    {/* ZDJĘCIE EKRANU POWITALNEGO. Skrypt stoi na końcu ciała, bo musi
+        zastać znacznik ekranu w dokumencie.
+
+        Bez sztucznego opóźnienia: wygaszanie startuje w chwili `load`,
+        a jeśli strona jest już gotowa, natychmiast. `setTimeout` na 4 s to
+        wyłącznie bezpiecznik na zasób, który się nie wczyta — skraca czas
+        czekania, nigdy go nie wydłuża.
+
+        Przewijanie blokujemy nasłuchem na `wheel` i `touchmove`, a nie
+        `overflow: hidden` na `<html>`. Ukrycie paska przewijania przesunęłoby
+        treść pod spodem o jego szerokość i użytkownik zobaczyłby skok
+        w momencie zdjęcia ekranu — a układ ma stać nieruchomo.
+
+        Po przejściu klasy schodzą z `<html>`, więc element wraca do
+        `display: none` i nie łapie już żadnych kliknięć. */}
+    <script is:inline>
+      (function () {
+        var html = document.documentElement;
+        if (!html.classList.contains('loader-aktywny')) return;
+
+        var blokujPrzewijanie = function (e) {
+          e.preventDefault();
+        };
+        window.addEventListener('wheel', blokujPrzewijanie, { passive: false });
+        window.addEventListener('touchmove', blokujPrzewijanie, { passive: false });
+
+        var zdjete = false;
+        var zdejmij = function () {
+          if (zdjete) return;
+          zdjete = true;
+          window.removeEventListener('wheel', blokujPrzewijanie);
+          window.removeEventListener('touchmove', blokujPrzewijanie);
+          html.classList.remove('loader-aktywny', 'loader-znika');
+        };
+
+        var wygaszanie = false;
+        var wygas = function () {
+          /* Warta `zdjete` jest tu równie ważna, co `wygaszanie`: bez niej
+             bezpiecznik z 4 s dokładałby klasę `loader-znika` na `<html>`
+             już PO sprzątaniu i zostawiał ją tam na stałe. */
+          if (wygaszanie || zdjete) return;
+          wygaszanie = true;
+          html.classList.add('loader-znika');
+
+          var ekran = document.querySelector('[data-loader]');
+          if (ekran) {
+            /* Tylko przejście SAMEGO ekranu i tylko na przezroczystości —
+               `transitionend` bąbelkuje, więc bez tego filtru dowolne
+               przejście wewnątrz (choćby na znaku marki) ścinałoby ekran
+               w połowie wygaszania, zamiast pozwolić mu zniknąć płynnie. */
+            ekran.addEventListener('transitionend', function (e) {
+              if (e.target === ekran && e.propertyName === 'opacity') zdejmij();
+            });
+          }
+          /* Zapas na wypadek, gdyby przejście nie wystartowało — np. przy
+             wyłączonych animacjach w systemie. */
+          setTimeout(zdejmij, 600);
+        };
+
+        if (document.readyState === 'complete') wygas();
+        else window.addEventListener('load', wygas);
+        setTimeout(wygas, 4000);
+      })();
+    </script>
 
     <style is:global>
       body {

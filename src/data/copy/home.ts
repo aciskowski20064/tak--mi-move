@@ -94,7 +94,7 @@ export const home = {
   classes: {
     eyebrow: 'Zajęcia',
     // ROBOCZE — nawiązuje do §4.2 briefu: różne drogi, wspólny cel.
-    title: 'Różne formy ruchu, jeden kierunek',
+    title: 'SIŁA SPOKÓJ RÓWNOWAGA',
     // Klientka wskazała ten komunikat dla sekcji zajęć (25.08.2026).
     // Ten sam tekst stoi na /zajecia — decyzja o spójności obu miejsc.
     lead: 'Wybierz, czego dziś potrzebujesz',

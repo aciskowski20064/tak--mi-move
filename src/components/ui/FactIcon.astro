@@ -37,8 +37,13 @@ const wspolne = {
   'stroke-linecap': 'round' as const,
   'stroke-linejoin': 'round' as const,
   style: `inline-size:${size};block-size:${size};flex:none`,
-  'aria-hidden': 'true',
-  focusable: 'false',
+  /* Literały, nie rozszerzony `string`. Atrybuty logiczne w typach SVG
+     przyjmują wąską unię (`true | false | 'true' | 'false'`), a bez `as const`
+     TypeScript rozszerza te dwie wartości do `string` — i wtedy KAŻDE
+     z czternastu wywołań `<svg {...wspolne}>` zgłaszało błąd przypisania.
+     Renderowany atrybut jest dokładnie ten sam. */
+  'aria-hidden': 'true' as const,
+  focusable: 'false' as const,
 };
 ---
 

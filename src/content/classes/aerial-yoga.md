@@ -7,7 +7,7 @@ order: 4
 # Nie renderuje się na tej podstronie: idzie na kafel na /zajecia, na kafel
 # na stronie głównej i do opisu dla wyszukiwarek. Przy każdej zmianie wstępu
 # trzeba je tu przenieść ręcznie — kolekcja nie czyta ciała pliku do pola.
-shortDescription: 'Aerial yoga to praktyka z wykorzystaniem hamaka przymocowanego do sufitu.'
+shortDescription: 'Praktyka, podczas której wykorzystywany jest, podwieszony do sufitu, hamak. Łączy klasyczną jogę z elementami stretchingu i akrobatyki'
 # FAKT: poziom i czas trwania odczytane z grafiku Fitssey 21.08.2026.
 # Żadne z tych trzech pól nie jest renderowane — zostają jako dane.
 level: 'Wszystkie poziomy'

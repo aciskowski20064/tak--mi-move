@@ -1,0 +1,105 @@
+---
+/**
+ * OZDOBNA PLAMA — motyw marki jako apla tła (brandbook §6, arkusz 28).
+ *
+ * Jedno miejsce na wszystkie dekoracje tego typu w serwisie. Kształt bierze
+ * z klasy `.apla--motyw` w base.css, czyli z tej samej maski, co reszta
+ * motywu — komponent NIE powtarza SVG i nie rysuje własnej sylwetki.
+ * Proporcja pudełka to `--motyw-proporcja`, więc kształt nigdy się nie
+ * deformuje, niezależnie od podanego rozmiaru.
+ *
+ * Zasady użycia (stałe, nie do obchodzenia w miejscu wywołania):
+ *   • wyłącznie trzy kolory brandbooka — terakota, szałwia, szarość,
+ *   • plama siedzi w warstwie tła (`z-index: 0`) i nie łapie kliknięć,
+ *   • jest dekoracją: `aria-hidden`, poza drzewem dostępności,
+ *   • ma wychodzić poza krawędź sekcji, więc RODZIC musi mieć
+ *     `position: relative` i `overflow: clip` — bez tego plama rozepchnie
+ *     stronę w poziomie. Te dwie linie zostają w arkuszu sekcji, bo to
+ *     jej układ, nie sprawa komponentu.
+ *
+ * Rodzeństwo plamy nie potrzebuje `z-index`: element jest pierwszy
+ * w kolejności malowania i nie tworzy własnego kontekstu, więc treść
+ * sekcji rysuje się nad nim.
+ */
+interface Props {
+  /** Trzy kolory dopuszczone dla motywu. */
+  kolor?: 'terakota' | 'szalwia' | 'szarosc';
+  /** Róg, do którego przyklejona jest plama. */
+  pozycja?: 'prawy-gora' | 'prawy-dol' | 'lewy-gora' | 'lewy-dol';
+  /** Szerokość plamy — dowolna długość CSS. Wysokość wynika z proporcji. */
+  rozmiar?: string;
+  /** O ile plama wychodzi poza pionową krawędź sekcji. */
+  wysuniecie?: string;
+  /** O ile plama wychodzi poza poziomą krawędź sekcji. */
+  przesuniecie?: string;
+  /** Lustrzane odbicie sylwetki — ta sama forma, druga ręka. */
+  odbicie?: boolean;
+  class?: string;
+}
+
+const {
+  kolor = 'terakota',
+  pozycja = 'prawy-gora',
+  rozmiar = '40rem',
+  wysuniecie = '60%',
+  przesuniecie = '-20%',
+  odbicie = false,
+  class: className,
+}: Props = Astro.props;
+
+const kolory = {
+  terakota: 'var(--motyw-roz)',
+  szalwia: 'var(--motyw-szalwia)',
+  szarosc: 'var(--motyw-szarosc)',
+} as const;
+---
+
+<span
+  class:list={['plama', `plama--${pozycja}`, odbicie && 'plama--odbicie', className]}
+  aria-hidden="true"
+  style={`--apla-kolor: ${kolory[kolor]}; --plama-rozmiar: ${rozmiar}; --plama-wysuniecie: ${wysuniecie}; --plama-przesuniecie: ${przesuniecie};`}
+>
+  <span class="plama__ksztalt apla--motyw"></span>
+</span>
+
+<style>
+  /* Zewnętrzny element trzyma pozycję, wewnętrzny sam kształt — odbicie
+     działa wtedy na sylwetce i nie miesza się z przesunięciami rogu. */
+  .plama {
+    position: absolute;
+    z-index: 0;
+    inline-size: var(--plama-rozmiar);
+    aspect-ratio: var(--motyw-proporcja);
+    pointer-events: none;
+  }
+
+  .plama__ksztalt {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .plama--odbicie .plama__ksztalt {
+    transform: scaleX(-1);
+  }
+
+  .plama--prawy-gora {
+    inset-block-start: var(--plama-przesuniecie);
+    inset-inline-end: calc(-1 * var(--plama-wysuniecie));
+  }
+
+  .plama--prawy-dol {
+    inset-block-end: var(--plama-przesuniecie);
+    inset-inline-end: calc(-1 * var(--plama-wysuniecie));
+  }
+
+  .plama--lewy-gora {
+    inset-block-start: var(--plama-przesuniecie);
+    inset-inline-start: calc(-1 * var(--plama-wysuniecie));
+  }
+
+  .plama--lewy-dol {
+    inset-block-end: var(--plama-przesuniecie);
+    inset-inline-start: calc(-1 * var(--plama-wysuniecie));
+  }
+</style>

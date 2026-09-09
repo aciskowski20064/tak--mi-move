@@ -163,7 +163,7 @@ export const pages = {
      * poza krokami na tej stronie stoi JEDEN tytuł.
      */
     /** FAKT: odpowiedzi 10 i 50 — co realnie zastaje się na miejscu. */
-    amenities: ['Szatnie', 'Prysznic', 'Ręczniki', 'Kosmetyki'],
+    amenities: ['Szatnie', 'Prysznic', 'Ręczniki', 'Kosmetyki', 'Sprzęt do ćwiczeń', 'Napoje'],
     photos: {
       // Zdjęcia od klientki (19.08.2026). Lokalizacja niepotwierdzona,
       // dlatego opisy nie nazywają studia.
@@ -182,7 +182,7 @@ export const pages = {
     sections: {
       bring: {
         title: 'Co zabrać',
-        body: 'Wystarczy ubranie, które nie krępuje ruchów. Ćwiczymy boso lub w skarpetkach, a maty i cały sprzęt czekają na miejscu — nie musisz przynosić nic swojego. Jedyny wyjątek dotyczy aerial yogi: na te zajęcia przychodzimy bez biżuterii, bo może uszkodzić hamak.',
+        body: 'Wystarczy ubranie, które nie krępuje ruchów. Ćwiczymy boso lub w skarpetkach, a maty i cały sprzęt czekają na miejscu — nie musisz przynosić nic swojego. Na zajęcia aerial yoga prosimy o ubranie koszulki z rękawkiem. W hamakach ćwiczymy bez biżuterii.',
       },
       arrival: {
         title: 'Na miejscu',
@@ -393,32 +393,12 @@ export const pages = {
      */
     title: 'Kontakt',
     /**
-     * Dwa zdania, dwa akapity. Jednym ciągiem „Wszystko" — pierwsze słowo
-     * drugiego zdania — zostawało na końcu wiersza pierwszego; przeglądarka
-     * nie ma powodu łamać wiersza akurat po kropce.
-     *
-     * Drugie zdanie przeredagowane na polecenie (29.08.2026): wyliczanka
-     * w myślnikach ustąpiła pytaniu i wezwaniu. Sens bez zmian — te same
-     * trzy sprawy (zajęcia, wydarzenia, wynajem) i to samo skierowanie
-     * bezpośrednio do studia.
-     *
-     * TRZECI AKAPIT (30.08.2026). Pytanie i wezwanie stały w jednym ciągu
-     * i łamały się jako „…lub wynajem? Skontaktuj" / „się z nami
-     * bezpośrednio." — wezwanie rozjeżdżało się na dwa wiersze, a „Skontaktuj"
-     * wisiało przy pytaniu. W mierze 40ch (433 px przy 1280) samo pytanie ma
-     * ok. 480 px, więc w jednym wierszu się nie mieści i przy jednym akapicie
-     * nie ma podziału, który zostawiłby wezwanie w całości.
-     *
-     * Rozdzielenie na osobne akapity daje to strukturą: „Skontaktuj się
-     * z nami bezpośrednio." (35 znaków, ok. 365 px) stoi w jednym wierszu na
-     * każdej szerokości, bo mieści się nawet w kolumnie 333 px przy 375 px.
-     * Słowa i ich kolejność bez zmian.
+     * LEAD ZDJĘTY (04.09.2026) na polecenie: trzy zdania o Fitssey,
+     * pytaniu i wezwaniu zniknęły z wejścia w podstronę. Sam podział na
+     * drogi kontaktu niesie to dalej — bloki „Kiedy Fitssey"
+     * i „Kiedy bezpośrednio do nas" mówią to samo strukturą.
+     * Nagłówek zostaje z samym tytułem i kreską.
      */
-    leadLines: [
-      'W sprawach rezerwacji, karnetów i płatności najszybciej pomoże system Fitssey.',
-      'Masz pytanie o zajęcia, wydarzenia lub wynajem?',
-      'Skontaktuj się z nami bezpośrednio.',
-    ],
     whenFitssey: {
       title: 'Kiedy Fitssey',
       // FAKT — zakres systemu opisany w briefie §2.5.
@@ -465,18 +445,21 @@ export const pages = {
     studiosTitle: 'Studia',
   },
 
+  /**
+   * Same nagłówki i opisy dla wyszukiwarek. TREŚĆ obu dokumentów mieszka
+   * w `src/data/legal/*.md` i stamtąd idzie wprost na podstrony. Pola
+   * `body` ze znacznikami `TODO(klientka)` oraz wspólny komunikat zaślepki
+   * („Ta strona czeka na treść…") zniknęły 09.09.2026, razem z wstawieniem
+   * gotowych polityk i zdjęciem `noindex`.
+   */
   legal: {
     privacy: {
       meta: { title: 'Polityka prywatności', description: 'Polityka prywatności serwisu TAK MI MOVE.' },
       title: 'Polityka prywatności',
-      body: 'TODO(klientka): treść przygotowana lub zatwierdzona przez specjalistę — brief §49 zabrania podawania wygenerowanego tekstu jako gotowej porady prawnej',
     },
     cookies: {
       meta: { title: 'Polityka cookies', description: 'Informacja o plikach cookies w serwisie TAK MI MOVE.' },
       title: 'Polityka cookies',
-      body: 'TODO(klientka): treść zatwierdzona przez specjalistę, z opisem osadzonych usług zewnętrznych (Fitssey, mapy Google)',
     },
-    notice:
-      'Ta strona czeka na treść zatwierdzoną przez klientkę. Do tego czasu nie jest indeksowana.',
   },
 } as const;

@@ -2,33 +2,62 @@
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
-import Todo from '~/components/ui/Todo.astro';
 import { pages } from '~/data/copy/pages';
-import { typo } from '~/lib/typografia';
+import { Content as Tresc } from '~/data/legal/polityka-cookies.md';
 
 /**
- * Patrz uwaga w polityka-prywatnosci.astro — ta sama zasada (brief §49).
- * Dokument musi wymienić usługi osadzone na stronie: Fitssey (grafik
- * i rezerwacje) oraz mapy Google (ładowane dopiero po kliknięciu).
+ * TREŚĆ WSTAWIONA 09.09.2026 — patrz bliźniaczy komentarz w
+ * `polityka-prywatnosci.astro`. Zaślepka, `noindex` i filtr w mapie
+ * witryny zeszły razem z dostarczeniem dokumentu.
+ *
+ * Dokument opisuje STAN FAKTYCZNY: osadzenia Fitssey (/grafik) i map
+ * Google (/kontakt) uruchamiają się automatycznie, a mechanizmu zgód
+ * nie ma. Gdyby kiedyś doszedł, trzeba zaktualizować punkt 4 pliku
+ * `src/data/legal/polityka-cookies.md` — inaczej strona zacznie
+ * obiecywać coś, czego nie robi.
  */
 const t = pages.legal.cookies;
 ---
 
-<Base title={t.meta.title} description={t.meta.description} noindex>
+<Base title={t.meta.title} description={t.meta.description}>
   <PageHeader title={t.title} crumbs={[{ label: t.title, href: '/polityka-cookies' }]} />
 
   <Section size="md">
-    <p class="legal__notice">{typo(pages.legal.notice)}</p>
-    {/* Jak na polityce prywatności: znacznik braku zostaje w trybie
-        deweloperskim, z wersji poglądowej znika. */}
-    {import.meta.env.DEV && <Todo label={t.body} block />}
+    <div class="legal">
+      <Tresc />
+    </div>
   </Section>
 </Base>
 
 <style>
-  .legal__notice {
+  /* Ten sam skład, co w polityce prywatności — obie podstrony mają
+     wyglądać jak jeden dokument w dwóch częściach. */
+  .legal {
     max-width: var(--measure);
-    margin-block-end: var(--space-md);
-    color: var(--text-muted);
+  }
+
+  .legal :global(h2) {
+    font-size: var(--fs-h4);
+    margin-block: var(--space-lg) var(--space-xs);
+  }
+
+  .legal :global(h2:first-child) {
+    margin-block-start: 0;
+  }
+
+  .legal :global(p) {
+    margin-block-end: var(--space-sm);
+  }
+
+  .legal :global(ul) {
+    margin-block-end: var(--space-sm);
+    padding-inline-start: var(--space-md);
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  .legal :global(a) {
+    color: var(--text-accent);
+    text-underline-offset: 0.2em;
   }
 </style>

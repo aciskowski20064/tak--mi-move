@@ -1,0 +1,108 @@
+---
+import Logo from '~/components/ui/Logo.astro';
+
+/**
+ * Ekran powitalny — znak marki na jasnej apli i cienka kreska ładowania.
+ *
+ * POKAZUJE SIĘ RAZ NA SESJĘ. Warunek rozstrzyga skrypt w `<head>`
+ * (`Base.astro`), zanim przeglądarka cokolwiek narysuje: dopiero on dokłada
+ * klasę `loader-aktywny` na `<html>`. Bez tej klasy element jest
+ * `display: none`, więc przy drugim i każdym kolejnym wejściu w tej samej
+ * sesji nie ma nawet mignięcia. Znacznik istnieje w HTML zawsze — decyzja
+ * jest po stronie klasy, nie renderowania.
+ *
+ * Zapis pamiętamy w `sessionStorage`, nie w cookie i nie w localStorage:
+ * ma żyć tyle, co karta przeglądarki. Po jej zamknięciu ekran powitalny
+ * należy się użytkownikowi ponownie.
+ *
+ * Żadnego sztucznego opóźnienia. Kreska animuje się w kółko, ale nie
+ * odmierza czasu — loader znika w chwili, gdy strona jest gotowa.
+ */
+---
+
+<div class="loader" data-loader aria-hidden="true">
+  <div class="loader__znak">
+    <Logo variant="pionowy" width={150} />
+    {/* Kreska nie jest paskiem postępu: nie zna procentów i nie udaje, że je
+        zna. Stąd brak roli `progressbar` i brak wartości — to dekoracja,
+        schowana przed czytnikami ekranu razem z całym ekranem. */}
+    <span class="loader__kreska"></span>
+  </div>
+</div>
+
+<style>
+  .loader {
+    display: none;
+  }
+
+  /* Klasę na `<html>` ustawia skrypt z `<head>`, więc reguła musi być
+     globalna — element `html` jest poza zasięgiem stylu komponentu. */
+  :global(html.loader-aktywny) .loader {
+    display: grid;
+    place-items: center;
+    position: fixed;
+    inset: 0;
+    /* Ponad wszystkim, łącznie z nagłówkiem i odsyłaczem „Przejdź do treści". */
+    z-index: 400;
+    background: var(--surface-alt);
+    opacity: 1;
+    transition: opacity 400ms var(--ease);
+  }
+
+  /* Stan wygaszania: przezroczystość schodzi do zera, a element od razu
+     przestaje łapać kliknięcia — nie czekamy z tym na koniec przejścia. */
+  :global(html.loader-znika) .loader {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .loader__znak {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-md);
+  }
+
+  .loader__kreska {
+    position: relative;
+    display: block;
+    inline-size: min(11rem, 45vw);
+    block-size: 2px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--szalwia) 28%, transparent);
+    border-radius: var(--radius-pill);
+  }
+
+  /* Sama animacja to przebiegający odcinek, nie rosnący pasek — nie sugeruje
+     postępu, którego nie mierzymy. Szałwia z palety marki. */
+  .loader__kreska::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inline-size: 40%;
+    background: var(--szalwia);
+    border-radius: inherit;
+    animation: loaderPrzebieg 1100ms var(--ease) infinite;
+  }
+
+  @keyframes loaderPrzebieg {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(250%);
+    }
+  }
+
+  /* Przy wyłączonych animacjach kreska stoi w miejscu (zostaje sam znak
+     marki na apli), a wygaszanie skraca się do mrugnięcia. */
+  @media (prefers-reduced-motion: reduce) {
+    .loader__kreska::after {
+      animation: none;
+      inline-size: 100%;
+    }
+
+    :global(html.loader-aktywny) .loader {
+      transition-duration: 120ms;
+    }
+  }
+</style>

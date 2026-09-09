@@ -5,19 +5,14 @@ scope: all
 approved: true
 ---
 
-Tak. Joga, pilates, stretching, aerial yoga i barre są zarówno w Gdańsku,
-jak i w Pruszczu Gdańskim.
-
-Terminy różnią się między lokalizacjami — aktualne znajdziesz
-w [grafiku](/grafik), przy każdych zajęciach widać, którego studia dotyczą.
+Dostępność poszczególnych zajęć w obu lokalizacjach może się nieco różnić.
+Sprawdź dokładny grafik [tutaj](/grafik).
 
 <!--
-  FAKT: potwierdzone przez klientkę 21.08.2026 — barre jest w obu studiach.
+  FAKT: brzmienie wskazane przez klientkę (09.09.2026), przepisane bez zmian —
+  słowo „tutaj" prowadzi do /grafik.
 
-  Poprzednia wersja twierdziła, że barre prowadzimy wyłącznie w Pruszczu.
-  Był to mój wniosek z opisów profili społecznościowych (barre wymieniony
-  tylko przy Pruszczu), a pytanie o podział zajęć klientka wcześniej
-  przekreśliła bez odpowiedzi. Wniosek okazał się błędny.
-
-  Wraz z tą poprawką zniknął ostatni na stronie wniosek podany jako fakt.
+  Poprzednia odpowiedź wymieniała wszystkie formy ruchu i twierdziła, że każda
+  jest w obu studiach. Klientka to skorygowała: dostępność bywa różna,
+  a rozstrzyga grafik. Wyliczanka zajęć zniknęła razem z tym twierdzeniem.
 -->

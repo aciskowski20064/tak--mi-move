@@ -1,38 +1,110 @@
 ---
-import { Image } from 'astro:assets';
-import wordmarkDark from '~/assets/brand/logo-wordmark-dark.png';
-import wordmarkLight from '~/assets/brand/logo-wordmark-light.png';
+/**
+ * Logotyp TAK MI MOVE — warianty i zasady z brandbooka, rozdziały 1 i 2.
+ *
+ * ŹRÓDŁO: ścieżki wyciągnięte jako WEKTOR z brandbooka (arkusze 3, 4, 9, 10).
+ * To te same krzywe, które narysował autor znaku — nie przerysowanie i nie
+ * wektoryzacja rastra. Poprzedni komponent renderował PNG odzyskany z JPG-a
+ * przez wyliczenie kanału alfa z luminancji i sam nazywał się materiałem
+ * tymczasowym.
+ *
+ * WARIANTY (brandbook §1–2):
+ *   pionowy            podstawowy — „TAK MI / MOVE" + łukowe „STUDIO"
+ *   pionowy-skrocony   bez dopisku
+ *   poziomy            jeden wiersz + „STUDIO"
+ *   poziomy-skrocony   jeden wiersz, bez dopisku
+ *
+ * MINIMALNE SZEROKOŚCI (§1.4, §2.4) — komponent ich pilnuje sam, więc zbyt
+ * mała wartość `width` nie zejdzie poniżej progu:
+ *   pionowy 130 px, pionowy skrócony 85 px,
+ *   poziomy 270 px, poziomy skrócony 180 px.
+ *
+ * POLE OCHRONNE (§1.5, §2.5): standardowe `2x`, gdzie `x` jest modułem
+ * konstrukcji znaku. Brandbook nie podaje jego wartości liczbowej, więc
+ * odtworzone proporcjonalnie z bryły logotypu.
+ *
+ * KOLOR (§4.2): znak żyje wyłącznie w czerni albo w bieli.
+ *   na różowej apli      — biały (negatyw)
+ *   na szałwiowej        — czarny albo biały
+ *   na szarej i kremowej — czarny
+ * Kolor bierze się z `currentColor`, więc steruje nim sam `tone`. Innych
+ * barw komponent nie przyjmuje — arkusz 31 zakazuje przebarwiania znaku.
+ */
+import pionowy from '~/assets/brand/logo-pionowy.svg?raw';
+import pionowySkrocony from '~/assets/brand/logo-pionowy-skrocony.svg?raw';
+import poziomy from '~/assets/brand/logo-poziomy.svg?raw';
+import poziomySkrocony from '~/assets/brand/logo-poziomy-skrocony.svg?raw';
 import { site } from '~/data/site';
 
-/**
- * UWAGA — materiał tymczasowy.
- * Wordmark odzyskany z dostarczonego JPG-a przez wyliczenie kanału alfa
- * z luminancji (1206 px źródła, przycięty do zawartości). Jakość wystarcza
- * do buildu i podglądu, ale PRZED PUBLIKACJĄ trzeba go zastąpić plikiem
- * wektorowym od klientki albo naszą wektoryzacją zatwierdzoną przez nią.
- * Patrz docs/content-inventory.md §6.
- */
+type Wariant = 'pionowy' | 'pionowy-skrocony' | 'poziomy' | 'poziomy-skrocony';
+
 interface Props {
+  /** Pominięty — wariant podstawowy z brandbooka. */
+  variant?: Wariant;
+  /**
+   * `dark` = znak czarny (krem, szarość, biel), `light` = negatyw biały
+   * (róż, czerń, ciemne zdjęcie). Nazwy zostają z poprzedniej wersji
+   * komponentu, żeby nie przepisywać wszystkich wywołań.
+   */
   tone?: 'dark' | 'light';
   width?: number;
   class?: string;
 }
 
-const { tone = 'dark', width = 76, class: className } = Astro.props;
-const source = tone === 'light' ? wordmarkLight : wordmarkDark;
+const zrodla: Record<Wariant, string> = {
+  pionowy,
+  'pionowy-skrocony': pionowySkrocony,
+  poziomy,
+  'poziomy-skrocony': poziomySkrocony,
+};
+
+/** Minimum z brandbooka §1.4 i §2.4, w pikselach. */
+const minima: Record<Wariant, number> = {
+  pionowy: 130,
+  'pionowy-skrocony': 85,
+  poziomy: 270,
+  'poziomy-skrocony': 180,
+};
+
+const { variant = 'pionowy', tone = 'dark', width, class: className } = Astro.props;
+
+const minimum = minima[variant];
+const szerokosc = Math.max(width ?? minimum, minimum);
+
+const svg = zrodla[variant]
+  .trim()
+  .replace('<svg', `<svg aria-label="${site.name} — logo" focusable="false"`);
 ---
 
-<Image
-  src={source}
-  alt={`${site.name} — logo`}
-  width={width}
-  densities={[1, 2]}
-  loading="eager"
-  class:list={['logo', className]}
+<span
+  class:list={['logo', `logo--${tone}`, className]}
+  style={`inline-size:${szerokosc}px`}
+  set:html={svg}
 />
 
 <style>
+  /* Pole ochronne z brandbooka — standardowe `2x`. Moduł `x` odtworzony
+     proporcjonalnie ze znaku i wyrażony w jego własnej szerokości, więc
+     rośnie razem z logotypem zamiast być stałą liczbą pikseli. */
   .logo {
-    height: auto;
+    --pole-ochronne: 4%;
+    display: inline-block;
+    padding: var(--pole-ochronne);
+    line-height: 0;
+  }
+
+  .logo :global(svg) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  /* Brandbook §4.2 — znak wyłącznie w czerni albo w bieli. */
+  .logo--dark {
+    color: var(--czern);
+  }
+
+  .logo--light {
+    color: var(--biel);
   }
 </style>

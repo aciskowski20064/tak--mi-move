@@ -41,23 +41,25 @@ const zdania = t.body.split(/(?<=\.)\s+/).filter(Boolean);
 <Section size="lg" tone="alt" class="crewSekcja">
   <div class="crew">
     <div class="crew__glowna">
-      <figure class="crew__figura">
-        <Image
-          src={fotoZespolu}
-          alt="Cztery prowadzące TAK MI MOVE w sali studia"
-          widths={[380, 560, 760]}
-          sizes="(min-width: 60rem) 42vw, 100vw"
-          loading="lazy"
-          class="crew__foto"
-        />
-      </figure>
-
+      {/* Kolejność w kodzie: najpierw treść, potem kadr. To ona obsługuje
+          telefon — tekst nad zdjęciem — bez żadnego `order` w CSS. */}
       <div class="crew__tresc">
         <p class="crew__eyebrow eyebrow">{t.eyebrow}</p>
         <h2 class="crew__title">{typo(t.title)}</h2>
 
         {zdania.map((zdanie) => <p class="crew__lead">{typo(zdanie)}</p>)}
       </div>
+
+      <figure class="crew__figura">
+        <Image
+          src={fotoZespolu}
+          alt="Cztery prowadzące TAK MI MOVE w sali studia"
+          widths={[380, 560, 760]}
+          sizes="(min-width: 60rem) 44vw, 100vw"
+          loading="lazy"
+          class="crew__foto"
+        />
+      </figure>
     </div>
 
     {/* Separator między „Prowadzącymi" a „Co nas łączy" — kreska, znak
@@ -140,23 +142,35 @@ const zdania = t.body.split(/(?<=\.)\s+/).filter(Boolean);
   }
 
   /* Kadr zespołu: jeden, klientka prosiła o ZDJĘCIE kadry, nie o galerię.
-     Proporcja natywna pliku (1536 × 2048, czyli pion 3:4) — bez `cover`
-     i bez wymuszonej proporcji kafel pokazuje cały kadr. */
-  /* Sufit 22 rem obowiązuje tylko w układzie pionowym, gdzie kadr stoi
+     Sufit 22 rem obowiązuje tylko w układzie pionowym, gdzie kadr stoi
      nad tekstem i bez ograniczenia rozciągnąłby się na całą sekcję. */
   .crew__figura {
     margin: 0;
     inline-size: 100%;
     max-inline-size: 22rem;
-    border-radius: var(--radius-card);
-    overflow: hidden;
   }
 
+  /* KADR PROSTOKĄTNY (09.09.2026, na polecenie). Maska motywu zeszła z tego
+     zdjęcia; zaokrąglenie to `--radius-card`, ten sam co na kartach studiów.
+
+     BEZ PRZYCINANIA (09.09.2026, na polecenie): zdjęcie ma być widoczne
+     w całości. Proporcja pudełka to natywne 3:4 pliku (1536 × 2048), więc
+     `cover` nie ma czego obciąć — widać cały kadr, od sufitu po podłogę,
+     wszystkie sześć instruktorek w pełnych sylwetkach.
+
+     Wcześniejsze 5:4 z przesunięciem `20%` pokazywało 60% wysokości pliku
+     i ucinało nogi kucających. Kosztem pełnego kadru jest wysokość: przy
+     kolumnie 471 px zdjęcie ma 628 px zamiast 377 i to ono, a nie tekst,
+     wyznacza wysokość sekcji. Świadomie — całe zdjęcie było tu warunkiem.
+
+     `object-position` nie ma już czego przesuwać, więc zniknęło. */
   .crew__foto {
     display: block;
     inline-size: 100%;
     block-size: auto;
     aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: var(--radius-card);
   }
 
   /* Dwa zdania jako osobne akapity, każde w wąskiej mierze. Jeden szeroki
@@ -252,23 +266,35 @@ const zdania = t.body.split(/(?<=\.)\s+/).filter(Boolean);
     }
   }
 
-  /* Kadr po lewej, treść po prawej. 0,8fr wobec 1fr daje kolumnie zdjęcia
-     ok. 43% szerokości — tyle, żeby kadr niósł swoją wagę i nie przejmował
-     sekcji. Poniżej progu wszystko schodzi w pion w kolejności:
-     kadr, nagłówek z opisem, separator, „Co nas łączy", karty. */
+  /* LUSTRZANE ODBICIE SEKCJI WYDARZEŃ: tam kadr stoi po lewej w torze 0,9fr,
+     a treść po prawej w 1fr, z rynną `--space-2xl`. Tutaj te same proporcje
+     i ta sama rynna, tylko odbite — treść po lewej, kadr po prawej. Dzięki
+     temu obie sekcje czytają się jako jeden system, a nie dwa osobne pomysły.
+
+     Poniżej progu wszystko schodzi w pion w kolejności: nagłówek z opisem,
+     kadr, separator, „Co nas łączy", karty. */
   @media (min-width: 60rem) {
     .crew__glowna {
-      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
       gap: var(--space-2xl);
       justify-items: start;
     }
 
-    /* Sufit zdjęty: w dwóch kolumnach szerokość kadru wyznacza tor
-       siatki, nie sztywna wartość. Przy 22 rem kadr miał 352 px, czyli
-       31% kontenera — o jedną trzecią mniej, niż daje mu jego własna
-       kolumna. Teraz wypełnia ją i siedzi w zamówionym paśmie 40–45%. */
+    /* Sufit WRACA (09.09.2026, na polecenie: kadr ma być mniejszy).
+       Odkąd zdjęcie jest pokazywane w całości, jego proporcja to pion 3:4
+       — przy pełnym torze siatki (471 px) dawało to 629 px wysokości przy
+       kolumnie tekstu wysokiej na 262 i zdjęcie przytłaczało sekcję.
+
+       22 rem, czyli 352 px, daje 469 px wysokości: o jedną czwartą mniej,
+       a kadr nadal prowadzi kompozycję. To ta sama wartość, która ogranicza
+       figurę w układzie pionowym — jeden sufit na oba układy.
+
+       `justify-self: end` dosuwa węższy kadr do prawej krawędzi sekcji.
+       Bez tego zostawałby przy rynnie, a pusty pas otwierałby się od strony
+       marginesu strony — czyli dokładnie tam, gdzie widać go najbardziej. */
     .crew__figura {
-      max-inline-size: none;
+      max-inline-size: 22rem;
+      justify-self: end;
     }
   }
 </style>

@@ -33,12 +33,9 @@ const wyjscia = home.studios;
   {/* `size="sm"` zamiast domyślnego `md` — ten sam prop, którym skrócone są
       nagłówki podstron studiów. Przy tytule z jednego słowa domyślny rytm
       dawał 475 px wysokości samego wejścia w treść. */}
-  <PageHeader
-    size="sm"
-    title={t.title}
-    leadLines={t.leadLines}
-    crumbs={[{ label: 'Kontakt', href: '/kontakt' }]}
-  />
+  {/* Bez leadu (04.09.2026, na polecenie) — nagłówek to sam tytuł
+      z kreską, a wejście w treść niosą bloki dwóch dróg kontaktu. */}
+  <PageHeader size="sm" title={t.title} crumbs={[{ label: 'Kontakt', href: '/kontakt' }]} />
 
   <Section size="md" class="drogi-sekcja">
     <div class="routes">
@@ -141,30 +138,8 @@ const wyjscia = home.studios;
 </Base>
 
 <style>
-  /* Lead jako dwa akapity: miara węższa i wiersz ciaśniejszy niż globalne
-     46ch przy 1.85. Przy takim rozstrzale dwa krótkie zdania czytały się
-     jak cztery luźne wiersze bez związku; 40ch i 1.55 wiąże każde zdanie
-     w blok, a odstęp między nimi robi za interpunkcję.
-
-     Reguły są globalne, bo element nosi scope komponentu PageHeader — ale
-     arkusz tej strony linkuje wyłącznie /kontakt, więc leady pozostałych
-     podstron zostają na wartościach z base.css. Ta sama ścieżka co na
-     /studia, gdzie lead dostał 40ch. */
-  :global(.page-header__lead) {
-    max-width: 40ch;
-    line-height: 1.55;
-    /* Wyrównanie długości wierszy — ten sam zabieg co w leadzie na /studia.
-       Przy trzech krótkich akapitach globalne `pretty` pilnuje tylko sieroty
-       na końcu i zostawiało „lub wynajem?" jako wiersz o jedną trzecią
-       krótszy od poprzedniego. `balance` rozkłada je równo. */
-    text-wrap: balance;
-  }
-
-  /* Odstęp między zdaniami — mniejszy niż wysokość wiersza, żeby akapity
-     czytały się jako jedno wejście w treść, a nie dwa osobne bloki. */
-  :global(.page-header__lead + .page-header__lead) {
-    margin-block-start: var(--space-xs);
-  }
+  /* Reguły leadu (miara 40ch, interlinia 1.55, odstęp między akapitami)
+     zdjęte razem z samym leadem — nie miały już czego dotyczyć. */
 
   /* Nagłówek ma własny `padding-block-end` i nie przyjmuje klasy, więc górę
      tej sekcji zerujemy i dokładamy ujemny margines — ten sam zabieg co na

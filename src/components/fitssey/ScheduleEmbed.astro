@@ -137,8 +137,11 @@ const canFilter = locations.every((l) => Boolean(l.fitsseyLocationId));
   /* Widżet ładuje się asynchronicznie — komunikat „wczytuję" znika, gdy
      biblioteka podmieni znacznik na własną ramkę. Limit czasu na wypadek,
      gdyby Fitssey nie odpowiedział; wtedy zostaje komunikat awaryjny. */
-  const status = document.querySelector('[data-embed-status]');
-  const kontener = document.querySelector('[data-embed-widget]');
+  /* `HTMLElement` w zapytaniu, bo `hidden` niżej jest własnością elementu
+     HTML, a nie ogólnego `Element`, który zwraca `querySelector` bez
+     parametru. Kod wykonywany w przeglądarce jest identyczny. */
+  const status = document.querySelector<HTMLElement>('[data-embed-status]');
+  const kontener = document.querySelector<HTMLElement>('[data-embed-widget]');
   if (status && kontener) {
     const obs = new MutationObserver(() => {
       if (kontener.querySelector('iframe')) {
@@ -239,7 +242,7 @@ const canFilter = locations.every((l) => Boolean(l.fitsseyLocationId));
     background: var(--accent);
     color: var(--on-accent);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 400;
   }
 
   .embed__note {

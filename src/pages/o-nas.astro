@@ -224,21 +224,36 @@ const values = realOnly(t.values.items, (item) => item.body);
     align-items: center;
   }
 
+  /* Kadr bierze cały swój tor siatki (09.09.2026). Sufit 22 rem, wpisany tu
+     na chwilę razem z sufitem u Prowadzących, zszedł: przy poziomym 3:2
+     dawał 352 × 235 px, czyli kadr o połowę niższy od kolumny tekstu obok.
+     Pełny tor to 505 × 337 px — wysokość praktycznie równa tekstowi (344 px),
+     więc obie połowy sekcji domykają się na tej samej linii.
+
+     Wielkości obu kadrów na tej podstronie nie zrównuje więc szerokość, tylko
+     dopasowanie każdego z nich do własnego sąsiada: zespół 352 px przy
+     krótkim opisie, wydarzenia 505 px przy pełnym akapicie z wezwaniem. */
   .event__figura {
     margin: 0;
-    border-radius: var(--radius-card);
-    overflow: hidden;
   }
 
-  /* Proporcja natywna kadru (1600 × 1068, czyli 3:2) — kafel niczego
-     nie obcina. `block-size: auto`, bo przy `100%` obrazek o większej
-     wysokości naturalnej po cichu ignoruje `aspect-ratio`. */
+  /* PROSTOKĄT, natywne 3:2 pliku (09.09.2026, na polecenie).
+
+     Maska motywu zeszła i z tego kadru — w serwisie nie ma już ani jednej.
+     Wraca proporcja własna zdjęcia, więc `cover` nie ma czego obciąć:
+     cztery ćwiczące, cztery uniesione ręce i całe wnętrze są w kadrze.
+     Razem z maską odpada `object-position`, które istniało wyłącznie po to,
+     żeby odsunąć grupę od wcięcia kształtu.
+
+     Zaokrąglenie `--radius-card`, to samo co przy kadrze zespołu, portrecie
+     założycielki, hero i kartach studiów. */
   .event__foto {
     display: block;
     inline-size: 100%;
     block-size: auto;
     aspect-ratio: 3 / 2;
     object-fit: cover;
+    border-radius: var(--radius-card);
   }
 
   .event__tytul {
@@ -346,9 +361,16 @@ const values = realOnly(t.values.items, (item) => item.body);
     margin-inline: auto;
   }
 
-  /* Naturalna proporcja pliku (2:3) — bez przycinania i bez rozciągania
-     na wysokość sąsiedniej kolumny, przez które portret zamieniał się
-     w pionowy pasek. */
+  /* KADR PROSTOKĄTNY (09.09.2026, na polecenie). Maska motywu zeszła z tego
+     portretu — zostaje wyłącznie przy kadrze sekcji wydarzeń niżej.
+
+     Wraz z maską znika CAŁE obejście, które istniało tylko dla niej:
+     `object-position: center top` i `padding-block-start: 12%` zsuwały
+     zdjęcie w dół, żeby głowa Kasi nie wchodziła we wcięcie kształtu.
+     W prostokącie nie ma czego omijać — pudełko ma dokładnie proporcję
+     pliku (2:3), więc `cover` nic nie przycina, a widać całą sylwetkę,
+     od włosów po blat recepcji. Rozmiar i miejsce kadru w siatce
+     bez zmian. */
   .founder__portrait {
     display: block;
     inline-size: 100%;

@@ -257,20 +257,43 @@ const t = home.hero;
     text-underline-offset: 0.25em;
   }
 
+  /* Kadr bierze całą szerokość prawej kolumny i siada w jej pionowym
+     środku — dzięki temu masa zdjęcia równoważy nagłówek, lead, przyciski
+     i dwie lokalizacje po lewej. Sufit w `rem` trzyma go w ryzach na bardzo
+     szerokich ekranach. `overflow` nie jest ustawiony nigdzie po drodze,
+     więc kontur maski nie ma się o co obciąć. */
   .hero__figure {
     margin: 0;
     display: grid;
+    justify-items: center;
+    align-self: center;
+    inline-size: min(100%, 34rem);
+    margin-inline: auto;
   }
 
-  /* 3:4 to NATYWNA proporcja pliku, więc nie ma tu żadnego przycięcia —
-     `object-fit` nie ma czego obcinać. Poprzednie 4:5 zabierało sześć
-     procent wysokości bez powodu. */
+  /* KADR PROSTOKĄTNY (09.09.2026, na polecenie). Maska w kształcie motywu
+     zeszła z tego zdjęcia — zostaje wyłącznie przy kadrze sekcji wydarzeń.
+     Zaokrąglenie takie samo jak na kartach studiów (`--radius-card`), więc
+     kadry w całym serwisie czytają się jako jeden system.
+
+     Kwadrat zamiast natywnych 3:4. Plik jest pionowy, a przy pełnej
+     proporcji kadr miałby 628 px przy kolumnie tekstu wysokiej na 527 —
+     hero urosłoby o sto kilkadziesiąt pikseli bez żadnego zysku. Kwadrat
+     daje 464 px, czyli mieści się pod tekstem i sekcja nie rośnie ani
+     o piksel.
+
+     `object-position` schodzi z 58% na 75%. Przy kwadracie `cover` zabiera
+     25% wysokości pliku i tę ćwiartkę bierzemy prawie w całości z GÓRY:
+     widoczny pas to 19–94% zdjęcia, czyli znika sufit z rurami, a zostają
+     stopy. Wszystkie cztery osoby są w kadrze w całości — nad głowami
+     kilkanaście punktów procentowych zapasu, pod stopami parkiet. */
   .hero__image {
     display: block;
     inline-size: 100%;
     block-size: auto;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
+    object-position: center 75%;
     border-radius: var(--radius-card);
   }
 

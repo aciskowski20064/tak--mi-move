@@ -5,7 +5,11 @@ import StudioPanel from '~/components/ui/StudioPanel.astro';
 import { locations } from '~/data/site';
 import { home } from '~/data/copy/home';
 
-import zdjecieP from '~/assets/photos/studio-pruszcz-sala.jpg';
+/* Kadr Pruszcza wymieniony 04.09.2026 na polecenie: zamiast sali
+   z hamakami idzie ujęcie z matami i bolsterami z nowej sesji
+   (Takmimove_Interior_5). Poprzedni plik `studio-pruszcz-sala.jpg`
+   zostaje w katalogu, nieużywany. */
+import zdjecieP from '~/assets/photos/studio-pruszcz-sala-maty.jpg';
 import zdjecieG from '~/assets/photos/studio-gdansk-sala.jpg';
 
 /**
@@ -24,7 +28,7 @@ const zdjecia: Record<string, ImageMetadata> = {
 const t = home.studios;
 ---
 
-<Section size="lg" tone="alt">
+<Section size="lg" tone="alt" class="studia-sekcja">
   <p class="eyebrow">{t.eyebrow}</p>
   {/* Lead o wspólnym zespole zdjęty na prośbę klientki (25.08.2026) —
       po nagłówku idą od razu dwa kadry. */}
@@ -46,6 +50,18 @@ const t = home.studios;
 </Section>
 
 <style>
+  /* Ta sekcja i sekcja zajęć pod nią stoją na TYM SAMYM tonie `alt`, więc
+     granicy między nimi nie widać — a każda dawała po 128 px oddechu, czyli
+     do 256 px pustki na jednolitym tle. Dół schodzi o dwa stopnie skali;
+     góra zostaje pełna, bo tam sekcja styka się z jaśniejszym pasem wartości
+     i ta przerwa faktycznie coś rozdziela.
+
+     :global, bo klasa trafia na korzeń komponentu Section i nosi JEGO scope.
+     Obie sekcje żyją wyłącznie na stronie głównej, więc zmiana nie sięga dalej. */
+  :global(.section.studia-sekcja) {
+    padding-block-end: var(--space-lg);
+  }
+
   /* Odstęp do paneli niesie sam nagłówek — lead, który go dawał,
      został zdjęty (25.08.2026). */
   .studios__title {

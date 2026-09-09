@@ -141,6 +141,15 @@ a:hover {
   border-color: transparent;
   background: var(--znak-tlo-pelny);
   color: var(--znak-kolor-pelny);
+  /* Sygnet w wypełnionym kółku (04.09.2026). Globalny `--sygnet-kolor` to
+     róż, czyli dokładnie to samo, co tło tej wersji znaku — sygnety
+     w kółkach wartości na /o-nas rysowały się różem na różu i kółka
+     wyglądały na puste. Ikony z `FactIcon` i strzałki tego nie miały, bo
+     dziedziczą `color` powyżej; Mark wpisuje `color: var(--sygnet-kolor)`
+     stylem lokalnym, więc reguła na `color` nie miałaby jak wygrać —
+     nadpisujemy samą zmienną. Czerń jest zgodna z arkuszem 31, który
+     dopuszcza dla sygnetu wyłącznie czerń albo biel. */
+  --sygnet-kolor: var(--znak-kolor-pelny);
 }
 
 /* ————————————————————— ramki: kiedy wolno ——————————————————————
@@ -230,7 +239,7 @@ a:hover {
 .eyebrow {
   font-family: var(--font-text);
   font-size: var(--fs-caption);
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: var(--ls-eyebrow);
   text-transform: uppercase;
   color: var(--text-muted);
@@ -350,5 +359,74 @@ a:hover {
 }
 
 .prose strong {
-  font-weight: 500;
+  font-weight: 400;
+}
+
+
+/* ————————————————— motyw graficzny marki (brandbook §6) —————————————————
+
+   Organiczny kształt wyprowadzony z sygnetu — NIE kwiat i nie liść.
+   Ilustracje kwiatu i liścia z nowszych materiałów social media zostały
+   z serwisu usunięte razem z komponentem, który je renderował.
+
+   Dwa dozwolone zastosowania, oba wprost z brandbooka:
+
+     .kadr--motyw   arkusz 29 — motyw jako MASKA zdjęcia
+     .apla--motyw   arkusz 28 — motyw jako KOLOROWA APLA pod kompozycją
+
+   Stosujemy oszczędnie: kilka akcentów w całym serwisie, nigdy jako domyślne
+   opakowanie każdego zdjęcia. Brandbook opiera się na kompozycji, kolorowych
+   powierzchniach i typografii, a nie na powtarzaniu jednego kształtu przy
+   wszystkim. Prostokątne kadry zostają większością.
+
+   Maska zapisana w `data:` zamiast osobnym plikiem: to jedna krzywa, a plik
+   oznaczałby drugie żądanie sieciowe dla czystej dekoracji. Kształt jest
+   identyczny z `src/assets/brand/motyw.svg`, bo z niego jest wygenerowany. */
+
+.kadr--motyw,
+.kadr--motyw.kadr--motyw {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20114.40%20104.81%22%20fill%3D%22%23fff%22%20role%3D%22img%22%3E%3Cg%20transform%3D%22translate(-613.84%20350.05)%20scale(1%20-1)%22%3E%3Cpath%20d%3D%22M714.63%20331.95C710.00%20337.16%20704.13%20341.48%20697.04%20344.91C689.95%20348.33%20681.58%20350.05%20671.93%20350.05C653.11%20340.53%20656.28%20328.94%20649.28%20321.63C644.17%20316.29%20633.20%20315.97%20627.18%20311.37C613.84%20301.20%20618.53%20286.47%20620.61%20280.35C622.68%20274.22%20625.94%20268.55%20630.38%20263.34C634.82%20258.12%20640.46%20253.80%20647.32%20250.38C654.17%20246.96%20662.37%20245.24%20671.93%20245.24C678.39%20245.24%20684.25%20246.04%20689.52%20247.63C694.77%20249.22%20699.50%20251.37%20703.70%20254.07C707.90%20256.77%20711.54%20259.89%20714.63%20263.41C717.72%20266.93%20720.25%20270.65%20722.23%20274.56C724.21%20278.47%20725.70%20282.39%20726.72%20286.35C727.73%20290.31%20728.24%20294.07%20728.24%20297.64C728.24%20303.05%20727.13%20308.81%20724.91%20314.94C722.69%20321.07%20719.26%20326.74%20714.63%20331.95%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20114.40%20104.81%22%20fill%3D%22%23fff%22%20role%3D%22img%22%3E%3Cg%20transform%3D%22translate(-613.84%20350.05)%20scale(1%20-1)%22%3E%3Cpath%20d%3D%22M714.63%20331.95C710.00%20337.16%20704.13%20341.48%20697.04%20344.91C689.95%20348.33%20681.58%20350.05%20671.93%20350.05C653.11%20340.53%20656.28%20328.94%20649.28%20321.63C644.17%20316.29%20633.20%20315.97%20627.18%20311.37C613.84%20301.20%20618.53%20286.47%20620.61%20280.35C622.68%20274.22%20625.94%20268.55%20630.38%20263.34C634.82%20258.12%20640.46%20253.80%20647.32%20250.38C654.17%20246.96%20662.37%20245.24%20671.93%20245.24C678.39%20245.24%20684.25%20246.04%20689.52%20247.63C694.77%20249.22%20699.50%20251.37%20703.70%20254.07C707.90%20256.77%20711.54%20259.89%20714.63%20263.41C717.72%20266.93%20720.25%20270.65%20722.23%20274.56C724.21%20278.47%20725.70%20282.39%20726.72%20286.35C727.73%20290.31%20728.24%20294.07%20728.24%20297.64C728.24%20303.05%20727.13%20308.81%20724.91%20314.94C722.69%20321.07%20719.26%20326.74%20714.63%20331.95%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  /* Maska zjada zaokrąglenia i obwódki — kadr niesie teraz sam kształt. */
+  border-radius: 0;
+}
+
+/* Apla: plama w kolorze marki, pod treścią. Kolor podaje miejsce użycia
+   przez `--apla-kolor`, bo brandbook dopuszcza tu róż, szałwię i szarość —
+   w odróżnieniu od sygnetu, który zostaje czarny albo biały. */
+.apla--motyw {
+  background-color: var(--apla-kolor, var(--motyw-szalwia));
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20114.40%20104.81%22%20fill%3D%22%23fff%22%20role%3D%22img%22%3E%3Cg%20transform%3D%22translate(-613.84%20350.05)%20scale(1%20-1)%22%3E%3Cpath%20d%3D%22M714.63%20331.95C710.00%20337.16%20704.13%20341.48%20697.04%20344.91C689.95%20348.33%20681.58%20350.05%20671.93%20350.05C653.11%20340.53%20656.28%20328.94%20649.28%20321.63C644.17%20316.29%20633.20%20315.97%20627.18%20311.37C613.84%20301.20%20618.53%20286.47%20620.61%20280.35C622.68%20274.22%20625.94%20268.55%20630.38%20263.34C634.82%20258.12%20640.46%20253.80%20647.32%20250.38C654.17%20246.96%20662.37%20245.24%20671.93%20245.24C678.39%20245.24%20684.25%20246.04%20689.52%20247.63C694.77%20249.22%20699.50%20251.37%20703.70%20254.07C707.90%20256.77%20711.54%20259.89%20714.63%20263.41C717.72%20266.93%20720.25%20270.65%20722.23%20274.56C724.21%20278.47%20725.70%20282.39%20726.72%20286.35C727.73%20290.31%20728.24%20294.07%20728.24%20297.64C728.24%20303.05%20727.13%20308.81%20724.91%20314.94C722.69%20321.07%20719.26%20326.74%20714.63%20331.95%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20114.40%20104.81%22%20fill%3D%22%23fff%22%20role%3D%22img%22%3E%3Cg%20transform%3D%22translate(-613.84%20350.05)%20scale(1%20-1)%22%3E%3Cpath%20d%3D%22M714.63%20331.95C710.00%20337.16%20704.13%20341.48%20697.04%20344.91C689.95%20348.33%20681.58%20350.05%20671.93%20350.05C653.11%20340.53%20656.28%20328.94%20649.28%20321.63C644.17%20316.29%20633.20%20315.97%20627.18%20311.37C613.84%20301.20%20618.53%20286.47%20620.61%20280.35C622.68%20274.22%20625.94%20268.55%20630.38%20263.34C634.82%20258.12%20640.46%20253.80%20647.32%20250.38C654.17%20246.96%20662.37%20245.24%20671.93%20245.24C678.39%20245.24%20684.25%20246.04%20689.52%20247.63C694.77%20249.22%20699.50%20251.37%20703.70%20254.07C707.90%20256.77%20711.54%20259.89%20714.63%20263.41C717.72%20266.93%20720.25%20270.65%20722.23%20274.56C724.21%20278.47%20725.70%20282.39%20726.72%20286.35C727.73%20290.31%20728.24%20294.07%20728.24%20297.64C728.24%20303.05%20727.13%20308.81%20724.91%20314.94C722.69%20321.07%20719.26%20326.74%20714.63%20331.95%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+/* Proporcja oficjalnego motywu, wprost z `viewBox` pliku `motyw.svg`.
+   Kadr o tej proporcji nie deformuje maski przy `mask-size: 100% 100%` —
+   pudełko i kształt mają wtedy ten sam stosunek boków. */
+:root {
+  --motyw-proporcja: 114.4 / 104.81;
+}
+
+
+/* Kadr pokazujący PEŁNY kontur motywu — jeden wspólny wariant dla hero
+   i dla kafli studiów, zamiast osobnych reguł przy każdym zdjęciu.
+
+   Pudełko bierze proporcję kształtu z `viewBox`, a maska skaluje się
+   `contain`, więc kontur nie jest ucięty z żadnej strony i nie deformuje
+   się — te dwie rzeczy razem znaczą, że pudełko i maska mają ten sam
+   stosunek boków, a `contain` tylko to potwierdza. */
+.kadr--motyw.kadr--motyw-pelny {
+  aspect-ratio: var(--motyw-proporcja);
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }

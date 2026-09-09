@@ -23,7 +23,9 @@ const currentPath = Astro.url.pathname;
 <header class="header" data-header>
   <div class="header__inner container">
     <a href="/" class="header__brand" aria-label={`${site.name} — strona główna`}>
-      <Logo width={76} />
+      {/* Wersja pionowa skrócona w minimum z brandbooka (§1.4: 85 px) —
+          pełna wymaga 130 px i nie mieści się w pasku o wysokości 80 px. */}
+      <Logo variant="pionowy-skrocony" width={85} />
     </a>
 
     <nav class="header__nav" aria-label="Nawigacja główna">

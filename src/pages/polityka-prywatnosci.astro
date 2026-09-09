@@ -2,38 +2,67 @@
 import Base from '~/layouts/Base.astro';
 import PageHeader from '~/components/sections/PageHeader.astro';
 import Section from '~/components/ui/Section.astro';
-import Todo from '~/components/ui/Todo.astro';
 import { pages } from '~/data/copy/pages';
-import { typo } from '~/lib/typografia';
+import { Content as Tresc } from '~/data/legal/polityka-prywatnosci.md';
 
 /**
- * Brief §49: Claude Code nie może przedstawiać wygenerowanego tekstu
- * jako gotowej porady prawnej. Strona istnieje, żeby linki w stopce
- * nie prowadziły w pustkę, ale do czasu dostarczenia treści jest
- * wyłączona z indeksowania.
+ * TREŚĆ WSTAWIONA 09.09.2026. Do tego dnia stała tu zaślepka z `noindex` —
+ * brief §49 zabraniał podawania wygenerowanego tekstu jako gotowej porady
+ * prawnej. Dokument został zredagowany i zaakceptowany, więc zaślepka,
+ * wyłączenie z indeksowania i filtr w mapie witryny zeszły razem z nią.
+ *
+ * Tekst NIE mieszka w tym pliku, tylko w `src/data/legal/*.md`, i jest
+ * kopią zaakceptowanego dokumentu bez zmian redakcyjnych. Jedyne
+ * odstępstwo: w pliku nie ma nagłówka pierwszego stopnia, bo tytuł
+ * podstrony renderuje `PageHeader` i dwa `h1` byłyby błędem struktury.
+ * Poprawka treści = podmiana pliku markdown, bez ruszania szablonu.
  */
 const t = pages.legal.privacy;
 ---
 
-<Base title={t.meta.title} description={t.meta.description} noindex>
+<Base title={t.meta.title} description={t.meta.description}>
   <PageHeader title={t.title} crumbs={[{ label: t.title, href: '/polityka-prywatnosci' }]} />
 
   <Section size="md">
-    <p class="legal__notice">{typo(pages.legal.notice)}</p>
-    {/* Znacznik braku tylko przy `npm run dev`. Reszta serwisu używa
-        `showPlaceholders`, czyli DEV **lub** DEMO_MODE — a tutaj oznaczałoby
-        to przerywaną ramkę z notatką dla nas („brief §49 zabrania…") na
-        stronie, którą ogląda klientka. Akapit wyżej mówi jej to samo jej
-        językiem, więc ramka nic nie wnosi. Ten sam zabieg co przy faktach
-        na podstronach studiów (Etap 5). */}
-    {import.meta.env.DEV && <Todo label={t.body} block />}
+    <div class="legal">
+      <Tresc />
+    </div>
   </Section>
 </Base>
 
 <style>
-  .legal__notice {
+  /* Skład dokumentu prawnego: jedna miara dla całości, rytm pionowy
+     z tokenów odstępów i te same stopnie pisma co w reszcie serwisu.
+     Reguły stoją tutaj, a nie w base.css, bo dotyczą wyłącznie dwóch
+     podstron z długą prozą — i są identyczne w polityce cookies. */
+  .legal {
     max-width: var(--measure);
-    margin-block-end: var(--space-md);
-    color: var(--text-muted);
+  }
+
+  .legal :global(h2) {
+    font-size: var(--fs-h4);
+    margin-block: var(--space-lg) var(--space-xs);
+  }
+
+  .legal :global(h2:first-child) {
+    margin-block-start: 0;
+  }
+
+  .legal :global(p) {
+    margin-block-end: var(--space-sm);
+  }
+
+  .legal :global(ul) {
+    margin-block-end: var(--space-sm);
+    padding-inline-start: var(--space-md);
+    display: grid;
+    gap: var(--space-3xs);
+  }
+
+  /* Odsyłacze do dokumentów dostawców i do UODO — czerń z podkreśleniem,
+     tak jak pozostałe odsyłacze w treści serwisu. */
+  .legal :global(a) {
+    color: var(--text-accent);
+    text-underline-offset: 0.2em;
   }
 </style>

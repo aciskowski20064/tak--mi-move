@@ -1,6 +1,5 @@
 ---
 import { Image } from 'astro:assets';
-import Mark from '~/components/ui/Mark.astro';
 import { formatAddress, site } from '~/data/site';
 import type { StudioLocation } from '~/types';
 
@@ -79,7 +78,6 @@ const Naglowek = `h${headingLevel}` as 'h2' | 'h3';
 
   <div class="studio-card__tresc">
     <div class="studio-card__head">
-      <Mark size="0.9rem" class="studio-card__mark" />
       <Naglowek class="studio-card__name">{location.city}</Naglowek>
     </div>
 
@@ -148,14 +146,10 @@ const Naglowek = `h${headingLevel}` as 'h2' | 'h3';
     padding: var(--space-sm) var(--space-md);
   }
 
+  /* Sygnet przy nazwie miasta zdjęty — nazwa stoi teraz sama. */
   .studio-card__head {
     display: flex;
     align-items: center;
-    gap: var(--space-2xs);
-  }
-
-  .studio-card__head :global(.studio-card__mark) {
-    color: var(--accent);
   }
 
   .studio-card__name {

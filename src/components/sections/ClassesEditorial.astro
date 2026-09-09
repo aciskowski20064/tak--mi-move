@@ -25,7 +25,7 @@ const t = home.classes;
 
 {
   classes.length > 0 && (
-    <Section size="lg" tone="alt" id="zajecia">
+    <Section size="lg" tone="alt" id="zajecia" class="zajecia-sekcja">
       <header class="classes__head">
         <p class="eyebrow">{t.eyebrow}</p>
         <h2>{typo(t.title)}</h2>
@@ -53,6 +53,16 @@ const t = home.classes;
 }
 
 <style>
+  /* Góra sekcji obcięta symetrycznie do dołu sekcji lokalizacji nad nią —
+     obie stoją na tym samym tonie `alt`, więc razem dają teraz ok. 4–6 rem
+     zamiast 9–16 rem. Dół zostaje pełny: niżej zaczyna się inny ton i tam
+     przerwa ma co rozdzielać.
+
+     :global, bo klasa trafia na korzeń komponentu Section i nosi JEGO scope. */
+  :global(.section.zajecia-sekcja) {
+    padding-block-start: var(--space-lg);
+  }
+
   .classes__head {
     max-width: var(--container-text);
   }
@@ -62,16 +72,27 @@ const t = home.classes;
   }
 
   /* Kreska oddziela wstęp od kart — na makiecie ciągnie się przez całą
-     szerokość sekcji, nie tylko pod węższym akapitem. */
+     szerokość sekcji, nie tylko pod węższym akapitem.
+
+     Dwa odstępy nakładały się na siebie: `--space-lg` nad kreską i `--space-xl`
+     pod nią, razem do 8 rem między leadem a pierwszym kaflem. Oba schodzą
+     o stopień, więc kreska trzyma się nagłówka, a kafle kreski. */
   .classes__list {
     list-style: none;
     padding: 0;
     margin: 0;
-    margin-block-start: var(--space-lg);
-    padding-block-start: var(--space-xl);
+    margin-block-start: var(--space-md);
+    padding-block-start: var(--space-lg);
     border-block-start: var(--hairline) solid var(--line);
     display: grid;
     gap: var(--space-md);
+  }
+
+  /* Kafel wypełnia komórkę, więc sąsiedzi w rzędzie mają równą wysokość —
+     `.karta` ma wewnątrz tor `1fr` na opisie i rozciąga się bez psucia
+     rytmu. Ta sama reguła stoi przy siatce kafli na /zajecia. */
+  .classes__list > li {
+    display: grid;
   }
 
   .classes__all {
@@ -83,18 +104,20 @@ const t = home.classes;
     color: var(--text-accent);
   }
 
-  @media (min-width: 40rem) {
+  /* Progi i liczba kolumn dokładnie te same co w siatce kafli na /zajecia —
+     ta sama lista zajęć nie ma się łamać na dwóch stronach inaczej. */
+  @media (min-width: 48rem) {
     .classes__list {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* Pięć kolumn dopiero tam, gdzie kafel ma sensowną szerokość. Niżej
-     dwie, bo przy pięciu opis schodzi do ~14 znaków w wierszu. */
+  /* Trzy kolumny, nie pięć: sześć kafli układa się wtedy w pełne dwa rzędy
+     po trzy, a nie w rząd pięciu i jeden osierocony. Rynna zostaje
+     `--space-md`, tak jak na /zajecia. */
   @media (min-width: 64rem) {
     .classes__list {
-      grid-template-columns: repeat(5, 1fr);
-      gap: var(--space-sm);
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>

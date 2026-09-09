@@ -87,6 +87,19 @@ sections:
         recommendation: 'vinyasa yoga, yoga open'
       - label: 'kobiety w ciąży'
         recommendation: 'Joga w ciąży, aktywna w ciąży'
+  # EFEKTY dopisane 09.09.2026 na polecenie klientki — brakowało ich przy
+  # jodze, choć stoją przy pozostałych zajęciach. Ten sam wariant
+  # `audience-grid` co w barre, stretchingu, aerial yodze i yogilatesie:
+  # siatka dwóch kolumn ze znakiem marki przy pozycji, cztery pozycje,
+  # czyli pełne 2 × 2. Miejsce w kolejności też to samo — tuż przed uwagami
+  # zdrowotnymi, które zamykają stronę.
+  - label: 'Efekty'
+    variant: audience-grid
+    items:
+      - 'poprawa elastyczności i mobilności ciała'
+      - 'redukcja napięcia i stresu'
+      - 'poprawa równowagi i koordynacji'
+      - 'zwiększenie świadomości ciała i oddechu'
   # Treść zdrowotna zamyka stronę — bez ikony i bez pudełka, samo wyróżnienie
   # terakotowym paskiem po lewej.
   # `width` poniżej pełnej szerokości ustawia uwagi OBOK modułu grafiku

@@ -131,7 +131,7 @@ export const locations: StudioLocation[] = [
     email: site.email,
     /** FAKT: odpowiedź 33 — ulica i piętro potwierdzone. */
     // Bez słowa „Wejście" na początku — stoi już w etykiecie karty obok.
-    entranceInfo: 'Od ulicy Kossaka, pierwsze piętro',
+    entranceInfo: 'Wejście od ul. Kossaka. Pierwsze piętro',
     // TODO(klientka): czy parking przy studiu jest płatny (odpowiedź 34 tego
     // nie rozstrzyga — dla Gdańska tak, dla Pruszcza zostało nieokreślone).
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
@@ -140,10 +140,10 @@ export const locations: StudioLocation[] = [
      * Zapis jak u niej — małą literą, bez skracania.
      */
     equipmentInfo:
-      'sprzęt do ćwiczeń, szatnia, prysznic, kosmetyki i ręczniki dostępne na miejscu',
+      'Sprzęt do ćwiczeń, szatnia, prysznic, kosmetyki i ręczniki dostępne na miejscu',
     /** FAKT: treść wprost od klientki (25.08.2026). Pruszcz bez „z dziećmi". */
     classesSummary:
-      'zróżnicowane formy ruchu i intensywność, zajęcia w ciąży, sesje grupowe i indywidualne',
+      'Zróżnicowane formy ruchu i intensywność, zajęcia w ciąży, sesje grupowe i indywidualne',
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga', 'barre'],
     /** FAKT: identyfikator z generatora widżetu Fitssey (21.08.2026). */
     fitsseyLocationId: '7E7E757E-E55D-54BC-3262-E448A467174F',
@@ -166,7 +166,7 @@ export const locations: StudioLocation[] = [
      * klientka wpisała ją ze znakiem zapytania („Bądkowskiego"?), więc do
      * czasu potwierdzenia zostaje sam adres z nagłówka.
      */
-    entranceInfo: 'Parter budynku',
+    entranceInfo: 'Wejście bezpośrednio od ul. Angielska Grobla',
     /**
      * FAKT: odpowiedź 34. Świadomie NIE renderowane od Etapu 5 — lista
      * klientki ma dokładnie cztery fakty i parkingu na niej nie ma.
@@ -193,7 +193,7 @@ export const locations: StudioLocation[] = [
      * podany przez nią explicite dla Gdańska to szatnia.
      */
     equipmentInfo:
-      'sprzęt do ćwiczeń, szatnia, prysznic, kosmetyki i ręczniki dostępne na miejscu',
+      'Sprzęt do ćwiczeń, szatnia, prysznic, kosmetyki i ręczniki dostępne na miejscu',
     // TODO(klientka): godziny otwarcia (odpowiedź 37 bez odpowiedzi).
     /**
      * FAKT: treść wprost od klientki (25.08.2026). Gdańsk ma dopisane
@@ -201,7 +201,7 @@ export const locations: StudioLocation[] = [
      * z dziećmi" i pilates dla mam z dziećmi stoją właśnie w Gdańsku.
      */
     classesSummary:
-      'zróżnicowane formy ruchu i intensywność, zajęcia w ciąży i z dziećmi, sesje grupowe i indywidualne',
+      'Zróżnicowane formy ruchu i intensywność, zajęcia w ciąży i z dziećmi, sesje grupowe i indywidualne',
     classSlugs: ['joga', 'pilates', 'stretching', 'aerial-yoga', 'barre'],
     /** FAKT: identyfikator z generatora widżetu Fitssey (21.08.2026). */
     fitsseyLocationId: '190D8811-0D88-4976-8A63-F042C284B507',

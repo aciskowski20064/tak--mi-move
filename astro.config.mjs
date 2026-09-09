@@ -24,12 +24,12 @@ const SITE =
 export default defineConfig({
   site: SITE,
   integrations: [
-    sitemap({
-      // Strony z `noindex` nie mogą trafić do sitemapy — to sprzeczny sygnał
-      // dla wyszukiwarek. Dokumenty prawne wrócą tu, gdy dostaną treść
-      // i zdejmiemy z nich noindex.
-      filter: (page) => !/\/polityka-(prywatnosci|cookies)\/?$/.test(page),
-    }),
+    // Filtr wykluczający obie polityki zdjęty 09.09.2026. Istniał, dopóki
+    // podstrony stały na zaślepce z `noindex` — strona wyłączona
+    // z indeksowania nie może być w mapie witryny, bo to sprzeczny sygnał.
+    // Dokumenty dostały treść, `noindex` zszedł, więc wracają do mapy
+    // razem z resztą serwisu.
+    sitemap(),
   ],
   /*
    * Reguły typograficzne dla treści z plików markdown: opisy zajęć,

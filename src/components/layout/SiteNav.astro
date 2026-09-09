@@ -43,10 +43,18 @@ const isActive = (href: string) =>
   {
     items.map((item) => (
       <li class="nav__item">
+        {/* `newTab` niesie wyłącznie pozycja prowadząca do dokumentu poza
+            serwisem (oferta eventowa). Otwarcie w nowej karcie zapowiadamy
+            w nazwie dostępnej — bez tego czytnik ekranu nie ma skąd wiedzieć,
+            że odsyłacz otwiera PDF w nowej karcie. */}
         <a
           href={item.href}
           class="nav__link"
           aria-current={isActive(item.href) ? 'page' : undefined}
+          target={item.newTab ? '_blank' : undefined}
+          rel={item.newTab ? 'noopener' : undefined}
+          aria-label={item.newTab ? `${item.label} — PDF, otwiera się w nowej karcie` : undefined}
+          data-event={item.newTab ? 'event_offer_download' : undefined}
         >
           {typo(item.label)}
         </a>
@@ -95,11 +103,27 @@ const isActive = (href: string) =>
     text-underline-offset: 0.4em;
   }
 
-  /* ——— desktop ——— */
+  /* ——— desktop ———
+
+     `nowrap` doszedł z siódmą pozycją („Organizacja wydarzeń", 09.09.2026).
+     Menu pojawia się od 60 rem i przy sześciu pozycjach mieściło się w jednym
+     wierszu na każdej szerokości. Siódma, najdłuższa etykieta przelewała je
+     na dwa wiersze w paśmie 960–1200 px — pasek nagłówka robił się wtedy
+     dwa razy wyższy.
+
+     Dolna granica odstępu schodzi z 1 rem na 0,55 rem: przy 1024 px siedem
+     pozycji potrzebuje ok. 590 px samego tekstu, a tor menu ma tam ok. 620 px.
+     Górna wartość bez zmian, więc na szerokim ekranie rytm jest ten sam
+     co dotąd. */
   .nav--desktop {
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 0.3rem + 1.5vw, 2rem);
+    flex-wrap: nowrap;
+    gap: clamp(0.55rem, 0.3rem + 1.5vw, 2rem);
+  }
+
+  .nav--desktop .nav__link {
+    white-space: nowrap;
   }
 
   .nav--desktop .nav__sub {
