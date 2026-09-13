@@ -144,6 +144,24 @@ const OZNACZENIE_PAKIETU = /\b(x\d+[,.;]?)[ \t]+/gu;
  */
 const TYLDA_SEPARATOR = /([^\s])[ \t]+~[ \t]+/gu;
 
+/**
+ * 8. Skrót „ul." trzyma się nazwy ulicy.
+ *
+ *    Zgłoszone przez klientkę (13.09.2026): w adresie studia „ul." potrafiło
+ *    zostać na końcu wiersza, a „Grunwaldzka 55/7" schodziło do następnego.
+ *    Sam skrót nic wtedy nie znaczy — czyta się jak urwane słowo.
+ *
+ *    Wiązanie jednostronne i tylko z PIERWSZYM wyrazem po skrócie:
+ *    „ul. Grunwaldzka" to 15 znaków, czyli mniej niż najwęższa kolumna
+ *    adresu w serwisie (ok. 200 px w kaflu studia na tablecie). Numer domu
+ *    łamie się dalej normalnie i to nikomu nie przeszkadza.
+ *
+ *    Reguła obejmuje oba studia — ich adresy zaczynają się tym samym
+ *    skrótem, a robienie wyjątku dla jednego byłoby wymyślaniem różnicy,
+ *    której nie ma.
+ */
+const SKROT_ULICY = /\b(ul\.)[ \t]+/gu;
+
 /** Wspólny przebieg reguł — używany i przez `typo()`, i przez wtyczkę rehype. */
 export const zastosujReguly = (tekst: string): string => {
   const zeSpacjami = tekst
@@ -155,7 +173,8 @@ export const zastosujReguly = (tekst: string): string => {
 
   return zKrotkimi
     .replace(OZNACZENIE_PAKIETU, `$1${TWARDA}`)
-    .replace(TYLDA_SEPARATOR, `$1${TWARDA}~ `);
+    .replace(TYLDA_SEPARATOR, `$1${TWARDA}~ `)
+    .replace(SKROT_ULICY, `$1${TWARDA}`);
 };
 
 /**

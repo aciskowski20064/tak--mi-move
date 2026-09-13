@@ -35,7 +35,7 @@ const year = new Date().getFullYear();
                 po dywizie — „80-" zostawało w pierwszej linijce, „756 Gdańsk"
                 schodziło do drugiej. Kod i miasto trzymają się teraz razem. */}
             <address class="footer__address">
-              {location.street},{' '}
+              {typo(location.street)},{' '}
               <span class="footer__miejscowosc">
                 {location.postalCode} {location.city}
               </span>

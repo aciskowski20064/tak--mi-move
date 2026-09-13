@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { formatAddress, site } from '~/data/site';
+import { typo } from '~/lib/typografia';
 import type { StudioLocation } from '~/types';
 
 /**
@@ -81,7 +82,10 @@ const Naglowek = `h${headingLevel}` as 'h2' | 'h3';
       <Naglowek class="studio-card__name">{location.city}</Naglowek>
     </div>
 
-    <p class="studio-card__address">{formatAddress(location)}</p>
+    {/* `typo()` wiąże „ul." z nazwą ulicy — bez tego skrót potrafił zostać
+        sam na końcu wiersza. Do mapy i do danych adres idzie dalej surowy,
+        przez `formatAddress` bez tego przebiegu. */}
+    <p class="studio-card__address">{typo(formatAddress(location))}</p>
 
     <dl class="studio-card__contact">
       <dt>Telefon</dt>

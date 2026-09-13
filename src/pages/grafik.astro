@@ -38,7 +38,7 @@ const t = pages.schedule;
       {
         locations.map((location) => (
           <p class="schedule__context" data-studio-context={location.slug} hidden>
-            {location.name} · {formatAddress(location)} ·{' '}
+            {location.name} · {typo(formatAddress(location))} ·{' '}
             <a href={`/studia/${location.slug}`}>{typo('dojazd i wejście')}</a>
           </p>
         ))

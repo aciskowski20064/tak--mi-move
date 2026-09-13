@@ -55,11 +55,25 @@
      W komponentach używamy WYŁĄCZNIE tych zmiennych, nigdy bazowych powyżej. */
 
   --surface: var(--biel);
-  /* Powierzchnia alternatywna z szarości marki. Na kremie wystarczało 40%,
-     na bieli to samo wydzielenie wymaga więcej: 50% daje #ececec, czyli pas
-     widoczny obok bieli, a wciąż spokojniejszy niż pełne --szarosc.
-     Czerń na nim 18,1:1, tekst drugorzędny 5,7:1. */
-  --surface-alt: color-mix(in srgb, var(--szarosc) 50%, var(--biel));
+  /* Powierzchnia alternatywna — szarość marki rozcieńczona w bieli. ŻADNEGO
+     nowego koloru: to wciąż --szarosc (#dadada) z brandbooka, zmienia się
+     wyłącznie proporcja rozcieńczenia.
+
+     50% → 30% (13.09.2026). Przy 50% pas miał #ededed i mimo zerowej
+     ciepłoty (R = G = B co do jednostki) klientka czytała go jako „budyniowy".
+     Na ekranach z True Tone albo Night Shift neutralna szarość faktycznie
+     zbiera ciepły odcień z wyświetlacza — im jaśniejszy pas, tym mniej ma
+     co przyjąć. 30% daje #f4f4f4.
+
+     Dlaczego nie jeszcze jaśniej: tego samego tokenu używają KARTY stojące
+     na białych sekcjach (np. „Co zabrać" na /pierwsza-wizyta). Sprawdzone
+     na żywo — przy #f7f7f7 karta przestaje się odcinać od bieli i wygląda
+     jak niedokończone tło. #f4f4f4 to punkt, w którym pas jest wyraźnie
+     bielszy, a karta nadal czyta się jako osobna płaszczyzna.
+
+     Kontrasty rosną razem z jasnością: czerń 19,3:1 (było 18,1), tekst
+     drugorzędny 5,6:1 (było 5,4). */
+  --surface-alt: color-mix(in srgb, var(--szarosc) 30%, var(--biel));
   /* Powierzchnia miękka to róż marki rozcieńczony w tle, a nie osobny odcień
      do zatwierdzenia. Przy 14% na bieli tekst czarny daje na niej 19,3:1. */
   --surface-soft: color-mix(in srgb, var(--roz) 14%, var(--biel));
