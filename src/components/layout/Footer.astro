@@ -120,6 +120,29 @@ const year = new Date().getFullYear();
     color: var(--text-on-sage);
     padding-block: var(--space-xl) var(--space-md);
     margin-block-start: auto;
+
+    /* SYGNET W STOPCE — CZERŃ, NIE TERAKOTA (18.09.2026).
+       Zgłoszone: znak przy „Zapisz się na zajęcia" jest ledwo widoczny.
+       Nie jest to kwestia gustu — terakota #DA9788 na szałwii #8FABA1 daje
+       1.03:1, czyli dokładnie tę samą jasność co tło. To ten sam wynik,
+       który akapit wyżej opisuje dla tekstu, tylko że sygnet miał go
+       jeszcze wpisanego na sztywno.
+
+       Wybór jest wąski, bo kolor musi pochodzić z palety marki, a na
+       szałwii wychodzi z niej tylko dwoje: czerń 8.51:1 i biel 2.47:1
+       (szarość #DADADA daje 1.77:1, czyli nadal za mało). Czerń wygrywa
+       także dlatego, że logo w tym samym bloku stoi już w wersji `dark`
+       — z identycznego powodu, opisanego przy `<Logo>` wyżej.
+
+       ŚWIADOME ODSTĘPSTWO od reguły przy `--sygnet-kolor` w tokens.css,
+       gdzie stoi decyzja klientki, że sygnet nie ma nigdzie być czarny.
+       Alternatywą jest wyłącznie biel; zmiana to podmiana jednego tokena
+       na `var(--biel)`. Czerń jest za to zgodna z arkuszem 31 brandbooka,
+       który dla sygnetu dopuszcza wyłącznie czerń albo biel.
+
+       Nadpisujemy ZMIENNĄ, nie `color`: `Mark.astro` wpisuje kolor stylem
+       liniowym, więc zwykła reguła na `color` nie miałaby jak wygrać. */
+    --sygnet-kolor: var(--text-on-sage);
   }
 
   .footer a {

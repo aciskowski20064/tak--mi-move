@@ -60,20 +60,28 @@ const SIEROTY = /(?<=^|[\s(„"'])([aiouwzAIOUWZ])[ \t]+/gu;
 const DWULITEROWE = /(?<=^|[\s(„"'])(\p{L}\p{L})[ \t]+/gu;
 
 /**
- * 5. „się" i „nie" nie zostają na końcu wiersza.
+ * 5. „się", „nie" i „lub" nie zostają na końcu wiersza.
  *
- *    Trzy litery, więc reguła wyżej ich nie łapie, a to dwa najczęstsze
- *    polskie wyrazy wiszące: żaden nic nie znaczy sam z siebie i czyta się
- *    dopiero razem z tym, co po nim. Zgłoszone na kartach wartości `/o-nas`
+ *    Trzy litery, więc reguła wyżej ich nie łapie, a to najczęstsze polskie
+ *    wyrazy wiszące: żaden nic nie znaczy sam z siebie i czyta się dopiero
+ *    razem z tym, co po nim. Zgłoszone na kartach wartości `/o-nas`
  *    („Tak samo liczy się" i „nikt nie" kończyły wiersze).
  *
- *    Lista jest ZAMKNIĘTA i celowo krótka. Pozostałych trzyliterowych
- *    („lub", „czy", „dla") nie wiążemy: są samodzielne, a każdy kolejny
- *    związany wyraz odbiera przeglądarce miejsce na złamanie wiersza.
+ *    „lub" DOPISANE 18.09.2026 na zgłoszenie klientki: w kroku 3
+ *    na `/pierwsza-wizyta` wiersz kończył się na „x4, x8 lub", a „Open"
+ *    schodziło niżej. Wcześniej stało tu, że „lub" celowo zostawiamy wolne,
+ *    bo jest samodzielne — w praktyce spójnik oderwany od tego, co wybiera,
+ *    czyta się tak samo źle jak wiszące „się". Razem z tą zmianą idzie
+ *    poluzowanie reguły 6; bez niego samo dopisanie „lub" nic by nie dało,
+ *    bo to reguła 6 trzymała „lub" przyklejone do „x8".
+ *
+ *    Lista jest ZAMKNIĘTA. Pozostałych trzyliterowych („czy", „dla") nie
+ *    wiążemy: każdy kolejny związany wyraz odbiera przeglądarce miejsce
+ *    na złamanie wiersza.
  *
  *    HAMULEC DŁUGOŚCI — patrz niżej.
  */
-const SIE_NIE = /(?<=^|[\s(„"'])([Ss]ię|[Nn]ie)[ \t]+/gu;
+const SIE_NIE = /(?<=^|[\s(„"'])([Ss]ię|[Nn]ie|[Ll]ub)[ \t]+/gu;
 
 /*
  * HAMULEC DŁUGOŚCI — wspólny dla reguł 4 i 5.
@@ -120,14 +128,22 @@ const zwiazKrotkie = (tekst: string, regula: RegExp): string =>
  *
  *    Bez tego wyliczanka rozpadała się w kroku 3 na `/pierwsza-wizyta`:
  *    „…albo karnet — x4," kończyło wiersz, a „x8 lub Open" schodziło niżej.
- *    Wiązanie przesuwa całą wyliczankę razem, a łamanie wypada przed słowem
+ *    Wiązanie przesuwa oznaczenia razem, a łamanie wypada przed słowem
  *    „karnet", czyli w naturalnym miejscu.
  *
- *    Reguła zatrzymuje się na „lub": gdyby objęła też „Open", nierozdzielny
- *    kawałek urósłby do 25 znaków i przy wąskich kolumnach groziłby
- *    wypchnięciem tekstu poza kadr.
+ *    ZAKRES ZAWĘŻONY 18.09.2026. Wcześniej reguła wiązała oznaczenie
+ *    z DOWOLNYM następnym wyrazem, więc „x8" zagarniało też „lub"
+ *    i powstawał nierozdzielny ciąg „karnet — x4, x8 lub" (19 znaków).
+ *    Nie dało się go złamać przed „lub" — a dokładnie o to poprosiła
+ *    klientka. Teraz oznaczenie wiąże się WYŁĄCZNIE z kolejnym
+ *    oznaczeniem: „x4, x8" zostaje całością, a „lub Open." schodzi niżej
+ *    jako osobny kawałek (wiąże je reguła 5).
+ *
+ *    Granica jest ta sama co wcześniej, tylko postawiona wyraźniej:
+ *    gdyby ciąg objął całe „x4, x8 lub Open", urósłby do 25 znaków
+ *    i przy wąskich kolumnach groziłby wypchnięciem tekstu poza kadr.
  */
-const OZNACZENIE_PAKIETU = /\b(x\d+[,.;]?)[ \t]+/gu;
+const OZNACZENIE_PAKIETU = /\b(x\d+[,.;]?)[ \t]+(?=x\d)/gu;
 
 /**
  * 7. Tylda w haśle „SIŁA ~ SPOKÓJ ~ RÓWNOWAGA" trzyma się słowa PRZED sobą.
@@ -162,6 +178,56 @@ const TYLDA_SEPARATOR = /([^\s])[ \t]+~[ \t]+/gu;
  */
 const SKROT_ULICY = /\b(ul\.)[ \t]+/gu;
 
+/**
+ * 9. „dnia" trzyma się tego, co po nim — czyli daty albo jej określenia.
+ *
+ *    Zgłoszone przez klientkę (18.09.2026) w kroku 3 na `/pierwsza-wizyta`:
+ *    wiersz kończył się na „liczy się od dnia", a „pierwszej wizyty"
+ *    schodziło niżej. „od dnia" samo w sobie nic nie mówi — to otwarcie
+ *    daty, nie informacja. Czyta się jak zdanie urwane w pół.
+ *
+ *    Wiązanie jest jednostronne i sięga tylko PIERWSZEGO wyrazu po „dnia".
+ *    Razem z regułą 4, która dokleiła już „od" do „dnia", daje to ciąg
+ *    „od dnia pierwszej" — 17 znaków. Zmierzone w najwęższej kolumnie,
+ *    w jakiej ten tekst stoi (krok na `/pierwsza-wizyta` przy 320 px):
+ *    mieści się z zapasem, bo w tej samej kolumnie muszą się zmieścić
+ *    pojedyncze słowa podobnej długości („przeciwwskazania").
+ *
+ *    REGUŁA MUSI BIEC PRZED REGUŁĄ 5. Gdyby szła po niej, „się" zdążyłoby
+ *    związać się z krótszym wtedy „od dnia" (11 znaków, mieści się
+ *    w hamulcu), a doklejenie „pierwszej" zrobiłoby z tego ciąg 21 znaków
+ *    i zepchnęło w dół całe „się od dnia pierwszej". Przy tej kolejności
+ *    hamulec widzi już 17 znaków, odmawia wiązania „się" i łamanie wypada
+ *    dokładnie tam, gdzie prosiła klientka — po „liczy się".
+ */
+const DNIA = /(?<=^|[\s(„"'])(dnia)[ \t]+/gu;
+
+/**
+ * 10. „e-mail" nie pęka na łączniku.
+ *
+ *    Zgłoszone przez klientkę (18.09.2026) w kroku 2 na `/pierwsza-wizyta`:
+ *    wiersz kończył się na „adres e-", a „mail;" schodziło niżej. Łącznik
+ *    jest w Unicode miejscem, w którym wolno złamać wiersz, więc żadna
+ *    reguła oparta na spacjach tego nie naprawi — spacji tam nie ma.
+ *
+ *    Wstawiamy ŁĄCZNIK WYRAZÓW (U+2060) tuż za łącznikiem. To znak pusty
+ *    i bezwymiarowy, który mówi tylko tyle: „tu nie wolno łamać".
+ *
+ *    Dlaczego nie łącznik niełamliwy (U+2011), czyli rozwiązanie z pozoru
+ *    naturalniejsze: podmieniłby WIDOCZNY znak na inny, a Tenor Sans
+ *    jedzie z Fontsource w podzbiorach latin i latin-ext. Gdyby zabrakło
+ *    w nich tego konkretnego znaku, przeglądarka podstawiłaby łącznik
+ *    z zupełnie innego kroju albo pustą ramkę. U+2060 nie ma czego
+ *    rysować, więc nie ma czym się zepsuć.
+ *
+ *    Koszt: skopiowany tekst niesie niewidoczny znak, a wyszukiwanie
+ *    w przeglądarce frazy „e-mail" na tej stronie może go nie znaleźć.
+ *    Dotyczy jednego słowa i żaden adres ani dane strukturalne nie
+ *    przechodzą przez ten przebieg (patrz nagłówek pliku).
+ */
+const LACZNIK_WYRAZOW = '⁠';
+const EMAIL = /\b([Ee])-(?=mail)/gu;
+
 /** Wspólny przebieg reguł — używany i przez `typo()`, i przez wtyczkę rehype. */
 export const zastosujReguly = (tekst: string): string => {
   const zeSpacjami = tekst
@@ -169,12 +235,18 @@ export const zastosujReguly = (tekst: string): string => {
     .replace(MYSLNIK, `${TWARDA}—${TWARDA}`)
     .replace(SIEROTY, `$1${TWARDA}`);
 
-  const zKrotkimi = zwiazKrotkie(zwiazKrotkie(zeSpacjami, DWULITEROWE), SIE_NIE);
+  /* Kolejność nie jest dowolna: DNIA musi stać między regułą 4 a 5 —
+     powód opisany przy samej regule 9. */
+  const zKrotkimi = zwiazKrotkie(
+    zwiazKrotkie(zwiazKrotkie(zeSpacjami, DWULITEROWE), DNIA),
+    SIE_NIE,
+  );
 
   return zKrotkimi
     .replace(OZNACZENIE_PAKIETU, `$1${TWARDA}`)
     .replace(TYLDA_SEPARATOR, `$1${TWARDA}~ `)
-    .replace(SKROT_ULICY, `$1${TWARDA}`);
+    .replace(SKROT_ULICY, `$1${TWARDA}`)
+    .replace(EMAIL, `$1-${LACZNIK_WYRAZOW}`);
 };
 
 /**

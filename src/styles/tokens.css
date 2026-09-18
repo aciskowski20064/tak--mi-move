@@ -127,12 +127,18 @@
      przebarwiania znaku — sygnet występuje wyłącznie w czerni albo bieli.
      Kolorować wolno MOTYW, czyli wypełnioną pochodną sygnetu, i to jego
      dotyczy `--motyw-*` niżej. */
-  /* SYGNET (komponent `Mark`) — jeden kolor w całym serwisie, terakota
-     marki. Decyzja klientki nadrzędna wobec arkusza 31 brandbooka, który
-     dopuszcza znak wyłącznie w czerni albo bieli: sygnet ma nigdzie nie
-     być czarny. Kolor wchodzi stylem liniowym w `Mark.astro`, więc żaden
-     stan `hover` ani `focus` go nie przewróci; nadpisać da się wyłącznie
-     świadomie, ustawiając ten token na przodku. */
+  /* SYGNET (komponent `Mark`) — domyślnie terakota marki. Decyzja klientki
+     nadrzędna wobec arkusza 31 brandbooka, który dopuszcza znak wyłącznie
+     w czerni albo bieli. Kolor wchodzi stylem liniowym w `Mark.astro`, więc
+     żaden stan `hover` ani `focus` go nie przewróci; nadpisać da się
+     wyłącznie świadomie, ustawiając ten token na przodku.
+
+     DWA MIEJSCA ROBIĄ TO ŚWIADOMIE i obu dotyczy ten sam powód — terakota
+     zrównuje się z tłem, więc znak przestaje być widoczny:
+       • `.znak--pelny` w base.css — róż na różu (kółka wartości /o-nas),
+       • `.footer` w Footer.astro — terakota na szałwii, 1.03:1.
+     Oba wracają do czerni, czyli do tego, co dopuszcza arkusz 31. Poza
+     nimi reguła „sygnet nigdzie nie jest czarny" obowiązuje. */
   --sygnet-kolor: var(--roz);
 
   --znak-size: 2.75rem;
